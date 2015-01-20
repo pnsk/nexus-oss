@@ -12,12 +12,15 @@
  */
 package org.sonatype.nexus.repository.raw.internal;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import org.sonatype.nexus.repository.Facet;
 import org.sonatype.nexus.repository.Format;
 import org.sonatype.nexus.repository.RecipeSupport;
 import org.sonatype.nexus.repository.Repository;
@@ -28,12 +31,15 @@ import org.sonatype.nexus.repository.raw.internal.negativecache.PathNegativeCach
 import org.sonatype.nexus.repository.raw.internal.negativecache.PlaceboNegativeCacheFacet;
 import org.sonatype.nexus.repository.raw.internal.proxy.ProxyFacetImpl;
 import org.sonatype.nexus.repository.raw.internal.proxy.ProxyHandler;
+import org.sonatype.nexus.repository.storage.StorageFacetImpl;
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet;
 import org.sonatype.nexus.repository.view.Route;
 import org.sonatype.nexus.repository.view.Router;
 import org.sonatype.nexus.repository.view.ViewFacet;
 import org.sonatype.nexus.repository.view.handlers.TimingHandler;
 import org.sonatype.nexus.repository.view.matchers.AlwaysMatcher;
+
+import com.google.common.collect.Lists;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.sonatype.nexus.repository.httpbridge.HttpHandlers.notFound;
@@ -54,21 +60,10 @@ public class RawProxyRecipe
 
   private final TimingHandler timingHandler;
 
-  private final Provider<ConfigurableViewFacet> viewFacet;
+  private final Provider<ConfigurableViewFacet> viewFacetProvider;
 
-  private final Provider<HttpClientFacet> httpClient;
-
-  private final Provider<PlaceboNegativeCacheFacet> negativeCache;
-
-  private final Provider<PathNegativeCacheKeyProvider> negativeCacheKeyProvider;
-
-  private final Provider<ProxyFacetImpl> proxyFacet;
-
-  private final Provider<RawLocatorFacet> locatorFacet;
-
-  private final Provider<RawPayloadStorage> payloadStorageFacet;
-
-  private final Provider<RawStorageFacetImpl> rawStorageFacet;
+  // Facets that don't require configuration
+  private final List<Provider<? extends Facet>> facetProviders = Lists.newArrayList();
 
   @Inject
   public RawProxyRecipe(final @Named("proxy") Type type,
@@ -76,14 +71,15 @@ public class RawProxyRecipe
                         final NegativeCacheHandler negativeCacheHandler,
                         final ProxyHandler proxyHandler,
                         final TimingHandler timingHandler,
-                        final Provider<ConfigurableViewFacet> viewFacet,
+                        final Provider<ConfigurableViewFacet> viewFacetProvider,
                         final Provider<HttpClientFacet> httpClient,
                         final Provider<PlaceboNegativeCacheFacet> negativeCache,
                         final Provider<PathNegativeCacheKeyProvider> negativeCacheKeyProvider,
                         final Provider<ProxyFacetImpl> proxyFacet,
                         final Provider<RawLocatorFacet> locatorFacet,
                         final Provider<RawPayloadStorage> payloadStorageFacet,
-                        final Provider<RawStorageFacetImpl> rawStorageFacet)
+                        final Provider<RawStorageFacetImpl> rawStorageFacet,
+                        final Provider<StorageFacetImpl> storageFacet)
   {
     super(type, format);
 
@@ -91,26 +87,25 @@ public class RawProxyRecipe
     this.proxyHandler = checkNotNull(proxyHandler);
     this.timingHandler = checkNotNull(timingHandler);
 
-    this.viewFacet = checkNotNull(viewFacet);
-    this.httpClient = checkNotNull(httpClient);
-    this.negativeCache = checkNotNull(negativeCache);
-    this.negativeCacheKeyProvider = checkNotNull(negativeCacheKeyProvider);
-    this.proxyFacet = checkNotNull(proxyFacet);
-    this.locatorFacet = checkNotNull(locatorFacet);
-    this.payloadStorageFacet = checkNotNull(payloadStorageFacet);
-    this.rawStorageFacet = checkNotNull(rawStorageFacet);
+    this.viewFacetProvider = checkNotNull(viewFacetProvider);
+
+    facetProviders.add(checkNotNull(httpClient));
+    facetProviders.add(checkNotNull(negativeCache));
+    facetProviders.add(checkNotNull(negativeCacheKeyProvider));
+    facetProviders.add(checkNotNull(proxyFacet));
+    facetProviders.add(checkNotNull(locatorFacet));
+    facetProviders.add(checkNotNull(payloadStorageFacet));
+    facetProviders.add(checkNotNull(rawStorageFacet));
+    facetProviders.add(checkNotNull(storageFacet));
   }
 
   @Override
   public void apply(final @Nonnull Repository repository) throws Exception {
-    repository.attach(configure(viewFacet.get()));
-    repository.attach(httpClient.get());
-    repository.attach(negativeCache.get());
-    repository.attach(negativeCacheKeyProvider.get());
-    repository.attach(proxyFacet.get());
-    repository.attach(locatorFacet.get());
-    repository.attach(payloadStorageFacet.get());
-    repository.attach(rawStorageFacet.get());
+    repository.attach(configure(viewFacetProvider.get()));
+
+    for (Provider<? extends Facet> facetProvider : facetProviders) {
+      repository.attach(facetProvider.get());
+    }
   }
 
   /**
