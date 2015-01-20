@@ -12,7 +12,9 @@
  */
 package org.sonatype.nexus.repository.raw.internal.proxy;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 import javax.annotation.Nullable;
@@ -22,7 +24,9 @@ import org.sonatype.nexus.repository.httpclient.HttpClientFacet;
 import org.sonatype.nexus.repository.util.NestedAttributesMap;
 import org.sonatype.nexus.repository.view.Payload;
 import org.sonatype.nexus.repository.view.payloads.HttpEntityPayload;
+import org.sonatype.nexus.repository.view.payloads.StreamPayload;
 
+import com.google.common.io.ByteStreams;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -123,7 +127,9 @@ public class ProxyFacetImpl
       HttpEntity entity = response.getEntity();
       try {
         log.debug("Entity: {}", entity);
-        payload = new HttpEntityPayload(response, entity);
+        final HttpEntityPayload httpEntityPayload = new HttpEntityPayload(response, entity);
+
+        payload = readFully(httpEntityPayload);
       }
       finally {
         EntityUtils.consume(entity);
@@ -131,6 +137,17 @@ public class ProxyFacetImpl
     }
 
     return payload;
+  }
+
+  /**
+   * Read an incoming Payload into memory.
+   */
+  private Payload readFully(final Payload payload) throws IOException {
+    try (InputStream stream = payload.openInputStream()) {
+      final byte[] bytes = ByteStreams.toByteArray(stream);
+      return new StreamPayload(new ByteArrayInputStream(bytes), bytes.length, payload.getContentType(),
+          payload.getLastModified());
+    }
   }
 
   private boolean isStale(Payload payload) {
@@ -143,7 +160,7 @@ public class ProxyFacetImpl
 
     if (lastModified == null) {
       log.debug("Artifact last modified date unknown.");
-      return false;
+      return true;
     }
 
     final DateTime earliestFreshDate = new DateTime().minusMinutes(artifactMaxAgeMinutes);

@@ -47,16 +47,23 @@ public class RawLocatorFacet
 
     @Override
     public String describe() {
-      return null;
+      return path;
     }
 
     @Override
     public String uri() {
-      return null;
+      return path;
     }
 
     public String path() {
       return path;
+    }
+
+    @Override
+    public String toString() {
+      return "RawLocator{" +
+          "path='" + path + '\'' +
+          '}';
     }
   }
 }

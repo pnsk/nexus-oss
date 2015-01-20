@@ -37,7 +37,7 @@ public class ProxyHandler
     // ensure GET
     final Locator locator = locator(context);
 
-    final Payload payload = payloadStorage().get(locator);
+    final Payload payload = proxyFacet(context).get(locator);
 
     if (payload != null) {
       return HttpResponses.ok(payload);
@@ -46,8 +46,8 @@ public class ProxyHandler
     return HttpResponses.notFound(locator.describe());
   }
 
-  private PayloadStorage payloadStorage() {
-    return null;
+  private ProxyFacet proxyFacet(final Context context) {
+    return context.getRepository().facet(ProxyFacet.class);
   }
 
   private Locator locator(final Context context) {

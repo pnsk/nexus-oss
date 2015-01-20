@@ -16,8 +16,9 @@ import org.sonatype.nexus.repository.Facet;
 import org.sonatype.nexus.repository.view.Context;
 
 /**
- * TODO: Rename - this is more like a generic facet for adapting format-specific into standard stuff
+ * Provides a method for creating {@link Locator}s that represent the content being asked for by the client.
  */
+@Facet.Exposed
 public interface LocatorFacet
     extends Facet
 {

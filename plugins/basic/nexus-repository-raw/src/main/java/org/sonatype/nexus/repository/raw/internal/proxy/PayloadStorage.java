@@ -20,6 +20,7 @@ import org.sonatype.nexus.repository.view.Payload;
 /**
  * @since 3.0
  */
+@Facet.Exposed
 public interface PayloadStorage
     extends Facet
 {

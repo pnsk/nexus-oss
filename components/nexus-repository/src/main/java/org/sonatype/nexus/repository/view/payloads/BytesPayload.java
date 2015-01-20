@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @since 3.0
  */
 public class BytesPayload
-  implements Payload
+    implements Payload
 {
   private final byte[] content;
 
