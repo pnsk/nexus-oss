@@ -96,7 +96,9 @@ public class RawStorageFacetImpl
         final BlobRef blobRef = storage.createBlob(content.openInputStream(), headers);
 
         asset.setProperty(BLOB_REF_PROPERTY, blobRef.toString());
-        asset.setProperty(CONTENT_TYPE_PROPERTY, content.getContentType());
+        if (content.getContentType() != null) {
+          asset.setProperty(CONTENT_TYPE_PROPERTY, content.getContentType());
+        }
 
         final DateTime lastModified = content.getLastModified();
         if (lastModified != null) {
