@@ -14,12 +14,15 @@ package org.sonatype.nexus.repository.raw.internal.proxy;
 
 import java.io.IOException;
 
+import org.sonatype.nexus.repository.Facet;
 import org.sonatype.nexus.repository.view.Payload;
 
 /**
  * @since 3.0
  */
+@Facet.Exposed
 public interface ProxyFacet
+    extends Facet
 {
   Payload get(Locator locator) throws IOException;
 }
