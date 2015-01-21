@@ -310,7 +310,7 @@ public abstract class EntityAdapter<T extends Entity>
     if (source instanceof ODocument) {
       return copy((ODocument)source);
     }
-    if (source instanceof Map) {
+    else if (source instanceof Map) {
       return copy((Map) source);
     }
     else if (source instanceof List) {
