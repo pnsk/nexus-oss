@@ -181,6 +181,8 @@ public class RepositoryImpl
   @Transitions(from=STARTED, to=STOPPED)
   public void stop() throws Exception {
     MultipleFailures failures = new MultipleFailures();
+
+    // FIXME: Invert order?
     for (Facet facet : facets) {
       try {
         log.debug("Stopping facet: {}", facet);
