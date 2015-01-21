@@ -12,6 +12,8 @@
  */
 package org.sonatype.nexus.repository.simple.internal;
 
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -20,9 +22,12 @@ import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.httpbridge.HttpResponses;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Handler;
+import org.sonatype.nexus.repository.view.Request;
 import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.nexus.repository.view.ViewFacet;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
+
+import com.google.common.collect.Sets;
 
 import static org.sonatype.nexus.repository.httpbridge.HttpMethods.GET;
 
@@ -37,24 +42,49 @@ public class SimpleGroupHandler
     extends ComponentSupport
     implements Handler
 {
+  /**
+   * Request-context state container for set of repositories already dispatched to.
+   */
+  private static class DispatchedRepositories
+  {
+    private final Set<String> dispatched = Sets.newHashSet();
+
+    public void add(final Repository repository) {
+      dispatched.add(repository.getName());
+    }
+
+    public boolean contains(final Repository repository) {
+      return dispatched.contains(repository.getName());
+    }
+  }
+
   @Nonnull
   @Override
   public Response handle(final @Nonnull Context context) throws Exception {
-    String name = ContextHelper.contentName(context);
-    String method = context.getRequest().getAction();
+    Request request = context.getRequest();
+    String method = request.getAction();
     Repository repository = context.getRepository();
+    String name = ContextHelper.contentName(context);
     log.debug("{} repository '{}' content-name: {}", method, repository.getName(), name);
 
+    // Lookup/create dispatched repositories in request-context
+    DispatchedRepositories dispatched = request.getAttributes().getOrCreate(DispatchedRepositories.class);
+
     SimpleGroupFacet group = repository.facet(SimpleGroupFacet.class);
-
-    // TODO: Track dispatched repositories, to avoid circular dispatching in nested groups
-
     switch (method) {
       case GET: {
         for (Repository member : group.members()) {
           log.trace("Trying member: {}", member);
+
+          // track repositories we have dispatched to, prevent circular dispatch for nested groups
+          if (dispatched.contains(member)) {
+            log.trace("Skipping already dispatched member: {}", member);
+            continue;
+          }
+          dispatched.add(member);
+
           ViewFacet view = member.facet(ViewFacet.class);
-          Response response = view.dispatch(context.getRequest());
+          Response response = view.dispatch(request);
           if (response.getStatus().getCode() == 200) {
             return response;
           }
