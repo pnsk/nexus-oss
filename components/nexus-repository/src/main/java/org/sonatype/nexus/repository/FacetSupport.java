@@ -93,8 +93,11 @@ public abstract class FacetSupport
 
   /**
    * Common init/update configuration extension-point.
+   *
+   * By default this is called on {@link #init} and {@link #update}
+   * unless sub-class overrides {@link #doInit} or {@link #doUpdate}.
    */
-  protected void configure() {
+  protected void configure() throws Exception {
     // nop
   }
 
