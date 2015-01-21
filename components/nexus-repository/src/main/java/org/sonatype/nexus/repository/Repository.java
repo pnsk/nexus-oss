@@ -37,6 +37,8 @@ public interface Repository
 
   void stop() throws Exception;
 
+  void delete() throws Exception;
+
   void destroy() throws Exception;
 
   Configuration getConfiguration();

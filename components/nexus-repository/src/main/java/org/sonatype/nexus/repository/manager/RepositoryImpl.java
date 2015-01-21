@@ -10,6 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.repository.manager;
 
 import javax.annotation.Nonnull;
@@ -35,6 +36,7 @@ import org.sonatype.sisu.goodies.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.sonatype.nexus.repository.manager.RepositoryImpl.State.DELETED;
 import static org.sonatype.nexus.repository.manager.RepositoryImpl.State.DESTROYED;
 import static org.sonatype.nexus.repository.manager.RepositoryImpl.State.FAILED;
 import static org.sonatype.nexus.repository.manager.RepositoryImpl.State.INITIALISED;
@@ -109,10 +111,17 @@ public class RepositoryImpl
   static final class State
   {
     public static final String NEW = "NEW";
+
     public static final String INITIALISED = "INITIALISED";
+
     public static final String STARTED = "STARTED";
+
     public static final String STOPPED = "STOPPED";
+
+    public static final String DELETED = "DELETED";
+
     public static final String DESTROYED = "DESTROYED";
+
     public static final String FAILED = "FAILED";
   }
 
@@ -133,14 +142,14 @@ public class RepositoryImpl
   //
 
   @Override
-  @Transitions(from=NEW, to=INITIALISED)
+  @Transitions(from = NEW, to = INITIALISED)
   public void init(final Configuration configuration) throws Exception {
     this.configuration = checkNotNull(configuration);
     this.name = configuration.getRepositoryName();
   }
 
   @Override
-  @Guarded(by=STOPPED)
+  @Guarded(by = STOPPED)
   public void update(final Configuration configuration) throws Exception {
     this.configuration = checkNotNull(configuration);
 
@@ -159,7 +168,7 @@ public class RepositoryImpl
   }
 
   @Override
-  @Transitions(from={INITIALISED, STOPPED}, to=STARTED)
+  @Transitions(from = {INITIALISED, STOPPED}, to = STARTED)
   public void start() throws Exception {
     MultipleFailures failures = new MultipleFailures();
     for (Facet facet : facets) {
@@ -178,7 +187,7 @@ public class RepositoryImpl
   }
 
   @Override
-  @Transitions(from=STARTED, to=STOPPED)
+  @Transitions(from = STARTED, to = STOPPED)
   public void stop() throws Exception {
     MultipleFailures failures = new MultipleFailures();
 
@@ -198,7 +207,25 @@ public class RepositoryImpl
   }
 
   @Override
-  @Transitions(to=DESTROYED)
+  @Transitions(from = STOPPED, to = DELETED)
+  public void delete() throws Exception {
+    MultipleFailures failures = new MultipleFailures();
+
+    for (Facet facet : facets.reverse()) {
+      try {
+        log.debug("Deleting facet: {}", facet);
+        facet.delete();
+      }
+      catch (Throwable t) {
+        log.error("Failed to delete facet: {}", facet, t);
+        failures.add(t);
+      }
+    }
+    failures.maybePropagate("Failed to delete facets");
+  }
+
+  @Override
+  @Transitions(to = DESTROYED)
   public void destroy() throws Exception {
     if (states.is(STARTED)) {
       stop();
@@ -228,7 +255,7 @@ public class RepositoryImpl
   //
 
   @Override
-  @Guarded(by=INITIALISED)
+  @Guarded(by = INITIALISED)
   public void attach(final Facet facet) throws Exception {
     checkNotNull(facet);
     log.debug("Attaching facet: {}", facet);

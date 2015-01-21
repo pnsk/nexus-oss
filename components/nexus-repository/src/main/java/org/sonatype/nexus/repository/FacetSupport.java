@@ -10,6 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.repository;
 
 import javax.annotation.Nonnull;
@@ -23,6 +24,7 @@ import org.sonatype.sisu.goodies.common.ComponentSupport;
 import org.sonatype.sisu.goodies.eventbus.EventBus;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.sonatype.nexus.repository.FacetSupport.State.DELETED;
 import static org.sonatype.nexus.repository.FacetSupport.State.DESTROYED;
 import static org.sonatype.nexus.repository.FacetSupport.State.FAILED;
 import static org.sonatype.nexus.repository.FacetSupport.State.INITIALISED;
@@ -63,10 +65,17 @@ public abstract class FacetSupport
   public final class State
   {
     public static final String NEW = "NEW";
+
     public static final String INITIALISED = "INITIALISED";
+
     public static final String STARTED = "STARTED";
+
     public static final String STOPPED = "STOPPED";
+
+    public static final String DELETED = "DELETED";
+
     public static final String DESTROYED = "DESTROYED";
+
     public static final String FAILED = "FAILED";
   }
 
@@ -82,6 +91,13 @@ public abstract class FacetSupport
     return states;
   }
 
+  /**
+   * Common init/update configuration extension-point.
+   */
+  protected void configure() {
+    // nop
+  }
+
   //
   // Lifecycle
   //
@@ -94,7 +110,7 @@ public abstract class FacetSupport
   }
 
   protected void doInit() throws Exception {
-    // nop
+    configure();
   }
 
   @Override
@@ -104,11 +120,11 @@ public abstract class FacetSupport
   }
 
   protected void doUpdate() throws Exception {
-    // nop
+    configure();
   }
 
   @Override
-  @Transitions(from={INITIALISED, STOPPED}, to=STARTED)
+  @Transitions(from = {INITIALISED, STOPPED}, to = STARTED)
   public void start() throws Exception {
     doStart();
     eventBus.register(this);
@@ -119,7 +135,7 @@ public abstract class FacetSupport
   }
 
   @Override
-  @Transitions(from=STARTED, to=STOPPED)
+  @Transitions(from = STARTED, to = STOPPED)
   public void stop() throws Exception {
     eventBus.unregister(this);
     doStop();
@@ -130,7 +146,17 @@ public abstract class FacetSupport
   }
 
   @Override
-  @Transitions(to=DESTROYED)
+  @Transitions(from = STOPPED, to = DELETED)
+  public void delete() throws Exception {
+    doDelete();
+  }
+
+  private void doDelete() throws Exception {
+    // nop
+  }
+
+  @Override
+  @Transitions(to = DESTROYED)
   public void destroy() throws Exception {
     if (states.is(STARTED)) {
       stop();

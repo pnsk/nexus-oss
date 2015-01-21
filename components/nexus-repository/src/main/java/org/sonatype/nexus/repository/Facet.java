@@ -34,6 +34,8 @@ public interface Facet
 
   void stop() throws Exception;
 
+  void delete() throws Exception;
+
   void destroy() throws Exception;
 
   /**

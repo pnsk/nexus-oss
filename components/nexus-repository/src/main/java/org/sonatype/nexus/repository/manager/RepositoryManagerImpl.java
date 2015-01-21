@@ -10,6 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.repository.manager;
 
 import java.util.List;
@@ -53,7 +54,7 @@ public class RepositoryManagerImpl
 
   private final ConfigurationStore store;
 
-  private final Map<String,Recipe> recipes;
+  private final Map<String, Recipe> recipes;
 
   private final RepositoryFactory factory;
 
@@ -66,7 +67,7 @@ public class RepositoryManagerImpl
                                final ConfigurationStore store,
                                final RepositoryFactory factory,
                                final Provider<ConfigurationFacet> configFacet,
-                               final Map<String,Recipe> recipes)
+                               final Map<String, Recipe> recipes)
   {
     this.eventBus = checkNotNull(eventBus);
     this.store = checkNotNull(store);
@@ -183,14 +184,14 @@ public class RepositoryManagerImpl
   }
 
   @Override
-  @Guarded(by=STARTED)
+  @Guarded(by = STARTED)
   public Iterable<Repository> browse() {
     return ImmutableList.copyOf(repositories.values());
   }
 
   @Nullable
   @Override
-  @Guarded(by=STARTED)
+  @Guarded(by = STARTED)
   public Repository get(final String name) {
     checkNotNull(name);
 
@@ -198,7 +199,7 @@ public class RepositoryManagerImpl
   }
 
   @Override
-  @Guarded(by=STARTED)
+  @Guarded(by = STARTED)
   public Repository create(final Configuration configuration) throws Exception {
     checkNotNull(configuration);
 
@@ -215,7 +216,7 @@ public class RepositoryManagerImpl
   }
 
   @Override
-  @Guarded(by=STARTED)
+  @Guarded(by = STARTED)
   public Repository update(final Configuration configuration) throws Exception {
     checkNotNull(configuration);
 
@@ -233,7 +234,7 @@ public class RepositoryManagerImpl
   }
 
   @Override
-  @Guarded(by=STARTED)
+  @Guarded(by = STARTED)
   public void delete(final String name) throws Exception {
     checkNotNull(name);
 
@@ -241,6 +242,7 @@ public class RepositoryManagerImpl
     Repository repository = repository(name);
     Configuration configuration = repository.getConfiguration();
     repository.stop();
+    repository.delete();
     repository.destroy();
     store.delete(configuration);
     untrack(repository);
