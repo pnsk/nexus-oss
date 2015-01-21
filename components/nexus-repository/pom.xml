@@ -58,12 +58,9 @@
       <artifactId>nexus-httpclient-api</artifactId>
     </dependency>
 
-    <!--
-    FIXME: This is where the privilege api lives, probably needs discrete module extraction therapy
-    -->
     <dependency>
       <groupId>org.sonatype.nexus</groupId>
-      <artifactId>nexus-security-realms</artifactId>
+      <artifactId>nexus-security</artifactId>
     </dependency>
 
     <dependency>
