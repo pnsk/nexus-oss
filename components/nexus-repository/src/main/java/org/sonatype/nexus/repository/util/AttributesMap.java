@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 
@@ -97,6 +98,25 @@ public class AttributesMap
   public <T> T get(final Class<T> type) {
     Object value = get(key(type));
     return type.cast(value);
+  }
+
+  /**
+   * Get attribute value or create attribute value if not set.
+   *
+   * @return Existing or newly created attribute value.
+   */
+  public <T> T getOrCreate(final Class<T> type) {
+    T value = get(type);
+    if (value == null) {
+      try {
+        value = type.newInstance();
+      }
+      catch (Exception e) {
+        throw Throwables.propagate(e);
+      }
+      set(type, value);
+    }
+    return value;
   }
 
   /**

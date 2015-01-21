@@ -93,4 +93,17 @@ class AttributesMapTest
     assert value.class == Boolean.class
     assert value == false
   }
+
+  static class GetOrCreateAttribute
+  {
+    // empty
+  }
+
+  @Test
+  void 'get or create'() {
+    assert !underTest.contains(GetOrCreateAttribute.class)
+    def value = underTest.getOrCreate(GetOrCreateAttribute.class)
+    assert value != null;
+    assert underTest.contains(GetOrCreateAttribute.class)
+  }
 }
