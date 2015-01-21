@@ -182,8 +182,7 @@ public class RepositoryImpl
   public void stop() throws Exception {
     MultipleFailures failures = new MultipleFailures();
 
-    // FIXME: Invert order?
-    for (Facet facet : facets) {
+    for (Facet facet : facets.reverse()) {
       try {
         log.debug("Stopping facet: {}", facet);
         facet.stop();
@@ -206,7 +205,7 @@ public class RepositoryImpl
     }
 
     MultipleFailures failures = new MultipleFailures();
-    for (Facet facet : facets) {
+    for (Facet facet : facets.reverse()) {
       try {
         log.debug("Destroying facet: {}", facet);
         facet.destroy();
