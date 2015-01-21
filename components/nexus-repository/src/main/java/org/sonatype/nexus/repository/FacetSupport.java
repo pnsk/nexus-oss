@@ -91,19 +91,19 @@ public abstract class FacetSupport
     return states;
   }
 
+  //
+  // Lifecycle
+  //
+
   /**
    * Common init/update configuration extension-point.
    *
    * By default this is called on {@link #init} and {@link #update}
    * unless sub-class overrides {@link #doInit} or {@link #doUpdate}.
    */
-  protected void configure() throws Exception {
+  protected void doConfigure() throws Exception {
     // nop
   }
-
-  //
-  // Lifecycle
-  //
 
   @Override
   @Transitions(from = NEW, to = INITIALISED)
@@ -113,7 +113,7 @@ public abstract class FacetSupport
   }
 
   protected void doInit() throws Exception {
-    configure();
+    doConfigure();
   }
 
   @Override
@@ -123,7 +123,7 @@ public abstract class FacetSupport
   }
 
   protected void doUpdate() throws Exception {
-    configure();
+    doConfigure();
   }
 
   @Override

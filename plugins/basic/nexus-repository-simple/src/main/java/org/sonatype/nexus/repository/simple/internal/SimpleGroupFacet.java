@@ -66,7 +66,7 @@ public class SimpleGroupFacet
   }
 
   @Override
-  protected void configure() throws Exception {
+  protected void doConfigure() throws Exception {
     NestedAttributesMap attributes = getRepository().getConfiguration().attributes(CONFIG_KEY);
     memberNames.addAll(attributes.require("memberNames", COLLECTION_STRING));
     log.debug("Members names: {}", memberNames);

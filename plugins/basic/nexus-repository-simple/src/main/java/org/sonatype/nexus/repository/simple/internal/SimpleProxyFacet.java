@@ -53,7 +53,7 @@ public class SimpleProxyFacet
   private HttpClientFacet httpClient;
 
   @Override
-  protected void configure() throws Exception {
+  protected void doConfigure() throws Exception {
     NestedAttributesMap attributes = getRepository().getConfiguration().attributes(CONFIG_KEY);
     String url = attributes.require("remoteUrl", String.class);
     if (!url.endsWith("/")) {
