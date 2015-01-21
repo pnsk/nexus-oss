@@ -69,7 +69,7 @@ public class MultipleFailures
   /**
    * Maybe throw {@link MultipleFailuresException} if there are any failures with optional message.
    */
-  public void propagate(final @Nullable String message) throws MultipleFailuresException {
+  public void maybePropagate(final @Nullable String message) throws MultipleFailuresException {
     if (!failures.isEmpty()) {
       log.trace("Propagating: {}", failures);
       throw new MultipleFailuresException(message);
@@ -79,7 +79,7 @@ public class MultipleFailures
   /**
    * Maybe throw {@link MultipleFailuresException} if there are any failures.
    */
-  public void propagate() throws MultipleFailuresException {
-    propagate(null);
+  public void maybePropagate() throws MultipleFailuresException {
+    maybePropagate(null);
   }
 }

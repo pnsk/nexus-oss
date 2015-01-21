@@ -34,14 +34,14 @@ class MultipleFailuresTest
   @Test
   void 'propagate with no failures'() {
     assert underTest.failures.isEmpty()
-    underTest.propagate()
+    underTest.maybePropagate()
   }
 
   @Test
   void 'propagate single'() {
     underTest.add(new Exception('TEST'))
     try {
-      underTest.propagate('OOPS')
+      underTest.maybePropagate('OOPS')
       fail()
     }
     catch (Exception e) {
@@ -61,7 +61,7 @@ class MultipleFailuresTest
     underTest.add(new Exception('FOO'))
     underTest.add(new Exception('BAR'))
     try {
-      underTest.propagate('OOPS')
+      underTest.maybePropagate('OOPS')
       fail()
     }
     catch (Exception e) {

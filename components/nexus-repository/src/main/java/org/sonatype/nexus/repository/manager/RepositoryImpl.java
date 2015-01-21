@@ -155,7 +155,7 @@ public class RepositoryImpl
         failures.add(t);
       }
     }
-    failures.propagate("Failed to update facets");
+    failures.maybePropagate("Failed to update facets");
   }
 
   @Override
@@ -172,7 +172,7 @@ public class RepositoryImpl
         failures.add(t);
       }
     }
-    failures.propagate("Failed to start facets");
+    failures.maybePropagate("Failed to start facets");
 
     eventBus.post(new RepositoryStartedEvent(this));
   }
@@ -192,7 +192,7 @@ public class RepositoryImpl
         failures.add(t);
       }
     }
-    failures.propagate("Failed to stop facets");
+    failures.maybePropagate("Failed to stop facets");
 
     eventBus.post(new RepositoryStoppedEvent(this));
   }
@@ -215,7 +215,7 @@ public class RepositoryImpl
         failures.add(t);
       }
     }
-    failures.propagate("Failed to destroy facets");
+    failures.maybePropagate("Failed to destroy facets");
 
     facets.clear();
     configuration = null;
