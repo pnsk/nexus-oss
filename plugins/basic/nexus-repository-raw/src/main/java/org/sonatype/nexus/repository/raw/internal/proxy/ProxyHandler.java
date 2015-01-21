@@ -14,12 +14,15 @@ package org.sonatype.nexus.repository.raw.internal.proxy;
 
 import javax.annotation.Nonnull;
 
+import org.sonatype.nexus.repository.http.HttpMethods;
 import org.sonatype.nexus.repository.http.HttpResponses;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Handler;
 import org.sonatype.nexus.repository.view.Payload;
 import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
+
+import static org.sonatype.nexus.repository.http.HttpMethods.GET;
 
 /**
  * A format-neutral proxy handler.
@@ -34,7 +37,11 @@ public class ProxyHandler
   @Override
   public Response handle(@Nonnull final Context context) throws Exception {
 
-    // ensure GET
+    final String action = context.getRequest().getAction();
+    if (!HttpMethods.GET.equals(action)) {
+      return HttpResponses.methodNotAllowed(action, GET);
+    }
+
     final Locator locator = locator(context);
 
     final Payload payload = proxyFacet(context).get(locator);
