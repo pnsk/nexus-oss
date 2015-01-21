@@ -74,6 +74,15 @@ public class ConfigurationEntityAdapter
   protected void readFields(final ODocument document, final Configuration entity) {
     String recipeName = document.field(P_RECIPE_NAME, OType.STRING);
     String repositoryName = document.field(P_REPOSITORY_NAME, OType.STRING);
+
+    Map<?,?> data = document.field(P_ATTRIBUTES, OType.EMBEDDEDMAP);
+    if (data != null) {
+      for (Map.Entry entry : data.entrySet()) {
+        System.out.println("KEY: " + entry.getKey());
+        System.out.println("VALUE: " + entry.getValue() + " (" + entry.getValue().getClass() + ")");
+      }
+    }
+
     Map<String, Map<String, Object>> attributes = document.field(P_ATTRIBUTES, OType.EMBEDDEDMAP);
 
     // deeply copy attributes to divorce from document

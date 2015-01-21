@@ -307,6 +307,9 @@ public abstract class EntityAdapter<T extends Entity>
   //
 
   private Object maybeCopy(final Object source) {
+    if (source instanceof ODocument) {
+      return copy((ODocument)source);
+    }
     if (source instanceof Map) {
       return copy((Map) source);
     }
@@ -317,6 +320,17 @@ public abstract class EntityAdapter<T extends Entity>
       return copy((Set)source);
     }
     return source;
+  }
+
+  @SuppressWarnings("unchecked")
+  protected Map copy(final ODocument source) {
+    String[] names = source.fieldNames();
+    Map target = Maps.newHashMapWithExpectedSize(names.length);
+    for (String name : names) {
+      Object value = maybeCopy(source.field(name));
+      target.put(name, value);
+    }
+    return target;
   }
 
   @SuppressWarnings("unchecked")
