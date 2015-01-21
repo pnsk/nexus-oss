@@ -135,8 +135,8 @@ public class RawStorageFacetImpl
     final String contentType = asset.getProperty(P_CONTENT_TYPE);
 
     final Date date = asset.getProperty(P_LAST_MODIFIED);
-    final DateTime lastModiifed = date == null ? null : new DateTime(date.getTime());
-
+    final DateTime lastModified = date == null ? null : new DateTime(date.getTime());
+    
     return new RawContent()
     {
       @Override
@@ -156,7 +156,7 @@ public class RawStorageFacetImpl
 
       @Override
       public DateTime getLastModified() {
-        return lastModiifed;
+        return lastModified;
       }
     };
   }
