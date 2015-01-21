@@ -20,6 +20,7 @@ import org.sonatype.nexus.repository.Facet;
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.security.CRoleBuilder;
 import org.sonatype.nexus.repository.security.MutableDynamicSecurityResource.Mutator;
+import org.sonatype.nexus.repository.security.RepositoryInstancePrivilegeDescriptor;
 import org.sonatype.security.model.SecurityModelConfiguration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -65,7 +66,7 @@ public class SimpleSecurityFacet
 
         // add repository-instance 'admin' role
         model.addRole(new CRoleBuilder()
-            .id(String.format("repository-instance-%s-admin", repositoryName))
+            .id(String.format("%s-%s-admin", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName))
             .privilege(id(repositoryName, BROWSE))
             .privilege(id(repositoryName, READ))
             .privilege(id(repositoryName, EDIT))
@@ -75,14 +76,14 @@ public class SimpleSecurityFacet
 
         // add repository-instance 'readonly' role
         model.addRole(new CRoleBuilder()
-            .id(String.format("repository-instance-%s-readonly", repositoryName))
+            .id(String.format("%s-%s-readonly", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName))
             .privilege(id(repositoryName, BROWSE))
             .privilege(id(repositoryName, READ))
             .create());
 
         // add repository-instance 'deployer' role
         model.addRole(new CRoleBuilder()
-            .id(String.format("repository-instance-%s-deployer", repositoryName))
+            .id(String.format("%s-%s-deployer", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName))
             .privilege(id(repositoryName, BROWSE))
             .privilege(id(repositoryName, READ))
             .privilege(id(repositoryName, EDIT))
@@ -108,9 +109,9 @@ public class SimpleSecurityFacet
         model.removePrivilege(id(repositoryName, DELETE));
 
         // remove repository-instance roles
-        model.removeRole(String.format("repository-instance-%s-admin", repositoryName));
-        model.removeRole(String.format("repository-instance-%s-readonly", repositoryName));
-        model.removeRole(String.format("repository-instance-%s-deployer", repositoryName));
+        model.removeRole(String.format("%s-%s-admin", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
+        model.removeRole(String.format("%s-%s-readonly", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
+        model.removeRole(String.format("%s-%s-deployer", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
       }
     });
   }

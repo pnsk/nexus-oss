@@ -19,6 +19,7 @@ import javax.inject.Singleton;
 
 import org.sonatype.nexus.repository.Format;
 import org.sonatype.nexus.repository.security.CRoleBuilder;
+import org.sonatype.nexus.repository.security.RepositoryFormatPrivilegeDescriptor;
 import org.sonatype.security.model.Configuration;
 import org.sonatype.security.model.SecurityModelConfiguration;
 import org.sonatype.security.realms.tools.StaticSecurityResource;
@@ -63,7 +64,7 @@ public class SimpleStaticSecurityResource
 
     // add repository-format 'admin' role
     model.addRole(new CRoleBuilder()
-        .id(String.format("repository-format-%s-admin", formatName))
+        .id(String.format("%s-%s-admin", RepositoryFormatPrivilegeDescriptor.TYPE, formatName))
         .privilege(id(formatName, BROWSE))
         .privilege(id(formatName, READ))
         .privilege(id(formatName, EDIT))
@@ -73,14 +74,14 @@ public class SimpleStaticSecurityResource
 
     // add repository-format 'readonly' role
     model.addRole(new CRoleBuilder()
-        .id(String.format("repository-format-%s-readonly", formatName))
+        .id(String.format("%s-%s-readonly", RepositoryFormatPrivilegeDescriptor.TYPE, formatName))
         .privilege(id(formatName, BROWSE))
         .privilege(id(formatName, READ))
         .create());
 
     // add repository-format 'deployer' role
     model.addRole(new CRoleBuilder()
-        .id(String.format("repository-format-%s-deployer", formatName))
+        .id(String.format("%s-%s-deployer", RepositoryFormatPrivilegeDescriptor.TYPE, formatName))
         .privilege(id(formatName, BROWSE))
         .privilege(id(formatName, READ))
         .privilege(id(formatName, EDIT))
