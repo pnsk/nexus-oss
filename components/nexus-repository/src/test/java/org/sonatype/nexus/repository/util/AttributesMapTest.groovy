@@ -94,7 +94,8 @@ class AttributesMapTest
     assert value == false
   }
 
-  static class GetOrCreateAttribute
+  // private to test creation with accessible=true
+  private static class GetOrCreateAttribute
   {
     // empty
   }

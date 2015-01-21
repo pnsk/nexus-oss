@@ -12,6 +12,7 @@
  */
 package org.sonatype.nexus.repository.util;
 
+import java.lang.reflect.Constructor;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -109,7 +110,11 @@ public class AttributesMap
     T value = get(type);
     if (value == null) {
       try {
-        value = type.newInstance();
+        // create new attribute value with accessible=true ctor to allow construction of private/package-private
+        Constructor<T> ctor = type.getDeclaredConstructor();
+        log.trace("Creating '{}' with constructor: {}", type, ctor);
+        ctor.setAccessible(true);
+        value = ctor.newInstance();
       }
       catch (Exception e) {
         throw Throwables.propagate(e);
