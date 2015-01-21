@@ -47,6 +47,8 @@ public class SimpleGroupHandler
 
     SimpleGroupFacet group = repository.facet(SimpleGroupFacet.class);
 
+    // TODO: Track dispatched repositories, to avoid circular dispatching in nested groups
+
     switch (method) {
       case GET: {
         for (Repository member : group.members()) {
