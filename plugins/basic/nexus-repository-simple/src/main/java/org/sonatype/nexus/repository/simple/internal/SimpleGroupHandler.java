@@ -56,6 +56,11 @@ public class SimpleGroupHandler
     public boolean contains(final Repository repository) {
       return dispatched.contains(repository.getName());
     }
+
+    @Override
+    public String toString() {
+      return dispatched.toString();
+    }
   }
 
   @Nonnull
