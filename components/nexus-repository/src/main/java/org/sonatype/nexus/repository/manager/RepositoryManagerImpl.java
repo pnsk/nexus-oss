@@ -60,6 +60,8 @@ public class RepositoryManagerImpl
 
   private final Provider<ConfigurationFacet> configFacet;
 
+  private final RepositoryAdminSecurityResource securityResource;
+
   private final Map<String, Repository> repositories = Maps.newHashMap();
 
   @Inject
@@ -67,13 +69,15 @@ public class RepositoryManagerImpl
                                final ConfigurationStore store,
                                final RepositoryFactory factory,
                                final Provider<ConfigurationFacet> configFacet,
-                               final Map<String, Recipe> recipes)
+                               final Map<String, Recipe> recipes,
+                               final RepositoryAdminSecurityResource securityResource)
   {
     this.eventBus = checkNotNull(eventBus);
     this.store = checkNotNull(store);
     this.factory = checkNotNull(factory);
     this.configFacet = checkNotNull(configFacet);
     this.recipes = checkNotNull(recipes);
+    this.securityResource = checkNotNull(securityResource);
   }
 
   /**
@@ -147,6 +151,7 @@ public class RepositoryManagerImpl
     for (Configuration configuration : configurations) {
       log.debug("Restoring repository: {}", configuration);
       Repository repository = newRepository(configuration);
+      securityResource.add(repository);
       track(repository);
 
       eventBus.post(new RepositoryLoadedEvent(repository));
@@ -183,6 +188,8 @@ public class RepositoryManagerImpl
     repositories.clear();
   }
 
+  // TODO: Hook up security verification
+
   @Override
   @Guarded(by = STARTED)
   public Iterable<Repository> browse() {
@@ -206,6 +213,7 @@ public class RepositoryManagerImpl
     log.debug("Creating repository: {}", configuration);
     store.create(configuration);
     Repository repository = newRepository(configuration);
+    securityResource.add(repository);
     track(repository);
 
     repository.start();
@@ -245,6 +253,7 @@ public class RepositoryManagerImpl
     repository.delete();
     repository.destroy();
     store.delete(configuration);
+    securityResource.remove(repository);
     untrack(repository);
 
     eventBus.post(new RepositoryDeletedEvent(repository));
