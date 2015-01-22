@@ -30,8 +30,7 @@ public interface Facet
   /**
    * Initialize facet.
    *
-   * Called when facet is first created, either from new repository creation or repository restored from persistent
-   * storage on startup.
+   * Called when facet is attached to a repository.
    */
   void init(Repository repository) throws Exception;
 
@@ -59,8 +58,8 @@ public interface Facet
   /**
    * Delete facet.
    *
-   * Allows facet to cope with contained repository being deleted and clean up persistent knowledge about the repository
-   * or its contents.
+   * Allows facet to cope with contained repository being deleted and clean up persistent knowledge about the
+   * repository or its contents.
    *
    * Facet must have been previously stopped.
    */
