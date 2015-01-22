@@ -89,8 +89,6 @@ public class SimpleSecurityHandler
     throw new RuntimeException("Unsupported action: " + request.getAction());
   }
 
-  // TODO: Consider using Subject.isPermitted() and Subject.isPermittedAll() instead?
-
   /**
    * Check if subject has ANY of the given permissions.
    */
