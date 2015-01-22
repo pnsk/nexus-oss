@@ -23,6 +23,7 @@ import org.sonatype.nexus.repository.RecipeSupport;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.Type;
 import org.sonatype.nexus.repository.http.HttpHandlers;
+import org.sonatype.nexus.repository.security.SecurityHandler;
 import org.sonatype.nexus.repository.types.HostedType;
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet;
 import org.sonatype.nexus.repository.view.Route;
@@ -57,7 +58,7 @@ public class SimpleHostedRecipe
 
   private final TimingHandler timingHandler;
 
-  private final SimpleSecurityHandler securityHandler;
+  private final SecurityHandler securityHandler;
 
   private final SimpleIndexHtmlHandler indexHtmlHandler;
 
@@ -71,7 +72,7 @@ public class SimpleHostedRecipe
                             final Provider<SimpleIndexHtmlFacet> indexHtmlFacet,
                             final Provider<SimpleStorageFacet> storageFacet,
                             final TimingHandler timingHandler,
-                            final SimpleSecurityHandler securityHandler,
+                            final SecurityHandler securityHandler,
                             final SimpleIndexHtmlHandler indexHtmlHandler,
                             final SimpleStorageHandler storageHandler)
   {

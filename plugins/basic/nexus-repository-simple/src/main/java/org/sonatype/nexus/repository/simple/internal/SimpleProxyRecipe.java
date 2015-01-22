@@ -24,6 +24,7 @@ import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.Type;
 import org.sonatype.nexus.repository.http.HttpHandlers;
 import org.sonatype.nexus.repository.httpclient.HttpClientFacet;
+import org.sonatype.nexus.repository.security.SecurityHandler;
 import org.sonatype.nexus.repository.types.ProxyType;
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet;
 import org.sonatype.nexus.repository.view.Route;
@@ -60,7 +61,7 @@ public class SimpleProxyRecipe
 
   private final TimingHandler timingHandler;
 
-  private final SimpleSecurityHandler securityHandler;
+  private final SecurityHandler securityHandler;
 
   private final SimpleIndexHtmlHandler indexHtmlHandler;
 
@@ -75,7 +76,7 @@ public class SimpleProxyRecipe
                            final Provider<HttpClientFacet> httpClientFacet,
                            final Provider<SimpleProxyFacet> proxyFacet,
                            final TimingHandler timingHandler,
-                           final SimpleSecurityHandler securityHandler,
+                           final SecurityHandler securityHandler,
                            final SimpleIndexHtmlHandler indexHtmlHandler,
                            final SimpleProxyHandler proxyHandler)
   {

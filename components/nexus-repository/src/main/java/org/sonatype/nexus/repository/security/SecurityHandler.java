@@ -11,7 +11,7 @@
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
 
-package org.sonatype.nexus.repository.simple.internal;
+package org.sonatype.nexus.repository.security;
 
 import javax.annotation.Nonnull;
 import javax.inject.Named;
@@ -25,13 +25,13 @@ import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
 /**
- * Simple security handler.
+ * Security handler.
  *
  * @since 3.0
  */
 @Named
 @Singleton
-public class SimpleSecurityHandler
+public class SecurityHandler
     extends ComponentSupport
     implements Handler
 {
@@ -39,7 +39,7 @@ public class SimpleSecurityHandler
   @Override
   public Response handle(@Nonnull final Context context) throws Exception {
     Repository repository = context.getRepository();
-    SimpleSecurityFacet securityFacet = repository.facet(SimpleSecurityFacet.class);
+    SecurityFacet securityFacet = repository.facet(SecurityFacet.class);
 
     if (securityFacet.permitted(context.getRequest(), repository)) {
       // TODO: Handle security exceptions
