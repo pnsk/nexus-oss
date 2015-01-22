@@ -25,7 +25,7 @@ import org.sonatype.nexus.repository.view.Response;
  */
 public class HttpHandlers
 {
-  public HttpHandlers() {}
+  private HttpHandlers() {}
 
   public static Handler notFound() {
     return new Handler()
