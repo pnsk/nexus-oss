@@ -19,19 +19,8 @@ import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.http.HttpMethods;
 import org.sonatype.nexus.repository.view.Request;
-import org.sonatype.security.model.CRoleBuilder;
-import org.sonatype.security.model.SecurityModelConfiguration;
-import org.sonatype.security.realms.tools.MutableDynamicSecurityResource;
-import org.sonatype.security.realms.tools.MutableDynamicSecurityResource.Mutator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.sonatype.nexus.repository.security.BreadActions.ADD;
-import static org.sonatype.nexus.repository.security.BreadActions.BROWSE;
-import static org.sonatype.nexus.repository.security.BreadActions.DELETE;
-import static org.sonatype.nexus.repository.security.BreadActions.EDIT;
-import static org.sonatype.nexus.repository.security.BreadActions.READ;
-import static org.sonatype.nexus.repository.security.RepositoryInstancePrivilegeDescriptor.id;
-import static org.sonatype.nexus.repository.security.RepositoryInstancePrivilegeDescriptor.privilege;
 
 /**
  * Support for {@link SecurityFacet} implementations.
@@ -44,81 +33,26 @@ public class SecurityFacetSupport
 {
   private final SecurityHelper securityHelper;
 
-  private final MutableDynamicSecurityResource securityResource;
+  private final RepositoryFormatSecurityResource securityResource;
 
   @Inject
   public SecurityFacetSupport(final SecurityHelper securityHelper,
-                              final MutableDynamicSecurityResource securityResource)
+                              final RepositoryFormatSecurityResource securityResource)
   {
     this.securityHelper = checkNotNull(securityHelper);
     this.securityResource = checkNotNull(securityResource);
   }
 
+  // TODO: Probably can/should do this on init/destroy?
+
   @Override
   protected void doStart() throws Exception {
-    final String repositoryName = getRepository().getName();
-
-    securityResource.apply(new Mutator()
-    {
-      @Override
-      public void apply(final SecurityModelConfiguration model) {
-        // add repository-instance privileges
-        model.addPrivilege(privilege(repositoryName, BROWSE));
-        model.addPrivilege(privilege(repositoryName, READ));
-        model.addPrivilege(privilege(repositoryName, EDIT));
-        model.addPrivilege(privilege(repositoryName, ADD));
-        model.addPrivilege(privilege(repositoryName, DELETE));
-
-        // add repository-instance 'admin' role
-        model.addRole(new CRoleBuilder()
-            .id(String.format("%s-%s-admin", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName))
-            .privilege(id(repositoryName, BROWSE))
-            .privilege(id(repositoryName, READ))
-            .privilege(id(repositoryName, EDIT))
-            .privilege(id(repositoryName, ADD))
-            .privilege(id(repositoryName, DELETE))
-            .create());
-
-        // add repository-instance 'readonly' role
-        model.addRole(new CRoleBuilder()
-            .id(String.format("%s-%s-readonly", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName))
-            .privilege(id(repositoryName, BROWSE))
-            .privilege(id(repositoryName, READ))
-            .create());
-
-        // add repository-instance 'deployer' role
-        model.addRole(new CRoleBuilder()
-            .id(String.format("%s-%s-deployer", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName))
-            .privilege(id(repositoryName, BROWSE))
-            .privilege(id(repositoryName, READ))
-            .privilege(id(repositoryName, EDIT))
-            .privilege(id(repositoryName, ADD))
-            .create());
-      }
-    });
+    securityResource.add(getRepository());
   }
 
   @Override
   protected void doStop() throws Exception {
-    final String repositoryName = getRepository().getName();
-
-    securityResource.apply(new Mutator()
-    {
-      @Override
-      public void apply(final SecurityModelConfiguration model) {
-        // remove repository-instance privileges
-        model.removePrivilege(id(repositoryName, BROWSE));
-        model.removePrivilege(id(repositoryName, READ));
-        model.removePrivilege(id(repositoryName, EDIT));
-        model.removePrivilege(id(repositoryName, ADD));
-        model.removePrivilege(id(repositoryName, DELETE));
-
-        // remove repository-instance roles
-        model.removeRole(String.format("%s-%s-admin", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
-        model.removeRole(String.format("%s-%s-readonly", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
-        model.removeRole(String.format("%s-%s-deployer", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
-      }
-    });
+    securityResource.remove(getRepository());
   }
 
   /**

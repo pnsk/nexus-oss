@@ -21,6 +21,7 @@ import org.sonatype.security.model.CRoleBuilder;
 import org.sonatype.security.model.SecurityModelConfiguration;
 import org.sonatype.security.realms.tools.MutableDynamicSecurityResource;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.sonatype.nexus.repository.security.BreadActions.ADD;
 import static org.sonatype.nexus.repository.security.BreadActions.BROWSE;
 import static org.sonatype.nexus.repository.security.BreadActions.DELETE;
@@ -52,6 +53,9 @@ public class RepositoryAdminSecurityResource
 
   // TODO: Sort out role[-naming] scheme
 
+  /**
+   * Initial (static) security configuration.
+   */
   private void initial(final SecurityModelConfiguration model) {
     model.addPrivilege(privilege("*", BROWSE));
     model.addPrivilege(privilege("*", READ));
@@ -69,7 +73,11 @@ public class RepositoryAdminSecurityResource
         .create());
   }
 
+  /**
+   * Add security configuration for given repository.
+   */
   public void add(final Repository repository) {
+    checkNotNull(repository);
     final String repositoryName = repository.getName();
     apply(new Mutator()
     {
@@ -93,7 +101,11 @@ public class RepositoryAdminSecurityResource
     });
   }
 
+  /**
+   * Remove security configuration for given repository.
+   */
   public void remove(final Repository repository) {
+    checkNotNull(repository);
     final String repositoryName = repository.getName();
     apply(new Mutator()
     {
