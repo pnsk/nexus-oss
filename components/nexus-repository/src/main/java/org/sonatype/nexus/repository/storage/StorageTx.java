@@ -22,6 +22,7 @@ import org.sonatype.nexus.blobstore.api.BlobRef;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
 /**
  * A storage transaction.
@@ -57,73 +58,73 @@ public interface StorageTx
   /**
    * Gets the bucket for the current repository.
    */
-  Vertex getBucket();
+  OrientVertex getBucket();
 
   /**
    * Gets all assets owned by the specified bucket.
    */
-  Iterable<Vertex> browseAssets(Vertex bucket);
+  Iterable<OrientVertex> browseAssets(Vertex bucket);
 
   /**
    * Gets all components owned by the specified bucket.
    */
-  Iterable<Vertex> browseComponents(Vertex bucket);
+  Iterable<OrientVertex> browseComponents(Vertex bucket);
 
   /**
    * Gets all vertices, optionally limited to those in the specified class.
    */
-  Iterable<Vertex> browseVertices(@Nullable String className);
+  Iterable<OrientVertex> browseVertices(@Nullable String className);
 
   /**
    * Gets an asset by id, owned by the specified bucket, or {@code null} if not found.
    */
   @Nullable
-  Vertex findAsset(Object vertexId, Vertex bucket);
+  OrientVertex findAsset(Object vertexId, Vertex bucket);
 
   /**
    * Gets an asset by some identifying property, owned by the specified bucket, or {@code null} if not found.
    */
   @Nullable
-  Vertex findAssetWithProperty(String propName, Object propValue, Vertex bucket);
+  OrientVertex findAssetWithProperty(String propName, Object propValue, Vertex bucket);
 
   /**
    * Gets a component by id, owned by the specified bucket, or {@code null} if not found.
    */
   @Nullable
-  Vertex findComponent(Object vertexId, Vertex bucket);
+  OrientVertex findComponent(Object vertexId, Vertex bucket);
 
   /**
    * Gets a component by some identifying property, or {@code null} if not found.
    */
   @Nullable
-  Vertex findComponentWithProperty(String propName, Object propValue, Vertex bucket);
+  OrientVertex findComponentWithProperty(String propName, Object propValue, Vertex bucket);
 
   /**
    * Gets a vertex by id, optionally limited by class, or {@code null} if not found.
    */
   @Nullable
-  Vertex findVertex(Object vertexId, @Nullable String className);
+  OrientVertex findVertex(Object vertexId, @Nullable String className);
 
   /**
    * Gets a vertex by some identifying property, optionally limited by class, or {@code null} if not found.
    */
   @Nullable
-  Vertex findVertexWithProperty(String propName, Object propValue, @Nullable String className);
+  OrientVertex findVertexWithProperty(String propName, Object propValue, @Nullable String className);
 
   /**
    * Creates a new asset owned by the specified bucket.
    */
-  Vertex createAsset(Vertex bucket);
+  OrientVertex createAsset(Vertex bucket);
 
   /**
    * Creates a new component owned by the specified bucket.
    */
-  Vertex createComponent(Vertex bucket);
+  OrientVertex createComponent(Vertex bucket);
 
   /**
    * Creates a new vertex of the specified class.
    */
-  Vertex createVertex(String className);
+  OrientVertex createVertex(String className);
 
   /**
    * Deletes an existing vertex.
