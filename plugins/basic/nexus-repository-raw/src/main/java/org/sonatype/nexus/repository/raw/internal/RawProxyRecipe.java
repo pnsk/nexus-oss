@@ -42,7 +42,7 @@ import org.sonatype.nexus.repository.view.matchers.AlwaysMatcher;
 import com.google.common.collect.Lists;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.sonatype.nexus.repository.httpbridge.HttpHandlers.notFound;
+import static org.sonatype.nexus.repository.http.HttpHandlers.notFound;
 
 /**
  * A recipe for creating 'proxy' repositories for the 'raw' format.

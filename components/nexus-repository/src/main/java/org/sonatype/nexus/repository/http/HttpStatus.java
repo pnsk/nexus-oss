@@ -10,30 +10,28 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.httpbridge;
+package org.sonatype.nexus.repository.http;
 
 /**
- * Helper defining common HTTP methods names.
+ * Helper defining common HTTP status codes.
  *
  * @since 3.0
  */
-public class HttpMethods
+public class HttpStatus
 {
-  private HttpMethods() {}
+  public static final int OK = 200;
 
-  public static final String OPTIONS = "OPTIONS";
+  public static final int CREATED = 201;
 
-  public static final String GET = "GET";
+  public static final int NO_CONTENT = 204;
 
-  public static final String HEAD = "HEAD";
+  public static final int NOT_FOUND = 404;
 
-  public static final String POST = "POST";
+  public static final int BAD_REQUEST = 400;
 
-  public static final String PUT = "PUT";
+  public static final int UNAUTHORIZED = 401;
 
-  public static final String DELETE = "DELETE";
+  public static final int FORBIDDEN = 403;
 
-  public static final String TRACE = "TRACE";
-
-  public static final String CONNECT = "CONNECT";
+  public static final int METHOD_NOT_ALLOWED = 405;
 }

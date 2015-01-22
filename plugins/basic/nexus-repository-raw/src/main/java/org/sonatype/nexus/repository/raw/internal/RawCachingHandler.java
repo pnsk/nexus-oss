@@ -13,7 +13,7 @@
 package org.sonatype.nexus.repository.raw.internal;
 
 import org.sonatype.nexus.repository.Repository;
-import org.sonatype.nexus.repository.httpbridge.HttpResponses;
+import org.sonatype.nexus.repository.http.HttpResponses;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Handler;
 import org.sonatype.nexus.repository.view.PayloadResponse;

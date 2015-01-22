@@ -10,7 +10,8 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.httpbridge;
+
+package org.sonatype.nexus.repository.http;
 
 import javax.annotation.Nullable;
 
@@ -20,17 +21,18 @@ import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.nexus.repository.view.Status;
 
 import com.google.common.base.Joiner;
+import com.google.common.net.HttpHeaders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_CREATED;
-import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
-import static javax.servlet.http.HttpServletResponse.SC_METHOD_NOT_ALLOWED;
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.sonatype.nexus.repository.http.HttpStatus.BAD_REQUEST;
+import static org.sonatype.nexus.repository.http.HttpStatus.CREATED;
+import static org.sonatype.nexus.repository.http.HttpStatus.FORBIDDEN;
+import static org.sonatype.nexus.repository.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.sonatype.nexus.repository.http.HttpStatus.NOT_FOUND;
+import static org.sonatype.nexus.repository.http.HttpStatus.NO_CONTENT;
+import static org.sonatype.nexus.repository.http.HttpStatus.OK;
+import static org.sonatype.nexus.repository.http.HttpStatus.UNAUTHORIZED;
 
 // TODO: Consider a builder model instead, may be easier to expose more flexibility in terms of custom responses?
 
@@ -46,21 +48,21 @@ public class HttpResponses
   // Ok: 200
 
   public static Response ok(final @Nullable String message) {
-    return new Response(Status.success(SC_OK, message));
+    return new Response(Status.success(OK, message));
   }
 
   public static Response ok() {
-    return ok((String)null);
+    return ok((String) null);
   }
 
   public static Response ok(final Payload payload) {
-    return new PayloadResponse(Status.success(SC_OK), payload);
+    return new PayloadResponse(Status.success(OK), payload);
   }
 
   // Created: 201
 
   public static Response created(final @Nullable String message) {
-    return new Response(Status.success(SC_CREATED, message));
+    return new Response(Status.success(CREATED, message));
   }
 
   public static Response created() {
@@ -70,7 +72,7 @@ public class HttpResponses
   // No Content: 204
 
   public static Response noContent(final @Nullable String message) {
-    return new Response(Status.success(SC_NO_CONTENT, message));
+    return new Response(Status.success(NO_CONTENT, message));
   }
 
   public static Response noContent() {
@@ -80,7 +82,7 @@ public class HttpResponses
   // Not Found: 404
 
   public static Response notFound(final @Nullable String message) {
-    return new Response(new Status(false, SC_NOT_FOUND, message));
+    return new Response(new Status(false, NOT_FOUND, message));
   }
 
   public static Response notFound() {
@@ -90,19 +92,19 @@ public class HttpResponses
   // Bad request: 400
 
   public static Response badRequest() {
-    return new Response(Status.failure(SC_BAD_REQUEST));
+    return new Response(Status.failure(BAD_REQUEST));
   }
 
   // Unauthorized: 401
 
   public static Response unauthorized() {
-    return new Response(Status.failure(SC_UNAUTHORIZED));
+    return new Response(Status.failure(UNAUTHORIZED));
   }
 
   // Forbidden: 403
 
   public static Response forbidden() {
-    return new Response(Status.failure(SC_FORBIDDEN));
+    return new Response(Status.failure(FORBIDDEN));
   }
 
   // Method not allowed: 405
@@ -111,9 +113,9 @@ public class HttpResponses
     checkNotNull(methodName);
     checkNotNull(allowedMethods);
     checkArgument(allowedMethods.length != 0);
-    Response response = new Response(Status.failure(SC_METHOD_NOT_ALLOWED, methodName));
+    Response response = new Response(Status.failure(METHOD_NOT_ALLOWED, methodName));
     String allow = Joiner.on(',').join(allowedMethods);
-    response.getHeaders().set("Allow", allow);
+    response.getHeaders().set(HttpHeaders.ALLOW, allow);
     return response;
   }
 }

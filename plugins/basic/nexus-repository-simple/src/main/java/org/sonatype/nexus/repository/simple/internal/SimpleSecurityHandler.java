@@ -19,8 +19,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.sonatype.nexus.repository.Repository;
-import org.sonatype.nexus.repository.httpbridge.HttpMethods;
-import org.sonatype.nexus.repository.httpbridge.HttpResponses;
+import org.sonatype.nexus.repository.http.HttpMethods;
+import org.sonatype.nexus.repository.http.HttpResponses;
 import org.sonatype.nexus.repository.security.BreadActions;
 import org.sonatype.nexus.repository.security.RepositoryFormatPrivilegeDescriptor;
 import org.sonatype.nexus.repository.security.RepositoryInstancePrivilegeDescriptor;
