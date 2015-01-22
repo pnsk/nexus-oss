@@ -22,9 +22,10 @@ import javax.inject.Inject;
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
 import org.sonatype.nexus.blobstore.api.BlobStore;
-import org.sonatype.nexus.orient.graph.GraphTx;
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.raw.RawContent;
+import org.sonatype.nexus.repository.raw.internal.negativecache.NegativeCacheKey;
+import org.sonatype.nexus.repository.raw.internal.negativecache.NegativeCacheKeySource;
 import org.sonatype.nexus.repository.raw.internal.proxy.Locator;
 import org.sonatype.nexus.repository.raw.internal.proxy.LocatorFacet;
 import org.sonatype.nexus.repository.storage.StorageFacet;
@@ -49,7 +50,7 @@ import static org.sonatype.nexus.repository.storage.StorageFacet.P_PATH;
  */
 public class RawStorageFacetImpl
     extends FacetSupport
-    implements RawStorageFacet, LocatorFacet
+    implements RawStorageFacet, LocatorFacet, NegativeCacheKeySource
 {
   @Inject
   public RawStorageFacetImpl() {
@@ -166,6 +167,11 @@ public class RawStorageFacetImpl
           "path='" + path + '\'' +
           '}';
     }
+  }
+  
+  @Override
+  public NegativeCacheKey cacheKey(final Context context) {
+    return new NegativeCacheKey(context.getRequest().getPath());
   }
 
   private StorageFacet getStorage() {
