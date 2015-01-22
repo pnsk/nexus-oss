@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 3.0
  */
-public class HttpRequest
+class HttpRequest
   extends Request
 {
   public HttpRequest(final HttpServletRequest httpServletRequest, final String path) {

@@ -27,7 +27,7 @@ import org.joda.time.DateTime;
  *
  * @since 3.0
  */
-public class HttpRequestPayload
+class HttpRequestPayload
     implements Payload
 {
   private final HttpServletRequest request;

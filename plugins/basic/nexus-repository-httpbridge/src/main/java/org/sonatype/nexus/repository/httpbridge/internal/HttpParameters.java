@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 3.0
  */
-public class HttpParameters
+class HttpParameters
     extends Parameters
 {
   public HttpParameters(final HttpServletRequest request) {

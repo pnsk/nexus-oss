@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 3.0
  */
-public class HttpHeaders
+class HttpHeaders
     extends Headers
 {
   public HttpHeaders(final HttpServletRequest request) {

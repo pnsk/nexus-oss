@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  *
  * @since 3.0
  */
-public class RepositoryPath
+class RepositoryPath
 {
   private final String repositoryName;
 
