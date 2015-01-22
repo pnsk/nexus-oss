@@ -31,6 +31,7 @@ import org.sonatype.nexus.repository.raw.internal.negativecache.PathNegativeCach
 import org.sonatype.nexus.repository.raw.internal.negativecache.PlaceboNegativeCacheFacet;
 import org.sonatype.nexus.repository.raw.internal.proxy.ProxyFacetImpl;
 import org.sonatype.nexus.repository.raw.internal.proxy.ProxyHandler;
+import org.sonatype.nexus.repository.security.SecurityHandler;
 import org.sonatype.nexus.repository.storage.StorageFacetImpl;
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet;
 import org.sonatype.nexus.repository.view.Route;
@@ -54,11 +55,15 @@ import static org.sonatype.nexus.repository.http.HttpHandlers.notFound;
 public class RawProxyRecipe
     extends RecipeSupport
 {
+  private final Provider<RawSecurityFacet> securityFacet;
+
   private final NegativeCacheHandler negativeCacheHandler;
 
   private final ProxyHandler proxyHandler;
 
   private final TimingHandler timingHandler;
+
+  private final SecurityHandler securityHandler;
 
   private final Provider<ConfigurableViewFacet> viewFacetProvider;
 
@@ -71,6 +76,8 @@ public class RawProxyRecipe
                         final NegativeCacheHandler negativeCacheHandler,
                         final ProxyHandler proxyHandler,
                         final TimingHandler timingHandler,
+                        final SecurityHandler securityHandler,
+                        final Provider<RawSecurityFacet> securityFacet,
                         final Provider<ConfigurableViewFacet> viewFacetProvider,
                         final Provider<HttpClientFacet> httpClient,
                         final Provider<PlaceboNegativeCacheFacet> negativeCache,
@@ -83,9 +90,11 @@ public class RawProxyRecipe
   {
     super(type, format);
 
+    this.securityFacet = checkNotNull(securityFacet);
     this.negativeCacheHandler = checkNotNull(negativeCacheHandler);
     this.proxyHandler = checkNotNull(proxyHandler);
     this.timingHandler = checkNotNull(timingHandler);
+    this.securityHandler = checkNotNull(securityHandler);
 
     this.viewFacetProvider = checkNotNull(viewFacetProvider);
 
@@ -101,6 +110,8 @@ public class RawProxyRecipe
 
   @Override
   public void apply(final @Nonnull Repository repository) throws Exception {
+    repository.attach(securityFacet.get());
+
     repository.attach(configure(viewFacetProvider.get()));
 
     for (Provider<? extends Facet> facetProvider : facetProviders) {
@@ -118,6 +129,7 @@ public class RawProxyRecipe
 
     router.route(new Route.Builder()
             .matcher(new AlwaysMatcher())
+            .handler(timingHandler)
             .handler(timingHandler)
             .handler(negativeCacheHandler)
             .handler(proxyHandler)
