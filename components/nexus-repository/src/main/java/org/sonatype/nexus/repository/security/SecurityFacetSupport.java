@@ -18,9 +18,11 @@ import javax.inject.Inject;
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.http.HttpMethods;
-import org.sonatype.nexus.repository.security.MutableDynamicSecurityResource.Mutator;
 import org.sonatype.nexus.repository.view.Request;
+import org.sonatype.security.model.CRoleBuilder;
 import org.sonatype.security.model.SecurityModelConfiguration;
+import org.sonatype.security.realms.tools.MutableDynamicSecurityResource;
+import org.sonatype.security.realms.tools.MutableDynamicSecurityResource.Mutator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.sonatype.nexus.repository.security.BreadActions.ADD;

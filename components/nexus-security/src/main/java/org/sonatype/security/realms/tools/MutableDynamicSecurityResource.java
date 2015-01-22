@@ -11,7 +11,7 @@
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
 
-package org.sonatype.nexus.repository.security;
+package org.sonatype.security.realms.tools;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -20,12 +20,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.sonatype.nexus.common.concurrent.Locks;
 import org.sonatype.security.model.Configuration;
 import org.sonatype.security.model.SecurityModelConfiguration;
-import org.sonatype.security.realms.tools.DynamicSecurityResource;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
-// TODO: Move to proper module
 
 /**
  * Mutable {@link DynamicSecurityResource}.

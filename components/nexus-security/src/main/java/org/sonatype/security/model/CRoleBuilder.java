@@ -10,55 +10,50 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.security;
-
-import org.sonatype.security.model.CPrivilege;
+package org.sonatype.security.model;
 
 import static com.google.common.base.Preconditions.checkState;
 
-// TODO: Move to proper module
-
 /**
- * Helper to build a {@link CPrivilege} instance.
+ * Helper to build a {@link CRole} instance.
  *
  * @since 3.0
  */
-public class CPrivilegeBuilder
+public class CRoleBuilder
 {
-  private final CPrivilege model = new CPrivilege();
+  private final CRole model = new CRole();
 
-  public CPrivilegeBuilder type(final String type) {
-    model.setType(type);
-    return this;
-  }
-
-  public CPrivilegeBuilder id(final String id) {
+  public CRoleBuilder id(final String id) {
     model.setId(id);
     return this;
   }
 
-  public CPrivilegeBuilder name(final String name) {
+  public CRoleBuilder name(final String name) {
     model.setName(name);
     return this;
   }
 
-  public CPrivilegeBuilder description(final String description) {
+  public CRoleBuilder description(final String description) {
     model.setDescription(description);
     return this;
   }
 
-  public CPrivilegeBuilder readOnly(final boolean readOnly) {
+  public CRoleBuilder privilege(final String privilege) {
+    model.addPrivilege(privilege);
+    return this;
+  }
+
+  public CRoleBuilder role(final String role) {
+    model.addRole(role);
+    return this;
+  }
+
+  public CRoleBuilder readOnly(final boolean readOnly) {
     model.setReadOnly(readOnly);
     return this;
   }
 
-  public CPrivilegeBuilder property(final String name, final String value) {
-    model.setProperty(name, value);
-    return this;
-  }
-
-  public CPrivilege create() {
-    checkState(model.getType() != null, "Missing: type");
+  public CRole create() {
     checkState(model.getId() != null, "Missing: id");
     if (model.getName() == null) {
       model.setName(model.getId());

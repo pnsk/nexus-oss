@@ -14,7 +14,9 @@
 package org.sonatype.nexus.repository.security;
 
 import org.sonatype.nexus.repository.Format;
+import org.sonatype.security.model.CRoleBuilder;
 import org.sonatype.security.model.SecurityModelConfiguration;
+import org.sonatype.security.realms.tools.MutableDynamicSecurityResource;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.sonatype.nexus.repository.security.BreadActions.ADD;
