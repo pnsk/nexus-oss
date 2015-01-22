@@ -23,8 +23,6 @@ import org.sonatype.security.realms.tools.DynamicSecurityResource;
  * Simple format {@link DynamicSecurityResource}.
  *
  * @since 3.0
- *
- * @see SimpleSecurityFacet
  */
 @Named
 @Singleton

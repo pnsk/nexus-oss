@@ -23,6 +23,9 @@ import org.sonatype.sisu.goodies.common.ComponentSupport;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Security helper.
  *
@@ -37,6 +40,9 @@ public class SecurityHelper
    * Check if subject has ANY of the given permissions.
    */
   public boolean anyPermitted(final Subject subject, final String... permissions) {
+    checkNotNull(subject);
+    checkNotNull(permissions);
+    checkArgument(permissions.length != 0);
     boolean trace = log.isTraceEnabled();
     if (trace) {
       log.trace("Checking if subject '{}' has ANY of these permissions: {}",
@@ -68,6 +74,9 @@ public class SecurityHelper
    * Check if subject has ALL of the given permissions.
    */
   public boolean allPermitted(final Subject subject, final String... permissions) {
+    checkNotNull(subject);
+    checkNotNull(permissions);
+    checkArgument(permissions.length != 0);
     boolean trace = log.isTraceEnabled();
     if (trace) {
       log.trace("Checking if subject '{}' has ALL of these permissions: {}",
