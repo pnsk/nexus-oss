@@ -50,21 +50,21 @@ public class SimpleSecurityFacet
 {
   private final SecurityHelper securityHelper;
 
-  private final SimpleFormatSecurityResource dynamicSecurityResource;
+  private final SimpleFormatSecurityResource securityResource;
 
   @Inject
   public SimpleSecurityFacet(final SecurityHelper securityHelper,
-                             final SimpleFormatSecurityResource dynamicSecurityResource)
+                             final SimpleFormatSecurityResource securityResource)
   {
     this.securityHelper = checkNotNull(securityHelper);
-    this.dynamicSecurityResource = checkNotNull(dynamicSecurityResource);
+    this.securityResource = checkNotNull(securityResource);
   }
 
   @Override
   protected void doStart() throws Exception {
     final String repositoryName = getRepository().getName();
 
-    dynamicSecurityResource.apply(new Mutator()
+    securityResource.apply(new Mutator()
     {
       @Override
       public void apply(final SecurityModelConfiguration model) {
@@ -108,7 +108,7 @@ public class SimpleSecurityFacet
   protected void doStop() throws Exception {
     final String repositoryName = getRepository().getName();
 
-    dynamicSecurityResource.apply(new Mutator()
+    securityResource.apply(new Mutator()
     {
       @Override
       public void apply(final SecurityModelConfiguration model) {
