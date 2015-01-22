@@ -24,6 +24,8 @@ import org.sonatype.nexus.repository.view.Handler;
 import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
+import org.apache.shiro.authz.AuthorizationException;
+
 /**
  * Security handler.
  *
@@ -42,8 +44,13 @@ public class SecurityHandler
     SecurityFacet securityFacet = repository.facet(SecurityFacet.class);
 
     if (securityFacet.permitted(context.getRequest(), repository)) {
-      // TODO: Handle security exceptions
-      return context.proceed();
+      try {
+        return context.proceed();
+      }
+      catch (AuthorizationException e) {
+        // TODO: handle legacy sonatype-exception too?
+        return HttpResponses.unauthorized();
+      }
     }
 
     return HttpResponses.unauthorized();
