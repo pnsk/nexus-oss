@@ -13,15 +13,23 @@
 
 package org.sonatype.nexus.repository.storage;
 
+import java.util.List;
+import java.util.Map;
+
 import org.sonatype.nexus.blobstore.api.BlobStoreManager;
 import org.sonatype.nexus.orient.DatabaseInstanceRule;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.sisu.goodies.eventbus.EventBus;
 import org.sonatype.sisu.litmus.testsupport.TestSupport;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.inject.util.Providers;
+import com.orientechnologies.orient.core.metadata.schema.OType;
+import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -73,6 +81,59 @@ public class StorageFacetImplIT
       // We should have one bucket, which was auto-created for the repository during initialization
       checkSize(tx.browseVertices(null), 1);
       checkSize(tx.browseVertices(V_BUCKET), 1);
+    }
+  }
+
+  @Test
+  public void mapOfMaps() {
+    Map<String, String> bag1 = ImmutableMap.of("foo", "bar");
+    Map<String, String> bag2 = ImmutableMap.of("baz", "qux");
+    Map<String, Map<String, String>> inputMap = ImmutableMap.of("bag1", bag1, "bag2", bag2);
+
+    // Transaction 1:
+    // Create a new asset with property "attributes" that's a map of maps (stored as an embeddedmap)
+    Object vertexId;
+    try (StorageTx tx = underTest.openTx()) {
+      Vertex bucket = tx.getBucket();
+      OrientVertex asset = tx.createAsset(bucket);
+      asset.setProperty("attributes", inputMap, OType.EMBEDDEDMAP);
+      tx.commit();
+      vertexId = asset.getId();
+    }
+
+    // Transaction 2:
+    // Get the asset and make sure it contains what we expect
+    try (StorageTx tx = underTest.openTx()) {
+      Vertex bucket = tx.getBucket();
+      OrientVertex asset = tx.findVertex(vertexId, null);
+      assert asset != null;
+
+      Map<String, Map<String, String>> outputMap = asset.getProperty("attributes");
+
+      assertThat(outputMap.keySet().size(), is(2));
+
+      Map<String, String> outputBag1 = outputMap.get("bag1");
+      assertNotNull(outputBag1);
+      assertThat(outputBag1.keySet().size(), is(1));
+      assertThat(outputBag1.get("foo"), is("bar"));
+
+      Map<String, String> outputBag2 = outputMap.get("bag2");
+      assertNotNull(outputBag2);
+      assertThat(outputBag2.keySet().size(), is(1));
+      assertThat(outputBag2.get("baz"), is("qux"));
+    }
+
+    // Transaction 3:
+    // Make sure we can use dot notation to query for the asset by some aspect of the attributes
+    try (StorageTx tx = underTest.openTx()) {
+      Map<String, String> parameters = ImmutableMap.of("fooValue", "bar");
+      String query = String.format("select from %s where attributes.bag1.foo = :fooValue", V_ASSET);
+
+      Iterable<OrientVertex> vertices = tx.getGraphTx().command(new OCommandSQL(query)).execute(parameters);
+      List<OrientVertex> list = Lists.newArrayList(vertices);
+
+      assertThat(list.size(), is(1));
+      assertThat(list.get(0).getId(), is(vertexId));
     }
   }
 
