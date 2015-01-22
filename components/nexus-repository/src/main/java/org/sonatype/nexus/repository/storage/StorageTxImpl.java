@@ -14,14 +14,11 @@ package org.sonatype.nexus.repository.storage;
 
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
-import org.sonatype.nexus.blobstore.api.BlobStore;
-import org.sonatype.nexus.blobstore.api.BlobStoreManager;
 import org.sonatype.nexus.common.stateguard.Guarded;
 import org.sonatype.nexus.common.stateguard.StateGuard;
 import org.sonatype.nexus.common.stateguard.StateGuardAware;
@@ -31,7 +28,6 @@ import org.sonatype.sisu.goodies.common.ComponentSupport;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
@@ -53,7 +49,7 @@ public class StorageTxImpl
   extends ComponentSupport
   implements StorageTx, StateGuardAware
 {
-  private final BlobStoreManager blobStoreManager;
+  private final BlobTx blobTx;
 
   private final GraphTx graphTx;
 
@@ -61,14 +57,10 @@ public class StorageTxImpl
 
   private final StateGuard stateGuard = new StateGuard.Builder().initial(CLOSED).create();
 
-  private final Set<BlobRef> newlyCreatedBlobs = Sets.newHashSet();
-
-  private final Set<BlobRef> deletionRequests = Sets.newHashSet();
-
-  public StorageTxImpl(final BlobStoreManager blobStoreManager,
+  public StorageTxImpl(final BlobTx blobTx,
                        final GraphTx graphTx,
                        final Object bucketId) {
-    this.blobStoreManager = checkNotNull(blobStoreManager);
+    this.blobTx = checkNotNull(blobTx);
     this.graphTx = checkNotNull(graphTx);
     this.bucketId = checkNotNull(bucketId);
   }
@@ -95,39 +87,21 @@ public class StorageTxImpl
   @Guarded(by=OPEN)
   public void commit() {
     graphTx.commit();
-    doBlobDeletions(deletionRequests, "Unable to delete old blob {} while committing transaction");
-    clearBlobState();
+    blobTx.commit();
   }
 
   @Override
   @Guarded(by=OPEN)
   public void rollback() {
     graphTx.rollback();
-    doBlobDeletions(newlyCreatedBlobs, "Unable to delete new blob {} while explicitly rolling back transaction");
-    clearBlobState();
-  }
-
-  private void clearBlobState() {
-    newlyCreatedBlobs.clear();
-    deletionRequests.clear();
-  }
-
-  private void doBlobDeletions(Set<BlobRef> blobRefs, String failureMessage) {
-    for (BlobRef blobRef : blobRefs) {
-      try {
-        blobStore().delete(blobRef.getBlobId());
-      }
-      catch (Throwable t) {
-        log.warn(failureMessage, t, blobRef);
-      }
-    }
+    blobTx.rollback();
   }
 
   @Override
   @Transitions(from = OPEN, to = CLOSED)
   public void close() {
     graphTx.close(); // rolls back and releases underlying ODatabaseDocumentTx to pool
-    doBlobDeletions(newlyCreatedBlobs, "Unable to delete new blob {} while implicitly rolling back transaction");
+    blobTx.rollback(); // no-op if no changes have occurred since last commit
   }
 
   @Override
@@ -287,20 +261,13 @@ public class StorageTxImpl
     graphTx.removeVertex(vertex);
   }
 
-  private BlobStore blobStore() {
-    return blobStoreManager.get("default");
-  }
-
   @Override
   @Guarded(by=OPEN)
   public BlobRef createBlob(final InputStream inputStream, Map<String, String> headers) {
     checkNotNull(inputStream);
     checkNotNull(headers);
 
-    Blob blob = blobStore().create(inputStream, headers);
-    BlobRef blobRef = new BlobRef("NODE", "STORE", blob.getId().asUniqueString());
-    newlyCreatedBlobs.add(blobRef);
-    return blobRef;
+    return blobTx.create(inputStream, headers);
   }
 
   @Nullable
@@ -309,7 +276,7 @@ public class StorageTxImpl
   public Blob getBlob(final BlobRef blobRef) {
     checkNotNull(blobRef);
 
-    return blobStore().get(blobRef.getBlobId());
+    return blobTx.get(blobRef);
   }
 
   @Override
@@ -317,6 +284,6 @@ public class StorageTxImpl
   public void deleteBlob(final BlobRef blobRef) {
     checkNotNull(blobRef);
 
-    deletionRequests.add(blobRef);
+    blobTx.delete(blobRef);
   }
 }

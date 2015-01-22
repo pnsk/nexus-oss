@@ -145,7 +145,7 @@ public class StorageFacetImpl
   @Override
   @Guarded(by=STARTED)
   public StorageTx openTx() {
-    return new StorageTxImpl(blobStoreManager, openGraphTx(), bucketId);
+    return new StorageTxImpl(new BlobTx(blobStoreManager), openGraphTx(), bucketId);
   }
 
   private GraphTx openGraphTx() {
