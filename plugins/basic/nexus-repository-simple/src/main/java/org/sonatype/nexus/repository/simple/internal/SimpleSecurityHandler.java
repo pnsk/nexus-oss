@@ -13,6 +13,7 @@
 package org.sonatype.nexus.repository.simple.internal;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -22,14 +23,14 @@ import org.sonatype.nexus.repository.http.HttpResponses;
 import org.sonatype.nexus.repository.security.BreadActions;
 import org.sonatype.nexus.repository.security.RepositoryFormatPrivilegeDescriptor;
 import org.sonatype.nexus.repository.security.RepositoryInstancePrivilegeDescriptor;
+import org.sonatype.nexus.repository.security.SecurityHelper;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Handler;
 import org.sonatype.nexus.repository.view.Request;
 import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Simple security handler.
@@ -42,12 +43,16 @@ public class SimpleSecurityHandler
   extends ComponentSupport
   implements Handler
 {
+  private final SecurityHelper securityHelper;
+
+  @Inject
+  public SimpleSecurityHandler(final SecurityHelper securityHelper) {
+    this.securityHelper = checkNotNull(securityHelper);
+  }
+
   @Nonnull
   @Override
   public Response handle(@Nonnull final Context context) throws Exception {
-    // lookup the subject to verify permissions on
-    Subject subject = SecurityUtils.getSubject();
-
     // determine permission action from request
     String action = action(context.getRequest());
 
@@ -56,8 +61,9 @@ public class SimpleSecurityHandler
     String formatPerm = RepositoryFormatPrivilegeDescriptor.permission(repository.getFormat().getValue(), action);
     String instancePerm = RepositoryInstancePrivilegeDescriptor.permission(repository.getName(), action);
 
-    SimpleSecurityFacet securityFacet = repository.facet(SimpleSecurityFacet.class);
-    if (securityFacet.anyPermitted(subject, formatPerm, instancePerm)) {
+    //SimpleSecurityFacet securityFacet = repository.facet(SimpleSecurityFacet.class);
+
+    if (securityHelper.anyPermitted(formatPerm, instancePerm)) {
       // TODO: Handle security exception
       return context.proceed();
     }
