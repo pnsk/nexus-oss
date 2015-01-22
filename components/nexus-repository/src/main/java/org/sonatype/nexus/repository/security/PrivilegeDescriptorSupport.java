@@ -55,7 +55,7 @@ public abstract class PrivilegeDescriptorSupport
   @Nullable
   public String buildPermission(final CPrivilege privilege) {
     // FIXME: This is a poor design, this check should be done by caller?
-    if (getType().equals(privilege.getType())) {
+    if (!getType().equals(privilege.getType())) {
       return null;
     }
 
