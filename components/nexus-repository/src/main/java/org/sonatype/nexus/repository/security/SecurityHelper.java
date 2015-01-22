@@ -20,11 +20,15 @@ import javax.inject.Singleton;
 
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+// NOTE: Specifically not using SecuritySystem here as that is a legacy api and has a lot of cruft
 
 /**
  * Security helper.
@@ -37,12 +41,42 @@ public class SecurityHelper
     extends ComponentSupport
 {
   /**
+   * Returns current subject.
+   */
+  @VisibleForTesting
+  Subject subject() {
+    return SecurityUtils.getSubject();
+  }
+
+  /**
+   * Ensure subject has given permissions.
+   */
+  public void ensurePermitted(final Subject subject, final String... permissions) throws AuthorizationException {
+    checkNotNull(subject);
+    checkNotNull(permissions);
+    checkArgument(permissions.length != 0);
+
+    if (log.isTraceEnabled()) {
+      log.trace("Ensuring subject '{}' has permissions: {}", subject.getPrincipal(), Arrays.toString(permissions));
+    }
+    subject.checkPermissions(permissions);
+  }
+
+  /**
+   * Ensure current subject has given permissions.
+   */
+  public void ensurePermitted(final String... permissions) throws AuthorizationException {
+    ensurePermitted(subject(), permissions);
+  }
+
+  /**
    * Check if subject has ANY of the given permissions.
    */
   public boolean anyPermitted(final Subject subject, final String... permissions) {
     checkNotNull(subject);
     checkNotNull(permissions);
     checkArgument(permissions.length != 0);
+
     boolean trace = log.isTraceEnabled();
     if (trace) {
       log.trace("Checking if subject '{}' has ANY of these permissions: {}",
@@ -67,7 +101,7 @@ public class SecurityHelper
    * Check if current subject has ANY of the given permissions.
    */
   public boolean anyPermitted(final String... permissions) {
-    return anyPermitted(SecurityUtils.getSubject(), permissions);
+    return anyPermitted(subject(), permissions);
   }
 
   /**
@@ -77,6 +111,7 @@ public class SecurityHelper
     checkNotNull(subject);
     checkNotNull(permissions);
     checkArgument(permissions.length != 0);
+
     boolean trace = log.isTraceEnabled();
     if (trace) {
       log.trace("Checking if subject '{}' has ALL of these permissions: {}",
@@ -95,13 +130,13 @@ public class SecurityHelper
       log.trace("Subject '{}' has required permissions: {}",
           subject.getPrincipal(), Arrays.toString(permissions));
     }
-    return false;
+    return true;
   }
 
   /**
    * Check if current subject has ALL of the given permissions.
    */
   public boolean allPermitted(final String... permissions) {
-    return allPermitted(SecurityUtils.getSubject(), permissions);
+    return allPermitted(subject(), permissions);
   }
 }

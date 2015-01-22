@@ -75,10 +75,11 @@ public class RepositoryAdminSecurityResource
     {
       @Override
       public void apply(final SecurityModelConfiguration model) {
+        // no per-repo repository-admin ADD action
+
         model.addPrivilege(privilege(repositoryName, BROWSE));
         model.addPrivilege(privilege(repositoryName, READ));
         model.addPrivilege(privilege(repositoryName, EDIT));
-        // no per-repo repository-admin ADD action
         model.addPrivilege(privilege(repositoryName, DELETE));
 
         model.addRole(new CRoleBuilder()
@@ -86,7 +87,6 @@ public class RepositoryAdminSecurityResource
             .privilege(id(repositoryName, BROWSE))
             .privilege(id(repositoryName, READ))
             .privilege(id(repositoryName, EDIT))
-                // no per-repo repository-admin ADD action
             .privilege(id(repositoryName, DELETE))
             .create());
       }
@@ -99,10 +99,11 @@ public class RepositoryAdminSecurityResource
     {
       @Override
       public void apply(final SecurityModelConfiguration model) {
+        // no per-repo repository-admin ADD action
+
         model.removePrivilege(id(repositoryName, BROWSE));
         model.removePrivilege(id(repositoryName, READ));
         model.removePrivilege(id(repositoryName, EDIT));
-        // no per-repo repository-admin ADD action
         model.removePrivilege(id(repositoryName, DELETE));
 
         model.removeRole(String.format("%s-%s-fullcontrol", repositoryName, TYPE));

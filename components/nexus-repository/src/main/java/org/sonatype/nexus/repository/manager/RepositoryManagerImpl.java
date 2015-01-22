@@ -29,15 +29,23 @@ import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.config.Configuration;
 import org.sonatype.nexus.repository.config.ConfigurationFacet;
 import org.sonatype.nexus.repository.config.ConfigurationStore;
+import org.sonatype.nexus.repository.security.SecurityHelper;
 import org.sonatype.nexus.repository.view.ViewFacet;
 import org.sonatype.sisu.goodies.eventbus.EventBus;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.sonatype.nexus.common.stateguard.StateGuardLifecycleSupport.State.STARTED;
+import static org.sonatype.nexus.repository.security.BreadActions.ADD;
+import static org.sonatype.nexus.repository.security.BreadActions.BROWSE;
+import static org.sonatype.nexus.repository.security.BreadActions.DELETE;
+import static org.sonatype.nexus.repository.security.BreadActions.EDIT;
+import static org.sonatype.nexus.repository.security.BreadActions.READ;
+import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.permission;
 
 /**
  * Default {@link RepositoryManager} implementation.
@@ -51,6 +59,8 @@ public class RepositoryManagerImpl
     implements RepositoryManager
 {
   private final EventBus eventBus;
+
+  private final SecurityHelper securityHelper;
 
   private final ConfigurationStore store;
 
@@ -66,6 +76,7 @@ public class RepositoryManagerImpl
 
   @Inject
   public RepositoryManagerImpl(final EventBus eventBus,
+                               final SecurityHelper securityHelper,
                                final ConfigurationStore store,
                                final RepositoryFactory factory,
                                final Provider<ConfigurationFacet> configFacet,
@@ -73,6 +84,7 @@ public class RepositoryManagerImpl
                                final RepositoryAdminSecurityResource securityResource)
   {
     this.eventBus = checkNotNull(eventBus);
+    this.securityHelper = checkNotNull(securityHelper);
     this.store = checkNotNull(store);
     this.factory = checkNotNull(factory);
     this.configFacet = checkNotNull(configFacet);
@@ -188,12 +200,16 @@ public class RepositoryManagerImpl
     repositories.clear();
   }
 
-  // TODO: Hook up security verification
-
   @Override
   @Guarded(by = STARTED)
   public Iterable<Repository> browse() {
-    return ImmutableList.copyOf(repositories.values());
+    return Iterables.filter(repositories.values(), new Predicate<Repository>()
+    {
+      @Override
+      public boolean apply(final Repository input) {
+        return securityHelper.allPermitted(permission(input.getName(), BROWSE));
+      }
+    });
   }
 
   @Nullable
@@ -201,6 +217,8 @@ public class RepositoryManagerImpl
   @Guarded(by = STARTED)
   public Repository get(final String name) {
     checkNotNull(name);
+
+    securityHelper.ensurePermitted(permission(name, READ));
 
     return repositories.get(name);
   }
@@ -211,6 +229,8 @@ public class RepositoryManagerImpl
     checkNotNull(configuration);
 
     log.debug("Creating repository: {}", configuration);
+
+    securityHelper.ensurePermitted(permission(configuration.getRepositoryName(), ADD));
     store.create(configuration);
     Repository repository = newRepository(configuration);
     securityResource.add(repository);
@@ -229,6 +249,8 @@ public class RepositoryManagerImpl
     checkNotNull(configuration);
 
     log.debug("Updating repository: {}", configuration);
+
+    securityHelper.ensurePermitted(permission(configuration.getRepositoryName(), EDIT));
     Repository repository = repository(configuration.getRepositoryName());
 
     // TODO: Ensure configuration sanity, before we apply to repository
@@ -247,6 +269,8 @@ public class RepositoryManagerImpl
     checkNotNull(name);
 
     log.debug("Deleting repository: {}", name);
+
+    securityHelper.ensurePermitted(permission(name, DELETE));
     Repository repository = repository(name);
     Configuration configuration = repository.getConfiguration();
     repository.stop();
