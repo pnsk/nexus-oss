@@ -62,7 +62,7 @@ public interface Repository
   /**
    * Stop the repository.
    *
-   * Repository must have been previously started.
+   * Repository must have been previously started.  Repository is stopped before applying {@link #update}.
    */
   void stop() throws Exception;
 
@@ -76,7 +76,9 @@ public interface Repository
   /**
    * Destroy the repository.
    *
-   * This is a cleanup hook and different than {@link #delete}.
+   * Allows repository to clean up resources.  This is different than {@link #delete}.
+   *
+   * Repository is stopped before destruction.
    */
   void destroy() throws Exception;
 

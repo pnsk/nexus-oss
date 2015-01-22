@@ -52,7 +52,7 @@ public interface Facet
   /**
    * Stop facet.
    *
-   * Facet was previously started.
+   * Facet was previously started.  Facet is stopped before applying {@link #update}.
    */
   void stop() throws Exception;
 
@@ -61,13 +61,17 @@ public interface Facet
    *
    * Allows facet to cope with contained repository being deleted and clean up persistent knowledge about the repository
    * or its contents.
+   *
+   * Facet must have been previously stopped.
    */
   void delete() throws Exception;
 
   /**
    * Destroy facet.
    *
-   * Allows facet to clean up resources.  This is not the same as {@link #delete}.
+   * Allows facet to clean up resources.  This is different than {@link #delete}.
+   *
+   * Facet is stopped before destruction.
    */
   void destroy() throws Exception;
 
