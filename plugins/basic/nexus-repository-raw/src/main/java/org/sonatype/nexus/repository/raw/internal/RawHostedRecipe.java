@@ -87,6 +87,10 @@ public class RawHostedRecipe
   @Override
   public void apply(@Nonnull final Repository repository) throws Exception {
     repository.attach(securityFacet.get());
+
+    // TODO: Ensure these are attached in reverse-dependency order
+    // things that get attached first get started first
+
     repository.attach(configure(viewFacet.get()));
     repository.attach(rawIndexFacet.get());
     repository.attach(rawStorageFacet.get());

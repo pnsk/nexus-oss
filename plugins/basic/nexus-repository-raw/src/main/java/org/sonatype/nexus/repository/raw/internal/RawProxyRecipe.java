@@ -27,8 +27,8 @@ import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.Type;
 import org.sonatype.nexus.repository.httpclient.HttpClientFacet;
 import org.sonatype.nexus.repository.raw.internal.negativecache.NegativeCacheHandler;
-import org.sonatype.nexus.repository.raw.internal.negativecache.PathNegativeCacheKeyProvider;
-import org.sonatype.nexus.repository.raw.internal.negativecache.PlaceboNegativeCacheFacet;
+import org.sonatype.nexus.repository.raw.internal.negativecache.PathNegativeCacheKeySource;
+import org.sonatype.nexus.repository.raw.internal.negativecache.NegativeCacheImpl;
 import org.sonatype.nexus.repository.raw.internal.proxy.ProxyFacetImpl;
 import org.sonatype.nexus.repository.raw.internal.proxy.ProxyHandler;
 import org.sonatype.nexus.repository.security.SecurityHandler;
@@ -77,14 +77,19 @@ public class RawProxyRecipe
                         final ProxyHandler proxyHandler,
                         final TimingHandler timingHandler,
                         final SecurityHandler securityHandler,
+
                         final Provider<RawSecurityFacet> securityFacet,
+
                         final Provider<ConfigurableViewFacet> viewFacetProvider,
-                        final Provider<HttpClientFacet> httpClient,
-                        final Provider<PlaceboNegativeCacheFacet> negativeCache,
-                        final Provider<PathNegativeCacheKeyProvider> negativeCacheKeyProvider,
+
+                        final Provider<NegativeCacheImpl> negativeCache,
+                        final Provider<PathNegativeCacheKeySource> negativeCacheKeyProvider,
+
                         final Provider<ProxyFacetImpl> proxyFacet,
+                        final Provider<HttpClientFacet> httpClient,
                         final Provider<RawLocatorFacet> locatorFacet,
                         final Provider<RawPayloadStorage> payloadStorageFacet,
+
                         final Provider<RawStorageFacetImpl> rawStorageFacet,
                         final Provider<StorageFacetImpl> storageFacet)
   {

@@ -16,12 +16,14 @@ import org.sonatype.nexus.repository.Facet;
 import org.sonatype.nexus.repository.view.Context;
 
 /**
- * Computes a cache key from
+ * Implement this facet to provide a format-appropriate cache key for the NFC.
+ *
+ * Some formats may care about the path alone, for others, query path is meaningful and implies distinct cache entries.
  *
  * @since 3.0
  */
 @Facet.Exposed
-public interface NegativeCacheKeyProvider
+public interface NegativeCacheKeySource
     extends Facet
 {
   NegativeCacheKey cacheKey(Context context);

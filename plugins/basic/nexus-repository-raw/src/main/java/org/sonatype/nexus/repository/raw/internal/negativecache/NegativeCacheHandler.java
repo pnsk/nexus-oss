@@ -59,6 +59,6 @@ public class NegativeCacheHandler
   }
 
   private NegativeCacheKey cacheKey(final Context context) {
-    return context.getRepository().facet(NegativeCacheKeyProvider.class).cacheKey(context);
+    return context.getRepository().facet(NegativeCacheKeySource.class).cacheKey(context);
   }
 }

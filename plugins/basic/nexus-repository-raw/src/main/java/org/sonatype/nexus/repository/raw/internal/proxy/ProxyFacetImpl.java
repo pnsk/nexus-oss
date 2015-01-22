@@ -69,6 +69,9 @@ public class ProxyFacetImpl
     log.debug("Artifact max age: {}", artifactMaxAgeMinutes);
   }
 
+  // TODO: implement doUpdate()
+  // TODO: Trigger other changes based on the remoteUrl changing - perhaps it calls facet(NFC.class).clear() at this point?
+
   @Override
   protected void doStart() throws Exception {
     httpClient = getRepository().facet(HttpClientFacet.class);

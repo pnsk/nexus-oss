@@ -23,6 +23,8 @@ import org.sonatype.nexus.repository.raw.RawContentImpl;
 /**
  * Provides persistent storage for {@link RawContentImpl}.
  *
+ *  TODO: Consider better naming so we don't get muddled up with RawStorageFacet/StorageFacet/FooStorageFacet/etc.
+ *
  * @since 3.0
  */
 @Facet.Exposed

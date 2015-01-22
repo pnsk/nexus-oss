@@ -17,22 +17,23 @@ import org.sonatype.nexus.repository.FacetSupport;
 /**
  * @since 3.0
  */
-public class PlaceboNegativeCacheFacet
+public class NegativeCacheImpl
     extends FacetSupport
     implements NegativeCacheFacet
 {
   @Override
   public void cacheNotFound(final NegativeCacheKey key) {
-    // do nothing
+    // TODO: implement
   }
 
   @Override
   public boolean isNotFound(final NegativeCacheKey key) {
+    // TODO: implement
     return false;
   }
 
   @Override
   public void uncacheNotFound(final NegativeCacheKey key) {
-    // do nothing
+    // TODO: implement
   }
 }

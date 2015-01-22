@@ -104,6 +104,7 @@ public class RawStorageFacetImpl
     }
   }
 
+
   @Override
   public boolean delete(final String path) throws IOException {
     try (StorageTx tx = getStorage().openTx()) {
@@ -136,7 +137,7 @@ public class RawStorageFacetImpl
 
     final Date date = asset.getProperty(P_LAST_MODIFIED);
     final DateTime lastModified = date == null ? null : new DateTime(date.getTime());
-    
+
     return new RawContent()
     {
       @Override

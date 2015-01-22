@@ -16,13 +16,13 @@ import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.view.Context;
 
 /**
- * A {@link NegativeCacheKeyProvider} facet that considers the path (only) to be the cache key.
+ * A {@link NegativeCacheKeySource} facet that considers the path (only) to be the cache key.
  *
  * @since 3.0
  */
-public class PathNegativeCacheKeyProvider
+public class PathNegativeCacheKeySource
     extends FacetSupport
-    implements NegativeCacheKeyProvider
+    implements NegativeCacheKeySource
 {
   @Override
   public NegativeCacheKey cacheKey(final Context context) {
