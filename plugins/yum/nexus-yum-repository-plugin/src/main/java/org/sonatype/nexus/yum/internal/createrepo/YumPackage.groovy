@@ -52,6 +52,8 @@ class YumPackage
   List<Entry> conflicts
   List<Entry> obsoletes
 
+  List<File> files
+
   @ToString(includePackage = false, includeNames = true)
   static class Entry {
     String name
@@ -60,6 +62,17 @@ class YumPackage
     String version
     String release
     boolean pre
+  }
+
+  @ToString(includePackage = false, includeNames = true)
+  static class File {
+    String name
+    FileType type
+    String primary
+  }
+
+  static enum FileType {
+    file, dir, ghost
   }
 
 }

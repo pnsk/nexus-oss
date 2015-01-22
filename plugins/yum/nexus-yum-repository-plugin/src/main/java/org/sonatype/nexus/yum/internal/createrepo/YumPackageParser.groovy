@@ -71,10 +71,42 @@ class YumPackageParser
             provides: parseDeps(header, HeaderTag.PROVIDENAME, HeaderTag.PROVIDEVERSION, HeaderTag.PROVIDEFLAGS),
             requires: parseDeps(header, HeaderTag.REQUIRENAME, HeaderTag.REQUIREVERSION, HeaderTag.REQUIREFLAGS),
             conflicts: parseDeps(header, HeaderTag.CONFLICTNAME, HeaderTag.CONFLICTVERSION, HeaderTag.CONFLICTFLAGS),
-            obsoletes: parseDeps(header, HeaderTag.OBSOLETENAME, HeaderTag.OBSOLETEVERSION, HeaderTag.OBSOLETEFLAGS)
+            obsoletes: parseDeps(header, HeaderTag.OBSOLETENAME, HeaderTag.OBSOLETEVERSION, HeaderTag.OBSOLETEFLAGS),
+            files: parseFiles(header)
         )
       }
     }
+  }
+
+  def parseFiles(final Header header) {
+    def files = []
+    def names = header.getEntry(HeaderTag.BASENAMES)?.values
+    if (!names) {
+      return null
+    }
+    def dirnames = header.getEntry(HeaderTag.DIRNAMES)?.values
+    def dirindexes = header.getEntry(HeaderTag.DIRINDEXES)?.values
+    def fileflags = header.getEntry(HeaderTag.FILEFLAGS)?.values
+    def filemodes = header.getEntry(HeaderTag.FILEMODES)?.values
+
+    names.eachWithIndex { name, i ->
+      String path = dirnames[dirindexes[i]] + name
+      def type = YumPackage.FileType.file
+      def flag = fileflags[i]
+      def mode = filemodes[i]
+      if (!(mode & 0x0040000)) {
+        type = YumPackage.FileType.dir
+      }
+      else if (flag & 0x40) {
+        type = YumPackage.FileType.ghost
+      }
+      files << new YumPackage.File(
+          name: path,
+          type: type,
+          primary: type != YumPackage.FileType.ghost && (path.contains('bin/') || path.startsWith('/etc/') || (type == YumPackage.FileType.file && path == '/usr/lib/sendmail'))
+      )
+    }
+    return files
   }
 
   def parseDeps(final Header header, final HeaderTag namesTag, final HeaderTag versionTag, final HeaderTag flagsTag) {

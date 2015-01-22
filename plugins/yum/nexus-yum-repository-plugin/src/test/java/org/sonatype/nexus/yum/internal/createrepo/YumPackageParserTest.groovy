@@ -24,14 +24,6 @@ extends TestSupport
   void 'parse package'() {
     File rpm = util.resolveFile('src/test/ut-resources/rpms/ant/1.7.1-13/ant-1.7.1-13.el6.i686.rpm')
     YumPackage yumPackage = new YumPackageParser().parse(rpm)
-    yumPackage.requires.each {
-      println it
-    }
-
-    //ReadableChannelWrapper rcw = new ReadableChannelWrapper(Channels.newChannel(new FileInputStream(rpm)))
-    //Scanner scanner = new Scanner()
-    //Format format = scanner.run(rcw)
-    //log format.header.getEntry(Header.HeaderTag.ARCH).values[0]
   }
 
 }
