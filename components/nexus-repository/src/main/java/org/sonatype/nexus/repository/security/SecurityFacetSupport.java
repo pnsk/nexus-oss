@@ -43,15 +43,13 @@ public class SecurityFacetSupport
     this.securityResource = checkNotNull(securityResource);
   }
 
-  // TODO: Probably can/should do this on init/destroy?
-
   @Override
-  protected void doStart() throws Exception {
+  protected void doInit() throws Exception {
     securityResource.add(getRepository());
   }
 
   @Override
-  protected void doStop() throws Exception {
+  protected void doDestroy() throws Exception {
     securityResource.remove(getRepository());
   }
 
