@@ -60,7 +60,7 @@ public class StorageFacetImpl
   }
 
   @Override
-  protected void doStart() throws Exception {
+  protected void doInit() throws Exception {
     initSchema();
     initBucket();
   }
