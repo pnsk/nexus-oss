@@ -27,5 +27,13 @@ import org.sonatype.nexus.repository.Repository;
 public interface GroupFacet
     extends Facet
 {
+  /**
+   * Check if given repository is a member of the group.
+   */
+  boolean member(Repository repository);
+
+  /**
+   * Return list of (non-transitive) member repositories.
+   */
   List<Repository> members();
 }

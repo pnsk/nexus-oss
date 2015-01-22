@@ -21,6 +21,7 @@ import javax.inject.Singleton;
 
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.http.HttpResponses;
+import org.sonatype.nexus.repository.http.HttpStatus;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Handler;
 import org.sonatype.nexus.repository.view.Request;
@@ -46,7 +47,7 @@ public class GroupHandler
   /**
    * Request-context state container for set of repositories already dispatched to.
    */
-  protected static class DispatchedRepositories
+  private static class DispatchedRepositories
   {
     private final Set<String> dispatched = Sets.newHashSet();
 
@@ -75,6 +76,7 @@ public class GroupHandler
     Repository repository = context.getRepository();
     GroupFacet group = repository.facet(GroupFacet.class);
 
+    // FIXME: To move forward prototype, exposing HTTP semantics here
     String method = request.getAction();
     switch (method) {
       case GET: {
@@ -90,7 +92,7 @@ public class GroupHandler
 
           ViewFacet view = member.facet(ViewFacet.class);
           Response response = view.dispatch(request);
-          if (response.getStatus().getCode() == 200) {
+          if (response.getStatus().getCode() == HttpStatus.OK) {
             return response;
           }
         }

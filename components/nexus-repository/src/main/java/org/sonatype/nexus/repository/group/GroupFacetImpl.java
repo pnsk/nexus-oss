@@ -65,9 +65,13 @@ public class GroupFacetImpl
     memberNames.clear();
   }
 
-  /**
-   * Return list of member repositories.
-   */
+  @Override
+  public boolean member(final Repository repository) {
+    checkNotNull(repository);
+    return memberNames.contains(repository.getName());
+  }
+
+  @Override
   @Guarded(by = STARTED)
   public List<Repository> members() {
     List<Repository> members = Lists.newArrayListWithCapacity(memberNames.size());

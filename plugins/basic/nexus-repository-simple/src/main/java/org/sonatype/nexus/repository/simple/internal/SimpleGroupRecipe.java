@@ -22,6 +22,7 @@ import org.sonatype.nexus.repository.Format;
 import org.sonatype.nexus.repository.RecipeSupport;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.Type;
+import org.sonatype.nexus.repository.group.GroupHandler;
 import org.sonatype.nexus.repository.http.HttpHandlers;
 import org.sonatype.nexus.repository.types.GroupType;
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet;
@@ -61,7 +62,7 @@ public class SimpleGroupRecipe
 
   private final SimpleIndexHtmlHandler indexHtmlHandler;
 
-  private final SimpleGroupHandler groupHandler;
+  private final GroupHandler groupHandler;
 
   @Inject
   public SimpleGroupRecipe(final @Named(GroupType.NAME) Type type,
@@ -73,7 +74,7 @@ public class SimpleGroupRecipe
                            final TimingHandler timingHandler,
                            final SimpleSecurityHandler securityHandler,
                            final SimpleIndexHtmlHandler indexHtmlHandler,
-                           final SimpleGroupHandler groupHandler)
+                           final GroupHandler groupHandler)
   {
     super(type, format);
     this.securityFacet = checkNotNull(securityFacet);
