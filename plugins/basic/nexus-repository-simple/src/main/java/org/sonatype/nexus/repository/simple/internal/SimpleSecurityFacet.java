@@ -18,9 +18,15 @@ import javax.inject.Named;
 
 import org.sonatype.nexus.repository.Facet;
 import org.sonatype.nexus.repository.FacetSupport;
+import org.sonatype.nexus.repository.Repository;
+import org.sonatype.nexus.repository.http.HttpMethods;
+import org.sonatype.nexus.repository.security.BreadActions;
 import org.sonatype.nexus.repository.security.CRoleBuilder;
 import org.sonatype.nexus.repository.security.MutableDynamicSecurityResource.Mutator;
+import org.sonatype.nexus.repository.security.RepositoryFormatPrivilegeDescriptor;
 import org.sonatype.nexus.repository.security.RepositoryInstancePrivilegeDescriptor;
+import org.sonatype.nexus.repository.security.SecurityHelper;
+import org.sonatype.nexus.repository.view.Request;
 import org.sonatype.security.model.SecurityModelConfiguration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -42,10 +48,15 @@ import static org.sonatype.nexus.repository.security.RepositoryInstancePrivilege
 public class SimpleSecurityFacet
     extends FacetSupport
 {
+  private final SecurityHelper securityHelper;
+
   private final SimpleDynamicSecurityResource dynamicSecurityResource;
 
   @Inject
-  public SimpleSecurityFacet(final SimpleDynamicSecurityResource dynamicSecurityResource) {
+  public SimpleSecurityFacet(final SecurityHelper securityHelper,
+                             final SimpleDynamicSecurityResource dynamicSecurityResource)
+  {
+    this.securityHelper = checkNotNull(securityHelper);
     this.dynamicSecurityResource = checkNotNull(dynamicSecurityResource);
   }
 
@@ -114,5 +125,46 @@ public class SimpleSecurityFacet
         model.removeRole(String.format("%s-%s-deployer", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
       }
     });
+  }
+
+  /**
+   * Check if the given request is permitted on the the repository.
+   */
+  public boolean permitted(final Request request, final Repository repository) {
+    checkNotNull(request);
+    checkNotNull(repository);
+
+    // determine permission action from request
+    String action = action(request);
+
+    // subject must have either format or instance permissions
+    String formatPerm = RepositoryFormatPrivilegeDescriptor.permission(repository.getFormat().getValue(), action);
+    String instancePerm = RepositoryInstancePrivilegeDescriptor.permission(repository.getName(), action);
+
+    return securityHelper.anyPermitted(formatPerm, instancePerm);
+  }
+
+  /**
+   * Returns BREAD action for request action.
+   */
+  private String action(final Request request) {
+    switch (request.getAction()) {
+      case HttpMethods.OPTIONS:
+      case HttpMethods.GET:
+      case HttpMethods.HEAD:
+      case HttpMethods.TRACE:
+        return BreadActions.READ;
+
+      case HttpMethods.POST:
+        return BreadActions.ADD;
+
+      case HttpMethods.PUT:
+        return BreadActions.EDIT;
+
+      case HttpMethods.DELETE:
+        return BreadActions.DELETE;
+    }
+
+    throw new RuntimeException("Unsupported action: " + request.getAction());
   }
 }

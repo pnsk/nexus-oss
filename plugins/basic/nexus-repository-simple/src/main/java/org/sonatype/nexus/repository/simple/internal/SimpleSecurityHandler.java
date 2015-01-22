@@ -10,27 +10,19 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.repository.simple.internal;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.sonatype.nexus.repository.Repository;
-import org.sonatype.nexus.repository.http.HttpMethods;
 import org.sonatype.nexus.repository.http.HttpResponses;
-import org.sonatype.nexus.repository.security.BreadActions;
-import org.sonatype.nexus.repository.security.RepositoryFormatPrivilegeDescriptor;
-import org.sonatype.nexus.repository.security.RepositoryInstancePrivilegeDescriptor;
-import org.sonatype.nexus.repository.security.SecurityHelper;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Handler;
-import org.sonatype.nexus.repository.view.Request;
 import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Simple security handler.
@@ -40,58 +32,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Named
 @Singleton
 public class SimpleSecurityHandler
-  extends ComponentSupport
-  implements Handler
+    extends ComponentSupport
+    implements Handler
 {
-  private final SecurityHelper securityHelper;
-
-  @Inject
-  public SimpleSecurityHandler(final SecurityHelper securityHelper) {
-    this.securityHelper = checkNotNull(securityHelper);
-  }
-
   @Nonnull
   @Override
   public Response handle(@Nonnull final Context context) throws Exception {
-    // determine permission action from request
-    String action = action(context.getRequest());
-
-    // subject must have either format or instance permissions
     Repository repository = context.getRepository();
-    String formatPerm = RepositoryFormatPrivilegeDescriptor.permission(repository.getFormat().getValue(), action);
-    String instancePerm = RepositoryInstancePrivilegeDescriptor.permission(repository.getName(), action);
+    SimpleSecurityFacet securityFacet = repository.facet(SimpleSecurityFacet.class);
 
-    //SimpleSecurityFacet securityFacet = repository.facet(SimpleSecurityFacet.class);
-
-    if (securityHelper.anyPermitted(formatPerm, instancePerm)) {
-      // TODO: Handle security exception
+    if (securityFacet.permitted(context.getRequest(), repository)) {
+      // TODO: Handle security exceptions
       return context.proceed();
     }
 
     return HttpResponses.unauthorized();
-  }
-
-  /**
-   * Returns BREAD action for request action.
-   */
-  private String action(final Request request) {
-    switch (request.getAction()) {
-      case HttpMethods.OPTIONS:
-      case HttpMethods.GET:
-      case HttpMethods.HEAD:
-      case HttpMethods.TRACE:
-        return BreadActions.READ;
-
-      case HttpMethods.POST:
-        return BreadActions.ADD;
-
-      case HttpMethods.PUT:
-        return BreadActions.EDIT;
-
-      case HttpMethods.DELETE:
-        return BreadActions.DELETE;
-    }
-
-    throw new RuntimeException("Unsupported action: " + request.getAction());
   }
 }
