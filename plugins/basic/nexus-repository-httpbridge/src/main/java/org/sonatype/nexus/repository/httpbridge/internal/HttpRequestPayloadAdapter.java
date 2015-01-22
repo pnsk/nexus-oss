@@ -43,9 +43,14 @@ class HttpRequestPayloadAdapter
     this.request = request;
     this.contentType = request.getContentType();
     this.size = request.getContentLength();
+    this.lastModified = parseLastModified(request.getDateHeader(HttpHeaders.LAST_MODIFIED));
+  }
 
-    final long lastModifiedHeader = request.getDateHeader(HttpHeaders.LAST_MODIFIED);
-    this.lastModified = lastModifiedHeader == -1 ? null : new DateTime(lastModifiedHeader);
+  private static DateTime parseLastModified(final long value) {
+    if (value != -1) {
+      return new DateTime(value);
+    }
+    return null;
   }
 
   @Nullable
