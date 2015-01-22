@@ -61,7 +61,7 @@ public class SecurityHelper
    * Check if current subject has ANY of the given permissions.
    */
   public boolean anyPermitted(final String... permissions) {
-    return anyPermitted(SecurityUtils.getSubject());
+    return anyPermitted(SecurityUtils.getSubject(), permissions);
   }
 
   /**
