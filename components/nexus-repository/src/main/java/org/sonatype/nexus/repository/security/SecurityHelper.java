@@ -15,6 +15,9 @@ package org.sonatype.nexus.repository.security;
 
 import java.util.Arrays;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
 import org.apache.shiro.SecurityUtils;
@@ -25,6 +28,8 @@ import org.apache.shiro.subject.Subject;
  *
  * @since 3.0
  */
+@Named
+@Singleton
 public class SecurityHelper
     extends ComponentSupport
 {
