@@ -32,8 +32,6 @@ public interface Payload
 
   long getSize();
 
-  // TODO: Should we split this up to mimeType and encoding?
-
   @Nullable
   String getContentType();
 
