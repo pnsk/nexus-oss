@@ -33,15 +33,13 @@ import com.google.common.collect.Sets;
 import static org.sonatype.nexus.repository.http.HttpMethods.GET;
 
 /**
- * Standard group handler.
+ * Group handler.
  *
  * @since 3.0
- *
- * @see StandardGroupFacet
  */
 @Named
 @Singleton
-public class StandardGroupHandler
+public class GroupHandler
     extends ComponentSupport
     implements Handler
 {
@@ -75,7 +73,7 @@ public class StandardGroupHandler
     DispatchedRepositories dispatched = request.getAttributes().getOrCreate(DispatchedRepositories.class);
 
     Repository repository = context.getRepository();
-    StandardGroupFacet group = repository.facet(StandardGroupFacet.class);
+    GroupFacet group = repository.facet(GroupFacet.class);
 
     String method = request.getAction();
     switch (method) {

@@ -10,6 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.repository.group;
 
 import java.util.List;
@@ -19,7 +20,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.sonatype.nexus.common.stateguard.Guarded;
-import org.sonatype.nexus.repository.Facet;
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.manager.RepositoryManager;
@@ -33,16 +33,14 @@ import static org.sonatype.nexus.repository.FacetSupport.State.STARTED;
 import static org.sonatype.nexus.repository.util.TypeTokens.COLLECTION_STRING;
 
 /**
- * Standard group facet.
+ * Default {@link GroupFacet} implementation.
  *
  * @since 3.0
- *
- * @see StandardGroupHandler
  */
 @Named
-@Facet.Exposed
-public class StandardGroupFacet
+public class GroupFacetImpl
     extends FacetSupport
+    implements GroupFacet
 {
   public static final String CONFIG_KEY = "group";
 
@@ -51,7 +49,7 @@ public class StandardGroupFacet
   private final Set<String> memberNames = Sets.newLinkedHashSet();
 
   @Inject
-  public StandardGroupFacet(final RepositoryManager repositoryManager) {
+  public GroupFacetImpl(final RepositoryManager repositoryManager) {
     this.repositoryManager = checkNotNull(repositoryManager);
   }
 
@@ -70,7 +68,7 @@ public class StandardGroupFacet
   /**
    * Return list of member repositories.
    */
-  @Guarded(by=STARTED)
+  @Guarded(by = STARTED)
   public List<Repository> members() {
     List<Repository> members = Lists.newArrayListWithCapacity(memberNames.size());
     for (String name : memberNames) {
