@@ -25,10 +25,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 3.0
  */
-class HttpParameters
+class HttpParametersAdapter
     extends Parameters
 {
-  public HttpParameters(final HttpServletRequest request) {
+  public HttpParametersAdapter(final HttpServletRequest request) {
     checkNotNull(request);
     Enumeration<String> names = request.getParameterNames();
     while (names.hasMoreElements()) {

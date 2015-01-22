@@ -25,10 +25,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 3.0
  */
-class HttpHeaders
+class HttpHeadersAdapter
     extends Headers
 {
-  public HttpHeaders(final HttpServletRequest request) {
+  public HttpHeadersAdapter(final HttpServletRequest request) {
     checkNotNull(request);
     Enumeration<String> names = request.getHeaderNames();
     while (names.hasMoreElements()) {

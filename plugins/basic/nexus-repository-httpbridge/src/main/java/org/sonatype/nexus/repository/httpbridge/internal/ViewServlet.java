@@ -129,7 +129,7 @@ public class ViewServlet
     // dispatch request and send response
     ViewFacet facet = repo.facet(ViewFacet.class);
     log.debug("Dispatching to view facet: {}", facet);
-    Response response = facet.dispatch(new HttpRequest(httpRequest, path.getRemainingPath()));
+    Response response = facet.dispatch(new HttpRequestAdapter(httpRequest, path.getRemainingPath()));
 
     HttpResponseSender sender = sender(repo);
     log.debug("HTTP response sender: {}", sender);

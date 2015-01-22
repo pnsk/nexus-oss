@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.sonatype.nexus.repository.view.Payload;
 
+import com.google.common.net.HttpHeaders;
 import org.joda.time.DateTime;
 
 /**
@@ -27,7 +28,7 @@ import org.joda.time.DateTime;
  *
  * @since 3.0
  */
-class HttpRequestPayload
+class HttpRequestPayloadAdapter
     implements Payload
 {
   private final HttpServletRequest request;
@@ -38,12 +39,12 @@ class HttpRequestPayload
 
   private final DateTime lastModified;
 
-  public HttpRequestPayload(final HttpServletRequest request) {
+  public HttpRequestPayloadAdapter(final HttpServletRequest request) {
     this.request = request;
     this.contentType = request.getContentType();
     this.size = request.getContentLength();
 
-    final long lastModifiedHeader = request.getDateHeader("Last-Modified");
+    final long lastModifiedHeader = request.getDateHeader(HttpHeaders.LAST_MODIFIED);
     this.lastModified = lastModifiedHeader == -1 ? null : new DateTime(lastModifiedHeader);
   }
 

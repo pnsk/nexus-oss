@@ -25,16 +25,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 3.0
  */
-class HttpRequest
+class HttpRequestAdapter
   extends Request
 {
-  public HttpRequest(final HttpServletRequest httpServletRequest, final String path) {
+  public HttpRequestAdapter(final HttpServletRequest httpServletRequest, final String path) {
     checkNotNull(httpServletRequest);
 
     this.action = httpServletRequest.getMethod();
     this.path = checkNotNull(path);
-    this.parameters = new HttpParameters(httpServletRequest);
-    this.headers = new HttpHeaders(httpServletRequest);
+    this.parameters = new HttpParametersAdapter(httpServletRequest);
+    this.headers = new HttpHeadersAdapter(httpServletRequest);
 
     // copy http-servlet-request attributes
     Enumeration<String> attributes = httpServletRequest.getAttributeNames();
@@ -44,7 +44,7 @@ class HttpRequest
     }
 
     // TODO: Can we tell if there is a payload or not from HttpServletRequest api?
-    this.payload = new HttpRequestPayload(httpServletRequest);
+    this.payload = new HttpRequestPayloadAdapter(httpServletRequest);
   }
 
   @Override
