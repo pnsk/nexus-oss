@@ -22,15 +22,20 @@ import javax.inject.Inject;
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
 import org.sonatype.nexus.blobstore.api.BlobStore;
+import org.sonatype.nexus.orient.graph.GraphTx;
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.raw.RawContent;
+import org.sonatype.nexus.repository.raw.internal.proxy.Locator;
+import org.sonatype.nexus.repository.raw.internal.proxy.LocatorFacet;
 import org.sonatype.nexus.repository.storage.StorageFacet;
 import org.sonatype.nexus.repository.storage.StorageTx;
+import org.sonatype.nexus.repository.view.Context;
 
 import com.google.common.collect.ImmutableMap;
 import com.tinkerpop.blueprints.Vertex;
 import org.joda.time.DateTime;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_BLOB_REF;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_CONTENT_TYPE;
@@ -44,7 +49,7 @@ import static org.sonatype.nexus.repository.storage.StorageFacet.P_PATH;
  */
 public class RawStorageFacetImpl
     extends FacetSupport
-    implements RawStorageFacet
+    implements RawStorageFacet, LocatorFacet
 {
   @Inject
   public RawStorageFacetImpl() {
@@ -113,12 +118,53 @@ public class RawStorageFacetImpl
         return false;
       }
 
+
       tx.deleteBlob(getBlobRef(path, asset));
       tx.deleteVertex(asset);
 
       tx.commit();
 
+
       return true;
+    }
+  }
+
+  @Override
+  public Locator locator(final Context context) {
+    return new RawLocator(context.getRequest().getPath());
+  }
+
+  /**
+   * A {@link Locator} based on the path.
+   */
+  public static class RawLocator
+      implements Locator
+  {
+    private final String path;
+
+    public RawLocator(final String path) {
+      this.path = checkNotNull(path);
+    }
+
+    @Override
+    public String describe() {
+      return path;
+    }
+
+    @Override
+    public String uri() {
+      return path;
+    }
+
+    public String path() {
+      return path;
+    }
+
+    @Override
+    public String toString() {
+      return "RawLocator{" +
+          "path='" + path + '\'' +
+          '}';
     }
   }
 

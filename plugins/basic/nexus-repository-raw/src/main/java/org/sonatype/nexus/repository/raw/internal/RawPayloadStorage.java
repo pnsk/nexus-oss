@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.raw.RawContent;
-import org.sonatype.nexus.repository.raw.internal.RawLocatorFacet.RawLocator;
+import org.sonatype.nexus.repository.raw.internal.RawStorageFacetImpl.RawLocator;
 import org.sonatype.nexus.repository.raw.internal.proxy.Locator;
 import org.sonatype.nexus.repository.raw.internal.proxy.PayloadStorage;
 import org.sonatype.nexus.repository.view.Payload;
