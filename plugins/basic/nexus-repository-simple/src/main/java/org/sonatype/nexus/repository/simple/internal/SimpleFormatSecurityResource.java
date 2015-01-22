@@ -19,10 +19,9 @@ import javax.inject.Singleton;
 
 import org.sonatype.nexus.repository.Format;
 import org.sonatype.nexus.repository.security.CRoleBuilder;
+import org.sonatype.nexus.repository.security.MutableDynamicSecurityResource;
 import org.sonatype.nexus.repository.security.RepositoryFormatPrivilegeDescriptor;
-import org.sonatype.security.model.Configuration;
 import org.sonatype.security.model.SecurityModelConfiguration;
-import org.sonatype.security.realms.tools.StaticSecurityResource;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.sonatype.nexus.repository.security.BreadActions.ADD;
@@ -34,26 +33,33 @@ import static org.sonatype.nexus.repository.security.RepositoryFormatPrivilegeDe
 import static org.sonatype.nexus.repository.security.RepositoryFormatPrivilegeDescriptor.privilege;
 
 /**
- * Simple format {@link StaticSecurityResource}.
+ * Simple format security resource.
  *
  * @since 3.0
  */
 @Named
 @Singleton
-public class SimpleStaticSecurityResource
-    implements StaticSecurityResource
+public class SimpleFormatSecurityResource
+    extends MutableDynamicSecurityResource
 {
   private final Format format;
 
   @Inject
-  public SimpleStaticSecurityResource(final @Named(SimpleFormat.NAME) Format format) {
+  public SimpleFormatSecurityResource(final @Named(SimpleFormat.NAME) Format format) {
     this.format = checkNotNull(format);
+
+    // apply initial configuration
+    apply(new Mutator()
+    {
+      @Override
+      public void apply(final SecurityModelConfiguration model) {
+        initial(model);
+      }
+    });
   }
 
-  @Override
-  public SecurityModelConfiguration getConfiguration() {
+  private void initial(final SecurityModelConfiguration model) {
     String formatName = format.getValue();
-    Configuration model = new Configuration();
 
     // add repository-format privileges
     model.addPrivilege(privilege(formatName, BROWSE));
@@ -87,7 +93,5 @@ public class SimpleStaticSecurityResource
         .privilege(id(formatName, EDIT))
         .privilege(id(formatName, ADD))
         .create());
-
-    return model;
   }
 }

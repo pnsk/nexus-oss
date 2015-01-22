@@ -50,11 +50,11 @@ public class SimpleSecurityFacet
 {
   private final SecurityHelper securityHelper;
 
-  private final SimpleDynamicSecurityResource dynamicSecurityResource;
+  private final SimpleFormatSecurityResource dynamicSecurityResource;
 
   @Inject
   public SimpleSecurityFacet(final SecurityHelper securityHelper,
-                             final SimpleDynamicSecurityResource dynamicSecurityResource)
+                             final SimpleFormatSecurityResource dynamicSecurityResource)
   {
     this.securityHelper = checkNotNull(securityHelper);
     this.dynamicSecurityResource = checkNotNull(dynamicSecurityResource);
