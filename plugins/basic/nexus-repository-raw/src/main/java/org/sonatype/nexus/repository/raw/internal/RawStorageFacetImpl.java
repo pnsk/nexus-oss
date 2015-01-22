@@ -22,10 +22,10 @@ import javax.inject.Inject;
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
 import org.sonatype.nexus.blobstore.api.BlobStore;
-import org.sonatype.nexus.orient.graph.GraphTx;
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.raw.RawContent;
 import org.sonatype.nexus.repository.storage.StorageFacet;
+import org.sonatype.nexus.repository.storage.StorageTx;
 
 import com.google.common.collect.ImmutableMap;
 import com.tinkerpop.blueprints.Vertex;
@@ -59,15 +59,15 @@ public class RawStorageFacetImpl
     return (RawContent) inTx(new GraphOperation()
     {
       @Override
-      public Object execute(final GraphTx graph, final StorageFacet storage) {
-        final Vertex asset = storage.findAssetWithProperty(graph, P_PATH, path, storage.getBucket(graph));
+      public Object execute(final StorageTx tx) {
+        final Vertex asset = tx.findAssetWithProperty(P_PATH, path, tx.getBucket());
         if (asset == null) {
           return null;
         }
 
         final BlobRef blobRef = getBlobRef(path, asset);
 
-        final Blob blob = storage.getBlob(blobRef);
+        final Blob blob = tx.getBlob(blobRef);
         checkState(blob != null, "asset at path %s refers to missing blob %s", path, blobRef);
 
         return marshall(asset, blob);
@@ -81,19 +81,18 @@ public class RawStorageFacetImpl
     return (RawContent) inTx(new GraphOperation()
     {
       @Override
-      public Object execute(final GraphTx graph, final StorageFacet storage) throws IOException {
+      public Object execute(final StorageTx tx) throws IOException {
         // Delete any existing asset at this path.
-        // TODO: This has transactional implications with blob replacement. Recall the old BlobTx code.
-        new DeleteAsset(path).execute(graph, storage);
+        new DeleteAsset(path).execute(tx);
 
-        final Vertex asset = storage.createAsset(graph, storage.getBucket(graph));
+        final Vertex asset = tx.createAsset(tx.getBucket());
         asset.setProperty(P_PATH, path);
 
         // TODO: Figure out created-by header
         final ImmutableMap<String, String> headers = ImmutableMap
             .of(BlobStore.BLOB_NAME_HEADER, path, BlobStore.CREATED_BY_HEADER, "unknown");
 
-        final BlobRef blobRef = storage.createBlob(content.openInputStream(), headers);
+        final BlobRef blobRef = tx.createBlob(content.openInputStream(), headers);
 
         asset.setProperty(BLOB_REF_PROPERTY, blobRef.toString());
         if (content.getContentType() != null) {
@@ -105,7 +104,7 @@ public class RawStorageFacetImpl
           asset.setProperty(LAST_MODIFIED_PROPERTY, new Date(lastModified.getMillis()));
         }
 
-        return marshall(asset, storage.getBlob(blobRef));
+        return marshall(asset, tx.getBlob(blobRef));
       }
     });
   }
@@ -117,14 +116,14 @@ public class RawStorageFacetImpl
 
   private static interface GraphOperation
   {
-    Object execute(GraphTx graph, final StorageFacet storage) throws IOException;
+    Object execute(StorageTx tx) throws IOException;
   }
 
   private Object inTx(GraphOperation operation) throws IOException {
     final StorageFacet storage = getStorage();
-    try (GraphTx graph = storage.getGraphTx()) {
-      final Object result = operation.execute(graph, storage);
-      graph.commit();
+    try (StorageTx tx = storage.openTx()) {
+      final Object result = operation.execute(tx);
+      tx.commit();
       return result;
     }
   }
@@ -177,19 +176,15 @@ public class RawStorageFacetImpl
     public DeleteAsset(final String path) {this.path = path;}
 
     @Override
-    public Object execute(final GraphTx graph, final StorageFacet storage) {
-      final Vertex asset = storage.findAssetWithProperty(graph, P_PATH, path, storage.getBucket(graph));
+    public Object execute(final StorageTx tx) {
+      final Vertex asset = tx.findAssetWithProperty(P_PATH, path, tx.getBucket());
       if (asset == null) {
         return false;
       }
 
-      final BlobRef blobRef = getBlobRef(path, asset);
-      final boolean delete = storage.deleteBlob(blobRef);
-      if (!delete) {
-        log.warn("Deleted asset {} referenced missing blob {}", path, blobRef);
-      }
+      tx.deleteBlob(getBlobRef(path, asset));
 
-      storage.deleteVertex(graph, asset);
+      tx.deleteVertex(asset);
 
       return true;
     }
