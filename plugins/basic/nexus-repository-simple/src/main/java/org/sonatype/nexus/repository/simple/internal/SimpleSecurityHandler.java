@@ -12,8 +12,6 @@
  */
 package org.sonatype.nexus.repository.simple.internal;
 
-import java.util.Arrays;
-
 import javax.annotation.Nonnull;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -57,7 +55,9 @@ public class SimpleSecurityHandler
     Repository repository = context.getRepository();
     String formatPerm = RepositoryFormatPrivilegeDescriptor.permission(repository.getFormat().getValue(), action);
     String instancePerm = RepositoryInstancePrivilegeDescriptor.permission(repository.getName(), action);
-    if (anyPermitted(subject, formatPerm, instancePerm)) {
+
+    SimpleSecurityFacet securityFacet = repository.facet(SimpleSecurityFacet.class);
+    if (securityFacet.anyPermitted(subject, formatPerm, instancePerm)) {
       // TODO: Handle security exception
       return context.proceed();
     }
@@ -87,54 +87,5 @@ public class SimpleSecurityHandler
     }
 
     throw new RuntimeException("Unsupported action: " + request.getAction());
-  }
-
-  /**
-   * Check if subject has ANY of the given permissions.
-   */
-  private boolean anyPermitted(final Subject subject, final String... permissions) {
-    boolean trace = log.isTraceEnabled();
-    if (trace) {
-      log.trace("Checking if subject '{}' has ANY of these permissions: {}",
-          subject.getPrincipal(), Arrays.toString(permissions));
-    }
-    for (String permission : permissions) {
-      if (subject.isPermitted(permission)) {
-        if (trace) {
-          log.trace("Subject '{}' has permission: {}", subject.getPrincipal(), permission);
-        }
-        return true;
-      }
-    }
-    if (trace) {
-      log.trace("Subject '{}' missing required permissions: {}",
-          subject.getPrincipal(), Arrays.toString(permissions));
-    }
-    return false;
-  }
-
-  /**
-   * Check if subject has ALL of the given permissions.
-   */
-  private boolean allPermitted(final Subject subject, final String... permissions) {
-    boolean trace = log.isTraceEnabled();
-    if (trace) {
-      log.trace("Checking if subject '{}' has ALL of these permissions: {}",
-          subject.getPrincipal(), Arrays.toString(permissions));
-    }
-    for (String permission : permissions) {
-      if (!subject.isPermitted(permission)) {
-        if (trace) {
-          log.trace("Subject '{}' missing permission: {}", subject.getPrincipal(), permission);
-        }
-        return false;
-      }
-    }
-
-    if (trace) {
-      log.trace("Subject '{}' has required permissions: {}",
-          subject.getPrincipal(), Arrays.toString(permissions));
-    }
-    return false;
   }
 }

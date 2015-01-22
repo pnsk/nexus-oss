@@ -66,6 +66,7 @@ public class GroupFacetImpl
   }
 
   @Override
+  @Guarded(by = STARTED)
   public boolean member(final Repository repository) {
     checkNotNull(repository);
     return memberNames.contains(repository.getName());
