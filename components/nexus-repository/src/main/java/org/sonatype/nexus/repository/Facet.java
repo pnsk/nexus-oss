@@ -10,6 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.repository;
 
 import java.lang.annotation.Documented;
@@ -26,16 +27,48 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 public interface Facet
 {
+  /**
+   * Initialize facet.
+   *
+   * Called when facet is first created, either from new repository creation or repository restored from persistent
+   * storage on startup.
+   */
   void init(Repository repository) throws Exception;
 
+  /**
+   * Update facet.
+   *
+   * Called when repository configuration has changed.
+   */
   void update() throws Exception;
 
+  /**
+   * Start facet.
+   *
+   * Facet has been previously initialized or updated.
+   */
   void start() throws Exception;
 
+  /**
+   * Stop facet.
+   *
+   * Facet was previously started.
+   */
   void stop() throws Exception;
 
+  /**
+   * Delete facet.
+   *
+   * Allows facet to cope with contained repository being deleted and clean up persistent knowledge about the repository
+   * or its contents.
+   */
   void delete() throws Exception;
 
+  /**
+   * Destroy facet.
+   *
+   * Allows facet to clean up resources.  This is not the same as {@link #delete}.
+   */
   void destroy() throws Exception;
 
   /**

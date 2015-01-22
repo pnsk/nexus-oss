@@ -23,28 +23,80 @@ import org.sonatype.nexus.repository.config.Configuration;
  */
 public interface Repository
 {
+  /**
+   * Returns the type of the repository.
+   */
   Type getType();
 
+  /**
+   * Returns the format of the repository.
+   */
   Format getFormat();
 
+  /**
+   * Returns the unique name of the repository.
+   */
   String getName();
 
+  /**
+   * Initialize the repository.
+   *
+   * Called when a new repository is created or a repository is restored from persistent storage on startup.
+   */
   void init(Configuration configuration) throws Exception;
 
+  /**
+   * Update the repository.
+   *
+   * Called when the repository configuration changes.  Repository has already been initialized.
+   */
   void update(Configuration configuration) throws Exception;
 
+  /**
+   * Start the repository.
+   *
+   * Repository has already been initialized or updated.
+   */
   void start() throws Exception;
 
+  /**
+   * Stop the repository.
+   *
+   * Repository must have been previously started.
+   */
   void stop() throws Exception;
 
+  /**
+   * Delete the repository and remove all persistent knowledge about repository and its contents.
+   *
+   * Repository must have been previously stopped.
+   */
   void delete() throws Exception;
 
+  /**
+   * Destroy the repository.
+   *
+   * This is a cleanup hook and different than {@link #delete}.
+   */
   void destroy() throws Exception;
 
+  /**
+   * Returns the configuration entity for the repository.
+   */
   Configuration getConfiguration();
 
+  /**
+   * Attach a facet to the repository.
+   *
+   * Facet must be initialized.
+   */
   void attach(Facet facet) throws Exception;
 
+  /**
+   * Returns a facet instance for the given type.
+   *
+   * @throws MissingFacetException  Request facet type was not previously attached.
+   */
   @Nonnull
   <T extends Facet> T facet(Class<T> type) throws MissingFacetException;
 }
