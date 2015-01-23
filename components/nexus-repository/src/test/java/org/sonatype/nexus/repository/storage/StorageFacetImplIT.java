@@ -16,6 +16,7 @@ package org.sonatype.nexus.repository.storage;
 import java.util.List;
 import java.util.Map;
 
+import org.sonatype.nexus.blobstore.api.BlobStore;
 import org.sonatype.nexus.blobstore.api.BlobStoreManager;
 import org.sonatype.nexus.orient.DatabaseInstanceRule;
 import org.sonatype.nexus.repository.Repository;
@@ -39,6 +40,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_PATH;
@@ -59,8 +61,10 @@ public class StorageFacetImplIT
 
   @Before
   public void setUp() throws Exception {
+    BlobStoreManager mockBlobStoreManager = mock(BlobStoreManager.class);
+    when(mockBlobStoreManager.get(anyString())).thenReturn(mock(BlobStore.class));
     underTest = new StorageFacetImpl(
-        mock(BlobStoreManager.class),
+        mockBlobStoreManager,
         Providers.of(database.getInstance())
     );
     underTest.installDependencies(mock(EventBus.class));
