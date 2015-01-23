@@ -89,6 +89,11 @@ public class RepositoryPathTest
   }
 
   @Test
+  public void sillySlashes() {
+    assertPath("/repo/foo/////bar/baz", "repo", "/foo/bar/baz");
+  }
+
+  @Test
   public void pathWithQuery() {
     assertPath("/repo/foo/bar/baz?a=b", "repo", "/foo/bar/baz?a=b");
   }
