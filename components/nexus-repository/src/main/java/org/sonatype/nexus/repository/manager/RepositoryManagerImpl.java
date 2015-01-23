@@ -230,6 +230,7 @@ public class RepositoryManagerImpl
   @Guarded(by = STARTED)
   public Repository create(final Configuration configuration) throws Exception {
     checkNotNull(configuration);
+    checkNotNull(configuration.getRepositoryName());
 
     log.debug("Creating repository: {}", configuration);
 
@@ -250,6 +251,7 @@ public class RepositoryManagerImpl
   @Guarded(by = STARTED)
   public Repository update(final Configuration configuration) throws Exception {
     checkNotNull(configuration);
+    checkNotNull(configuration.getRepositoryName());
 
     log.debug("Updating repository: {}", configuration);
 
