@@ -66,6 +66,19 @@ public class RepositoryPathTest
   }
 
   @Test
+  public void repoDots() {
+    // repository name can not be a . or ..
+    assertNullPath("/./");
+    assertNullPath("/../");
+  }
+
+  @Test
+  public void repoAndRootPath() {
+    // allow root path
+    assertPath("/repo/", "repo", "/");
+  }
+
+  @Test
   public void repoAndSimplePath() {
     assertPath("/repo/path", "repo", "/path");
   }

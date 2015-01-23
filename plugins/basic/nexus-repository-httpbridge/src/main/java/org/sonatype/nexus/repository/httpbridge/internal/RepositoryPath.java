@@ -77,6 +77,10 @@ class RepositoryPath
     }
 
     String repo = input.substring(1, i);
+    if (repo.equals(".") || repo.equals("..")) {
+      return null;
+    }
+
     String path = normalize(input.substring(i, input.length()));
 
     // if normalization succeeded return success
@@ -92,6 +96,11 @@ class RepositoryPath
 
   @Nullable
   private static String normalize(final String input) {
+    // root path
+    if (input.equals("/")) {
+      return input;
+    }
+
     // Parts stack
     LinkedList<String> parts = Lists.newLinkedList();
 
