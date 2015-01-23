@@ -23,16 +23,15 @@ import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
 import org.sonatype.nexus.blobstore.api.BlobStore;
 import org.sonatype.nexus.repository.FacetSupport;
+import org.sonatype.nexus.repository.negativecache.NegativeCacheKey;
+import org.sonatype.nexus.repository.negativecache.NegativeCacheKeySource;
 import org.sonatype.nexus.repository.raw.RawContent;
-import org.sonatype.nexus.repository.raw.internal.negativecache.NegativeCacheKey;
-import org.sonatype.nexus.repository.raw.internal.negativecache.NegativeCacheKeySource;
 import org.sonatype.nexus.repository.raw.internal.proxy.Locator;
 import org.sonatype.nexus.repository.raw.internal.proxy.LocatorFacet;
 import org.sonatype.nexus.repository.storage.StorageFacet;
 import org.sonatype.nexus.repository.storage.StorageTx;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher;
-import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher.State;
 
 import com.google.common.collect.ImmutableMap;
 import com.tinkerpop.blueprints.Vertex;
@@ -176,7 +175,7 @@ public class RawStorageFacetImpl
           '}';
     }
   }
-  
+
   @Override
   public NegativeCacheKey cacheKey(final Context context) {
     return new NegativeCacheKey(context.getRequest().getPath());

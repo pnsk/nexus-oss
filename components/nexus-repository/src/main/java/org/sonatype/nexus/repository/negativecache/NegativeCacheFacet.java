@@ -10,21 +10,29 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.raw.internal.negativecache;
+package org.sonatype.nexus.repository.negativecache;
 
 import org.sonatype.nexus.repository.Facet;
-import org.sonatype.nexus.repository.view.Context;
 
 /**
- * Implement this facet to provide a format-appropriate cache key for the NFC.
- *
- * Some formats may care about the path alone, for others, query path is meaningful and implies distinct cache entries.
- *
  * @since 3.0
  */
 @Facet.Exposed
-public interface NegativeCacheKeySource
+public interface NegativeCacheFacet
     extends Facet
 {
-  NegativeCacheKey cacheKey(Context context);
+  /**
+   * Indicate that the item is not found
+   */
+  void cacheNotFound(NegativeCacheKey key);
+
+  /**
+   * Test if the item was marked as not found within the cache expiry time.
+   */
+  boolean isNotFound(NegativeCacheKey key);
+
+  /**
+   * The item has been found, so clear away any record that the item can't be found.
+   */
+  void uncacheNotFound(NegativeCacheKey key);
 }

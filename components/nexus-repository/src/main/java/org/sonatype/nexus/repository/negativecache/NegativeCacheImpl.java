@@ -10,29 +10,30 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.raw.internal.negativecache;
+package org.sonatype.nexus.repository.negativecache;
 
-import org.sonatype.nexus.repository.Facet;
+import org.sonatype.nexus.repository.FacetSupport;
 
 /**
  * @since 3.0
  */
-@Facet.Exposed
-public interface NegativeCacheFacet
-    extends Facet
+public class NegativeCacheImpl
+    extends FacetSupport
+    implements NegativeCacheFacet
 {
-  /**
-   * Indicate that the item is not found
-   */
-  void cacheNotFound(NegativeCacheKey key);
+  @Override
+  public void cacheNotFound(final NegativeCacheKey key) {
+    // TODO: implement
+  }
 
-  /**
-   * Test if the item was marked as not found within the cache expiry time.
-   */
-  boolean isNotFound(NegativeCacheKey key);
+  @Override
+  public boolean isNotFound(final NegativeCacheKey key) {
+    // TODO: implement
+    return false;
+  }
 
-  /**
-   * The item has been found, so clear away any record that the item can't be found.
-   */
-  void uncacheNotFound(NegativeCacheKey key);
+  @Override
+  public void uncacheNotFound(final NegativeCacheKey key) {
+    // TODO: implement
+  }
 }
