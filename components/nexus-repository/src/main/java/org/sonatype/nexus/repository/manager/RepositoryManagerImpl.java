@@ -230,11 +230,11 @@ public class RepositoryManagerImpl
   @Guarded(by = STARTED)
   public Repository create(final Configuration configuration) throws Exception {
     checkNotNull(configuration);
-    checkNotNull(configuration.getRepositoryName());
+    String repositoryName = checkNotNull(configuration.getRepositoryName());
 
-    log.debug("Creating repository: {}", configuration);
+    log.debug("Creating repository: {} -> {}", repositoryName, configuration);
 
-    securityHelper.ensurePermitted(permission(configuration.getRepositoryName(), ADD));
+    securityHelper.ensurePermitted(permission(repositoryName, ADD));
     store.create(configuration);
     Repository repository = newRepository(configuration);
     securityResource.add(repository);
@@ -251,12 +251,12 @@ public class RepositoryManagerImpl
   @Guarded(by = STARTED)
   public Repository update(final Configuration configuration) throws Exception {
     checkNotNull(configuration);
-    checkNotNull(configuration.getRepositoryName());
+    String repositoryName = checkNotNull(configuration.getRepositoryName());
 
-    log.debug("Updating repository: {}", configuration);
+    log.debug("Updating repository: {} -> {}", repositoryName, configuration);
 
-    securityHelper.ensurePermitted(permission(configuration.getRepositoryName(), EDIT));
-    Repository repository = repository(configuration.getRepositoryName());
+    securityHelper.ensurePermitted(permission(repositoryName, EDIT));
+    Repository repository = repository(repositoryName);
 
     // TODO: Ensure configuration sanity, before we apply to repository
     repository.stop();
