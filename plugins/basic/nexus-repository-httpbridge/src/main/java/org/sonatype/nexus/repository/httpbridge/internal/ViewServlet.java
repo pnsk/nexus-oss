@@ -114,7 +114,7 @@ public class ViewServlet
     // resolve repository for request
     RepositoryPath path = path(httpRequest);
     if (path == null) {
-      send(HttpResponses.notFound("Repository not found"), httpResponse);
+      send(HttpResponses.badRequest("Invalid repository path"), httpResponse);
       return;
     }
     log.debug("Parsed path: {}", path);
