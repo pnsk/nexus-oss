@@ -53,6 +53,7 @@ class YumPackage
   List<Entry> obsoletes
 
   List<File> files
+  List<ChangeLog> changes
 
   @ToString(includePackage = false, includeNames = true)
   static class Entry {
@@ -73,6 +74,13 @@ class YumPackage
 
   static enum FileType {
     file, dir, ghost
+  }
+
+  @ToString(includePackage = false, includeNames = true)
+  static class ChangeLog {
+    String author
+    int date
+    String text
   }
 
 }

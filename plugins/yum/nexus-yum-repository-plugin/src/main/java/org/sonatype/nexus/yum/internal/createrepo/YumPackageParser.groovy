@@ -72,7 +72,8 @@ class YumPackageParser
             requires: parseDeps(header, HeaderTag.REQUIRENAME, HeaderTag.REQUIREVERSION, HeaderTag.REQUIREFLAGS),
             conflicts: parseDeps(header, HeaderTag.CONFLICTNAME, HeaderTag.CONFLICTVERSION, HeaderTag.CONFLICTFLAGS),
             obsoletes: parseDeps(header, HeaderTag.OBSOLETENAME, HeaderTag.OBSOLETEVERSION, HeaderTag.OBSOLETEFLAGS),
-            files: parseFiles(header)
+            files: parseFiles(header),
+            changes: parseChanges(header)
         )
       }
     }
@@ -135,6 +136,24 @@ class YumPackageParser
       )
     }
     return provides
+  }
+
+  def parseChanges(final Header header) {
+    def changes = []
+    def names = header.getEntry(HeaderTag.CHANGELOGNAME)?.values
+    if (!names) {
+      return null
+    }
+    def dates = header.getEntry(HeaderTag.CHANGELOGTIME)?.values
+    def texts = header.getEntry(HeaderTag.CHANGELOGTEXT)?.values
+    names.eachWithIndex { name, i ->
+      changes << new YumPackage.ChangeLog(
+          author: names[i],
+          date: dates[i],
+          text: texts[i]
+      )
+    }
+    return changes
   }
 
   def parseVersion(final String fullVersion) {
