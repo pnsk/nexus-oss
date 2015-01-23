@@ -127,6 +127,7 @@ Ext.define('NX.coreui.controller.Privileges', {
       me.getFeature().setItemClass(1, NX.Icons.cls('privilege-' + model.get('type'), 'x16'));
 
       info[NX.I18n.get('ADMIN_PRIVILEGES_SUMMARY_ID')] = model.getId();
+      info[NX.I18n.get('ADMIN_PRIVILEGES_SUMMARY_TYPE')] = model.get('type');
       info[NX.I18n.get('ADMIN_PRIVILEGES_SUMMARY_NAME')] = model.get('name');
       info[NX.I18n.get('ADMIN_PRIVILEGES_SUMMARY_DESCRIPTION')] = model.get('description');
       info[NX.I18n.get('ADMIN_PRIVILEGES_SUMMARY_PERMISSION')] = model.get('permission');
