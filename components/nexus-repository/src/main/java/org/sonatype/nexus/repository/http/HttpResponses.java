@@ -34,8 +34,6 @@ import static org.sonatype.nexus.repository.http.HttpStatus.NO_CONTENT;
 import static org.sonatype.nexus.repository.http.HttpStatus.OK;
 import static org.sonatype.nexus.repository.http.HttpStatus.UNAUTHORIZED;
 
-// TODO: Consider a builder model instead, may be easier to expose more flexibility in terms of custom responses?
-
 /**
  * Convenience methods for constructing various commonly used HTTP responses.
  *
@@ -91,20 +89,32 @@ public class HttpResponses
 
   // Bad request: 400
 
+  public static Response badRequest(final @Nullable String message) {
+    return new Response(Status.failure(BAD_REQUEST, message));
+  }
+
   public static Response badRequest() {
-    return new Response(Status.failure(BAD_REQUEST));
+    return badRequest(null);
   }
 
   // Unauthorized: 401
 
+  public static Response unauthorized(final @Nullable String message) {
+    return new Response(Status.failure(UNAUTHORIZED, message));
+  }
+
   public static Response unauthorized() {
-    return new Response(Status.failure(UNAUTHORIZED));
+    return unauthorized(null);
   }
 
   // Forbidden: 403
 
+  public static Response forbidden(final @Nullable String message) {
+    return new Response(Status.failure(FORBIDDEN, message));
+  }
+
   public static Response forbidden() {
-    return new Response(Status.failure(FORBIDDEN));
+    return forbidden(null);
   }
 
   // Method not allowed: 405
