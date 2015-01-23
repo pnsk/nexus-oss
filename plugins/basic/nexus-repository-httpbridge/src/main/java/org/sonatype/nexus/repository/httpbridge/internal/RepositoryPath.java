@@ -12,10 +12,12 @@
  */
 package org.sonatype.nexus.repository.httpbridge.internal;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.LinkedList;
 
 import javax.annotation.Nullable;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 /**
  * A utility class for parsing the repository name and remaining path out of a request URI.
@@ -53,21 +55,79 @@ class RepositoryPath
   // Parser
   //
 
-  // FIXME: Simplify/optimize parsing, and normalize remaining path
-
-  private static final Pattern PATTERN = Pattern.compile("/?([^/]*)(.*)");
-
   /**
    * @return The parsed path or {@code null}
    */
   @Nullable
-  public static RepositoryPath parse(final @Nullable String path) {
+  public static RepositoryPath parse(final @Nullable String input) {
+    // input not be null or empty
+    if (input == null || input.isEmpty()) {
+      return null;
+    }
+
+    // input must start with '/'
+    if (!(input.charAt(0) == '/')) {
+      return null;
+    }
+
+    // input must have another '/' after initial '/'
+    int i = input.indexOf('/', 1);
+    if (i == -1) {
+      return null;
+    }
+
+    String repo = input.substring(1, i);
+    String path = normalize(input.substring(i, input.length()));
+
+    // if normalization suceeded return success
     if (path != null) {
-      Matcher matcher = PATTERN.matcher(path);
-      if (matcher.matches()) {
-        return new RepositoryPath(matcher.group(1), matcher.group(2));
+      return new RepositoryPath(repo, path);
+    }
+
+    // otherwise path is invalid
+    return null;
+  }
+
+  private static Splitter splitter = Splitter.on('/');
+
+  @Nullable
+  private static String normalize(final String input) {
+    // if input contains no dots return asis
+    if (input.indexOf('.') == -1) {
+      return input;
+    }
+
+    // Parts stack
+    LinkedList<String> parts = Lists.newLinkedList();
+
+    // split up string into parts, ignoring first '/'
+    for (String part : splitter.split(input.substring(1, input.length()))) {
+      if (part.isEmpty()) {
+        // empty parts not allowed (ie. // bad)
+        return null;
+      }
+      else if (part.equals(".")) {
+        // skip
+        continue;
+      }
+      else if (part.equals("..")) {
+        // past stack abort
+        if (parts.isEmpty()) {
+          return null;
+        }
+        parts.pop();
+      }
+      else {
+        parts.add(part);
       }
     }
-    return null;
+
+    // rebuild path from normalized parts
+    StringBuilder buff = new StringBuilder();
+    for (String part : parts) {
+      buff.append('/');
+      buff.append(part);
+    }
+    return buff.toString();
   }
 }
