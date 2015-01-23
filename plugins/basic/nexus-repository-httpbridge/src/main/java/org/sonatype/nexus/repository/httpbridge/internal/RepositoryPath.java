@@ -75,6 +75,8 @@ class RepositoryPath
 
     // pull off repository-name part
     String repo = input.substring(1, i);
+
+    // repository must not be a relative token
     if (repo.equals(".") || repo.equals("..")) {
       return null;
     }
@@ -82,6 +84,8 @@ class RepositoryPath
     // pull off remaining-path part and normalize
     String path = input.substring(i, input.length());
     path = URI.create(path).normalize().toString();
+
+    // path must not contain any relative tokens
     if (path.contains("/..")) {
       return null;
     }
