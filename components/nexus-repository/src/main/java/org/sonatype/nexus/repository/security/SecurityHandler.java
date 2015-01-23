@@ -47,9 +47,8 @@ public class SecurityHandler
       try {
         return context.proceed();
       }
-      catch (AuthorizationException e) {
-        // TODO: handle legacy sonatype-exception too?
-        return HttpResponses.unauthorized();
+      catch (AuthorizationException | org.sonatype.security.authorization.AuthorizationException e) {
+        log.trace("Not authorized", e);
       }
     }
 
