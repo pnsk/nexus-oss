@@ -12,12 +12,9 @@
  */
 package org.sonatype.nexus.repository.httpbridge.internal;
 
-import java.util.LinkedList;
+import java.net.URI;
 
 import javax.annotation.Nullable;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 
 /**
  * A utility class for parsing the repository name and remaining path out of a request URI.
@@ -76,62 +73,19 @@ class RepositoryPath
       return null;
     }
 
+    // pull off repository-name part
     String repo = input.substring(1, i);
     if (repo.equals(".") || repo.equals("..")) {
       return null;
     }
 
-    String path = normalize(input.substring(i, input.length()));
-
-    // if normalization succeeded return success
-    if (path != null) {
-      return new RepositoryPath(repo, path);
+    // pull off remaining-path part and normalize
+    String path = input.substring(i, input.length());
+    path = URI.create(path).normalize().toString();
+    if (path.contains("/..")) {
+      return null;
     }
 
-    // otherwise path is invalid
-    return null;
-  }
-
-  private static final Splitter splitter = Splitter.on('/');
-
-  @Nullable
-  private static String normalize(final String input) {
-    // root path
-    if (input.equals("/")) {
-      return input;
-    }
-
-    // Parts stack
-    LinkedList<String> parts = Lists.newLinkedList();
-
-    // split up string into parts, ignoring first '/'
-    for (String part : splitter.split(input.substring(1, input.length()))) {
-      if (part.isEmpty()) {
-        // empty parts not allowed (ie. // bad)
-        return null;
-      }
-      else if (part.equals(".")) {
-        // skip
-        continue;
-      }
-      else if (part.equals("..")) {
-        // past stack abort
-        if (parts.isEmpty()) {
-          return null;
-        }
-        parts.pop();
-      }
-      else {
-        parts.add(part);
-      }
-    }
-
-    // rebuild path from normalized parts
-    StringBuilder buff = new StringBuilder();
-    for (String part : parts) {
-      buff.append('/');
-      buff.append(part);
-    }
-    return buff.toString();
+    return new RepositoryPath(repo, path);
   }
 }
