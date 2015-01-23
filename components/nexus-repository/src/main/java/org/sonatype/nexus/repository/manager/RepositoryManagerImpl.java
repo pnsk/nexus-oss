@@ -36,6 +36,7 @@ import org.sonatype.sisu.goodies.eventbus.EventBus;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import org.apache.shiro.subject.Subject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -203,11 +204,13 @@ public class RepositoryManagerImpl
   @Override
   @Guarded(by = STARTED)
   public Iterable<Repository> browse() {
+    // lookup subject to avoid re-resolving this for each item in the list
+    final Subject subject = securityHelper.subject();
     return Iterables.filter(repositories.values(), new Predicate<Repository>()
     {
       @Override
       public boolean apply(final Repository input) {
-        return securityHelper.allPermitted(permission(input.getName(), BROWSE));
+        return securityHelper.allPermitted(subject, permission(input.getName(), BROWSE));
       }
     });
   }

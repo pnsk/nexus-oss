@@ -20,7 +20,6 @@ import javax.inject.Singleton;
 
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
-import com.google.common.annotations.VisibleForTesting;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
@@ -43,8 +42,7 @@ public class SecurityHelper
   /**
    * Returns current subject.
    */
-  @VisibleForTesting
-  Subject subject() {
+  public Subject subject() {
     return SecurityUtils.getSubject();
   }
 
