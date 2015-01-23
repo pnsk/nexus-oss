@@ -30,19 +30,19 @@ class YumPackage
   String summary
   String description
   String url
-  int time_file
-  int time_build
+  Integer time_file
+  Integer time_build
   String rpm_license
   String rpm_vendor
   String rpm_group
   String rpm_buildhost
   String rpm_sourcerpm
-  int rpm_header_start
-  int rpm_header_end
+  Integer rpm_header_start
+  Integer rpm_header_end
   String rpm_packager
-  int size_package
-  int size_installed
-  int size_archive
+  Integer size_package
+  Integer size_installed
+  Integer size_archive
   String location_href
   String location_base
   String checksum_type
@@ -58,7 +58,7 @@ class YumPackage
   @ToString(includePackage = false, includeNames = true)
   static class Entry {
     String name
-    int flags
+    Integer flags
     String epoch
     String version
     String release
@@ -79,7 +79,7 @@ class YumPackage
   @ToString(includePackage = false, includeNames = true)
   static class ChangeLog {
     String author
-    int date
+    Integer date
     String text
   }
 

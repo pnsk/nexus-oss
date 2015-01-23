@@ -119,13 +119,9 @@ class YumPackageParser
     def versions = header.getEntry(versionTag)?.values
     def flags = header.getEntry(flagsTag)?.values
     names.eachWithIndex { name, i ->
-      def epoch = null, version = null, release = null, flag = null
-      if (versions) {
-        (epoch, version, release) = parseVersion(versions[i])
-      }
-      if (flags) {
-        flag = flags[i]
-      }
+      def epoch, version, release
+      (epoch, version, release) = parseVersion(versions[i])
+      def flag = flags[i]
       provides << new YumPackage.Entry(
           name: name,
           epoch: epoch,
