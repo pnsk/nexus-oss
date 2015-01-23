@@ -168,11 +168,18 @@ public class AttributesMap
   }
 
   /**
+   * Allow customization of missing key message.
+   */
+  protected String missingKeyMessage(final String key) {
+    return "Missing: " + key;
+  }
+
+  /**
    * Get required attribute value for given key.
    */
   public Object require(final String key) {
     Object value = get(key);
-    checkState(value != null, "Missing: %s", key);
+    checkState(value != null, missingKeyMessage(key));
     return value;
   }
 
@@ -181,7 +188,7 @@ public class AttributesMap
    */
   public <T> T require(final Class<T> type) {
     T value = get(type);
-    checkState(value != null, "Missing: %s", AttributeKey.get(type));
+    checkState(value != null, missingKeyMessage(AttributeKey.get(type)));
     return value;
   }
 
