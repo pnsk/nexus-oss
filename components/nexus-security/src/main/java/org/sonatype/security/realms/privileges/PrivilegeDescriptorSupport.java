@@ -10,7 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.security;
+package org.sonatype.security.realms.privileges;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,15 +19,12 @@ import javax.annotation.Nullable;
 
 import org.sonatype.configuration.validation.ValidationResponse;
 import org.sonatype.security.model.CPrivilege;
-import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
-import org.sonatype.security.realms.privileges.PrivilegePropertyDescriptor;
 import org.sonatype.security.realms.validator.SecurityValidationContext;
 
 import com.google.common.base.Strings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-// TODO: Move to proper module
 // NOTE: Not using existing AbstractPrivilegeDescriptor to investigate divorcing from legacy
 
 /**
@@ -81,7 +78,7 @@ public abstract class PrivilegeDescriptorSupport
   @Nullable
   public String buildPermission(final CPrivilege privilege) {
     // FIXME: This is a poor design, this check should be done by caller?
-    if (!getType().equals(privilege.getType())) {
+    if (!type.equals(privilege.getType())) {
       return null;
     }
 

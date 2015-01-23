@@ -19,6 +19,7 @@ import javax.inject.Singleton;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.model.CPrivilegeBuilder;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
+import org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport;
 
 // TODO: Do we need this, or would nexus:repository-instance:*:<actions> cover this as well?
 
