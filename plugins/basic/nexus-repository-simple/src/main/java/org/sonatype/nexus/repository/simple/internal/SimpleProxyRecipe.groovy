@@ -18,6 +18,8 @@ import org.sonatype.nexus.repository.Repository
 import org.sonatype.nexus.repository.Type
 import org.sonatype.nexus.repository.http.HttpHandlers
 import org.sonatype.nexus.repository.httpclient.HttpClientFacet
+import org.sonatype.nexus.repository.negativecache.NegativeCacheHandler
+import org.sonatype.nexus.repository.negativecache.NegativeCacheImpl
 import org.sonatype.nexus.repository.security.SecurityHandler
 import org.sonatype.nexus.repository.types.ProxyType
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet
@@ -64,10 +66,16 @@ class SimpleProxyRecipe
   Provider<SimpleProxyFacet> proxyFacet
 
   @Inject
+  Provider<NegativeCacheImpl> negativeCacheFacet
+
+  @Inject
   TimingHandler timingHandler
 
   @Inject
   SecurityHandler securityHandler
+
+  @Inject
+  NegativeCacheHandler negativeCacheHandler
 
   @Inject
   SimpleIndexHtmlHandler indexHtmlHandler
@@ -88,6 +96,7 @@ class SimpleProxyRecipe
     repository.attach(configure(viewFacet.get()))
     repository.attach(indexHtmlFacet.get())
     repository.attach(httpClientFacet.get())
+    repository.attach(negativeCacheFacet.get())
     repository.attach(proxyFacet.get())
   }
 
@@ -110,6 +119,7 @@ class SimpleProxyRecipe
         .matcher(new TokenMatcher('/{name:.+}'))
         .handler(timingHandler)
         .handler(securityHandler)
+        .handler(negativeCacheHandler)
         .handler(proxyHandler)
         .create())
 
