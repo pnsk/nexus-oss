@@ -36,4 +36,6 @@ public class HttpMethods
   public static final String TRACE = "TRACE";
 
   public static final String CONNECT = "CONNECT";
+
+  public static final String PATCH = "PATCH";
 }
