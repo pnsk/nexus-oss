@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
 import org.sonatype.nexus.blobstore.api.BlobStore;
-import org.sonatype.nexus.blobstore.api.BlobStoreManager;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
 import com.google.common.collect.Sets;
@@ -37,21 +36,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 class BlobTx
   extends ComponentSupport
 {
-  private final BlobStoreManager blobStoreManager;
-
-  private final String blobkStoreId;
+  private final BlobStore blobStore;
 
   private final Set<BlobRef> newlyCreatedBlobs = Sets.newHashSet();
 
   private final Set<BlobRef> deletionRequests = Sets.newHashSet();
 
-  public BlobTx(final BlobStoreManager blobStoreManager, final String blobStoreId) {
-    this.blobStoreManager = checkNotNull(blobStoreManager);
-    this.blobkStoreId = checkNotNull(blobStoreId);
+  public BlobTx(final BlobStore blobStore) {
+    this.blobStore = checkNotNull(blobStore);
   }
 
   public BlobRef create(InputStream inputStream, Map<String, String> headers) {
-    Blob blob = blobStore().create(inputStream, headers);
+    Blob blob = blobStore.create(inputStream, headers);
     BlobRef blobRef = new BlobRef("NODE", "STORE", blob.getId().asUniqueString());
     newlyCreatedBlobs.add(blobRef);
     return blobRef;
@@ -59,7 +55,7 @@ class BlobTx
 
   @Nullable
   public Blob get(BlobRef blobRef) {
-    return blobStore().get(blobRef.getBlobId());
+    return blobStore.get(blobRef.getBlobId());
   }
 
   public void delete(BlobRef blobRef) {
@@ -79,7 +75,7 @@ class BlobTx
   private void doDeletions(Set<BlobRef> blobRefs, String failureMessage) {
     for (BlobRef blobRef : blobRefs) {
       try {
-        blobStore().delete(blobRef.getBlobId());
+        blobStore.delete(blobRef.getBlobId());
       }
       catch (Throwable t) {
         log.warn(failureMessage, t, blobRef);
@@ -90,9 +86,5 @@ class BlobTx
   private void clearState() {
     newlyCreatedBlobs.clear();
     deletionRequests.clear();
-  }
-
-  private BlobStore blobStore() {
-    return blobStoreManager.get(blobkStoreId);
   }
 }

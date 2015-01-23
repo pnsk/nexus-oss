@@ -10,6 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.repository.storage;
 
 import javax.annotation.Nullable;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import org.sonatype.nexus.blobstore.api.BlobStore;
 import org.sonatype.nexus.blobstore.api.BlobStoreManager;
 import org.sonatype.nexus.common.stateguard.Guarded;
 import org.sonatype.nexus.orient.DatabaseInstance;
@@ -43,8 +45,8 @@ import static org.sonatype.nexus.common.stateguard.StateGuardLifecycleSupport.St
  */
 @Named
 public class StorageFacetImpl
-  extends FacetSupport
-  implements StorageFacet
+    extends FacetSupport
+    implements StorageFacet
 {
   private final BlobStoreManager blobStoreManager;
 
@@ -56,7 +58,8 @@ public class StorageFacetImpl
 
   @Inject
   public StorageFacetImpl(final BlobStoreManager blobStoreManager,
-                          final @Named(ComponentDatabase.NAME) Provider<DatabaseInstance> databaseInstanceProvider) {
+                          final @Named(ComponentDatabase.NAME) Provider<DatabaseInstance> databaseInstanceProvider)
+  {
     this.blobStoreManager = checkNotNull(blobStoreManager);
     this.databaseInstanceProvider = checkNotNull(databaseInstanceProvider);
   }
@@ -74,7 +77,8 @@ public class StorageFacetImpl
     // initialize the graph schema if needed
     final CheckedGraphNoTx graph = new CheckedGraphNoTx(databaseInstanceProvider.get().acquire());
     try {
-      initVertexType(graph, V_ASSET, new Predicate<OrientVertexType>() {
+      initVertexType(graph, V_ASSET, new Predicate<OrientVertexType>()
+      {
         @SuppressWarnings("unchecked")
         @Override
         public boolean apply(final OrientVertexType type) {
@@ -83,7 +87,8 @@ public class StorageFacetImpl
           return true;
         }
       });
-      initVertexType(graph, V_BUCKET, new Predicate<OrientVertexType>() {
+      initVertexType(graph, V_BUCKET, new Predicate<OrientVertexType>()
+      {
         @SuppressWarnings("unchecked")
         @Override
         public boolean apply(final OrientVertexType type) {
@@ -107,7 +112,8 @@ public class StorageFacetImpl
     }
   }
 
-  private static class CheckedGraphNoTx extends OrientGraphNoTx
+  private static class CheckedGraphNoTx
+      extends OrientGraphNoTx
   {
     public CheckedGraphNoTx(ODatabaseDocumentTx db) {
       super(db);
@@ -148,9 +154,10 @@ public class StorageFacetImpl
   }
 
   @Override
-  @Guarded(by=STARTED)
+  @Guarded(by = STARTED)
   public StorageTx openTx() {
-    return new StorageTxImpl(new BlobTx(blobStoreManager, blobStoreId), openGraphTx(), bucketId);
+    BlobStore blobStore = blobStoreManager.get(blobStoreId);
+    return new StorageTxImpl(new BlobTx(blobStore), openGraphTx(), bucketId);
   }
 
   private GraphTx openGraphTx() {
