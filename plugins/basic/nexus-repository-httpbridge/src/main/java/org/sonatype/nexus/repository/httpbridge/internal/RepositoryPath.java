@@ -53,6 +53,8 @@ class RepositoryPath
   // Parser
   //
 
+  // FIXME: Simplify/optimize parsing, and normalize remaining path
+
   private static final Pattern PATTERN = Pattern.compile("/?([^/]*)(.*)");
 
   /**
