@@ -12,6 +12,8 @@
  */
 package org.sonatype.nexus.repository.util;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -21,6 +23,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class AttributeKey
 {
+  @VisibleForTesting
+  static final String SUFFIX_SEPARATOR = "#";
+
   public static String get(final Class type) {
     checkNotNull(type);
     return type.getName();
@@ -28,6 +33,6 @@ public class AttributeKey
 
   public static String get(final Class type, final String suffix) {
     checkNotNull(suffix);
-    return get(type) + "#" + suffix;
+    return get(type) + SUFFIX_SEPARATOR + suffix;
   }
 }
