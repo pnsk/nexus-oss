@@ -37,7 +37,7 @@ import org.sonatype.nexus.repository.view.Route;
 import org.sonatype.nexus.repository.view.Router;
 import org.sonatype.nexus.repository.view.ViewFacet;
 import org.sonatype.nexus.repository.view.handlers.TimingHandler;
-import org.sonatype.nexus.repository.view.matchers.AlwaysMatcher;
+import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher;
 
 import com.google.common.collect.Lists;
 
@@ -128,8 +128,7 @@ public class RawProxyRecipe
     // Build the primary route of the raw proxy view
 
     router.route(new Route.Builder()
-            .matcher(new AlwaysMatcher())
-            .handler(timingHandler)
+            .matcher(new TokenMatcher("/{name:.+}"))
             .handler(timingHandler)
             .handler(negativeCacheHandler)
             .handler(proxyHandler)

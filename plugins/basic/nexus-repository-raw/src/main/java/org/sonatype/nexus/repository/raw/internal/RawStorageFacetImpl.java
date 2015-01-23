@@ -31,6 +31,8 @@ import org.sonatype.nexus.repository.raw.internal.proxy.LocatorFacet;
 import org.sonatype.nexus.repository.storage.StorageFacet;
 import org.sonatype.nexus.repository.storage.StorageTx;
 import org.sonatype.nexus.repository.view.Context;
+import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher;
+import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher.State;
 
 import com.google.common.collect.ImmutableMap;
 import com.tinkerpop.blueprints.Vertex;
@@ -132,7 +134,13 @@ public class RawStorageFacetImpl
 
   @Override
   public Locator locator(final Context context) {
-    return new RawLocator(context.getRequest().getPath());
+    // TODO: This is incorrect, it should get the "name" that the TokenParser (see RawProxyRecipe), as this starts
+    // with a leading slash and messes up the proxy's remoteUrl.resolves(name).
+    final TokenMatcher.State require = context.getAttributes().require(TokenMatcher.State.class);
+
+    final String name = require.getTokens().get("name");
+
+    return new RawLocator(name);
   }
 
   /**
