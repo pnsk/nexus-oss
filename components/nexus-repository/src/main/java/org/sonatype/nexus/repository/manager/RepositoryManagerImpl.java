@@ -33,20 +33,12 @@ import org.sonatype.nexus.repository.security.SecurityHelper;
 import org.sonatype.nexus.repository.view.ViewFacet;
 import org.sonatype.sisu.goodies.eventbus.EventBus;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import org.apache.shiro.subject.Subject;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.sonatype.nexus.common.stateguard.StateGuardLifecycleSupport.State.STARTED;
-import static org.sonatype.nexus.repository.security.BreadActions.ADD;
-import static org.sonatype.nexus.repository.security.BreadActions.BROWSE;
-import static org.sonatype.nexus.repository.security.BreadActions.DELETE;
-import static org.sonatype.nexus.repository.security.BreadActions.EDIT;
-import static org.sonatype.nexus.repository.security.BreadActions.READ;
-import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.permission;
 
 /**
  * Default {@link RepositoryManager} implementation.
@@ -201,18 +193,22 @@ public class RepositoryManagerImpl
     repositories.clear();
   }
 
+  // FIXME: Disabling security checks for now, this may not be the right place for these to live
+
   @Override
   @Guarded(by = STARTED)
   public Iterable<Repository> browse() {
-    // lookup subject to avoid re-resolving this for each item in the list
-    final Subject subject = securityHelper.subject();
-    return Iterables.filter(repositories.values(), new Predicate<Repository>()
-    {
-      @Override
-      public boolean apply(final Repository input) {
-        return securityHelper.allPermitted(subject, permission(input.getName(), BROWSE));
-      }
-    });
+    //// lookup subject to avoid re-resolving this for each item in the list
+    //final Subject subject = securityHelper.subject();
+    //return Iterables.filter(repositories.values(), new Predicate<Repository>()
+    //{
+    //  @Override
+    //  public boolean apply(final Repository input) {
+    //    return securityHelper.allPermitted(subject, permission(input.getName(), BROWSE));
+    //  }
+    //});
+
+    return ImmutableList.copyOf(repositories.values());
   }
 
   @Nullable
@@ -221,7 +217,7 @@ public class RepositoryManagerImpl
   public Repository get(final String name) {
     checkNotNull(name);
 
-    securityHelper.ensurePermitted(permission(name, READ));
+    //securityHelper.ensurePermitted(permission(name, READ));
 
     return repositories.get(name);
   }
@@ -234,7 +230,7 @@ public class RepositoryManagerImpl
 
     log.debug("Creating repository: {} -> {}", repositoryName, configuration);
 
-    securityHelper.ensurePermitted(permission(repositoryName, ADD));
+    //securityHelper.ensurePermitted(permission(repositoryName, ADD));
     store.create(configuration);
     Repository repository = newRepository(configuration);
     securityResource.add(repository);
@@ -255,7 +251,7 @@ public class RepositoryManagerImpl
 
     log.debug("Updating repository: {} -> {}", repositoryName, configuration);
 
-    securityHelper.ensurePermitted(permission(repositoryName, EDIT));
+    //securityHelper.ensurePermitted(permission(repositoryName, EDIT));
     Repository repository = repository(repositoryName);
 
     // TODO: Ensure configuration sanity, before we apply to repository
@@ -275,7 +271,7 @@ public class RepositoryManagerImpl
 
     log.debug("Deleting repository: {}", name);
 
-    securityHelper.ensurePermitted(permission(name, DELETE));
+    //securityHelper.ensurePermitted(permission(name, DELETE));
     Repository repository = repository(name);
     Configuration configuration = repository.getConfiguration();
     repository.stop();
