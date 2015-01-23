@@ -25,6 +25,8 @@ import org.sonatype.security.realms.validator.SecurityValidationContext;
 
 import com.google.common.base.Strings;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 // TODO: Move to proper module
 // NOTE: Not using existing AbstractPrivilegeDescriptor to investigate divorcing from legacy
 
@@ -36,6 +38,30 @@ import com.google.common.base.Strings;
 public abstract class PrivilegeDescriptorSupport
   implements PrivilegeDescriptor
 {
+  private final String type;
+
+  public PrivilegeDescriptorSupport(final String type) {
+    this.type = checkNotNull(type);
+  }
+
+  @Override
+  public String getType() {
+    return type;
+  }
+
+  @Override
+  public String getName() {
+    // FIXME: PrivilegeDescriptor.getName() is no longer exposed, but not yet removed
+    return "UNUSED";
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + "{" +
+        "type='" + type + '\'' +
+        '}';
+  }
+
   @Override
   public List<PrivilegePropertyDescriptor> getPropertyDescriptors() {
     // FIXME: These are not presently required, but could still be useful to properly support extensibility in the UI

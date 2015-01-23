@@ -38,14 +38,8 @@ public class RepositoryFormatPrivilegeDescriptor
 
   public static final String P_ACTIONS = "actions";
 
-  @Override
-  public String getType() {
-    return TYPE;
-  }
-
-  @Override
-  public String getName() {
-    return "Repository Format";
+  public RepositoryFormatPrivilegeDescriptor() {
+    super(TYPE);
   }
 
   @Override

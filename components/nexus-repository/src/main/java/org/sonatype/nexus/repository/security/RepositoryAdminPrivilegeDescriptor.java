@@ -36,14 +36,8 @@ public class RepositoryAdminPrivilegeDescriptor
 
   public static final String P_ACTIONS = "actions";
 
-  @Override
-  public String getType() {
-    return TYPE;
-  }
-
-  @Override
-  public String getName() {
-    return "Repository Administration";
+  public RepositoryAdminPrivilegeDescriptor() {
+    super(TYPE);
   }
 
   @Override

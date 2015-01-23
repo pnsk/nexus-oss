@@ -36,14 +36,8 @@ public class RepositoryInstancePrivilegeDescriptor
 
   public static final String P_ACTIONS = "actions";
 
-  @Override
-  public String getType() {
-    return TYPE;
-  }
-
-  @Override
-  public String getName() {
-    return "Repository Instance";
+  public RepositoryInstancePrivilegeDescriptor() {
+    super(TYPE);
   }
 
   @Override
