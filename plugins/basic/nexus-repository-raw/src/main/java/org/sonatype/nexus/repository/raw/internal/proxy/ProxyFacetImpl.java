@@ -56,21 +56,27 @@ public class ProxyFacetImpl
   private PayloadStorage localStorage;
 
   @Override
-  protected void doInit() throws Exception {
+  protected void doConfigure() throws Exception {
     NestedAttributesMap attributes = getRepository().getConfiguration().attributes(CONFIG_KEY);
     String url = attributes.require("remoteUrl", String.class);
     if (!url.endsWith("/")) {
       url = url + "/";
     }
-    this.remoteUrl = new URI(url);
+
+
+    final URI newRemoteURI = new URI(url);
+    if (remoteUrl != null && !remoteUrl.equals(newRemoteURI)) {
+      log.debug("Remote URL is changing: clearing caches.");
+      // TODO: Trigger other changes based on the remoteUrl changing - perhaps it calls facet(NFC.class).clear() at this point?
+    }
+
+    this.remoteUrl = newRemoteURI;
     log.debug("Remote URL: {}", remoteUrl);
 
     artifactMaxAgeMinutes = attributes.require("artifactMaxAge", Integer.class);
     log.debug("Artifact max age: {}", artifactMaxAgeMinutes);
   }
 
-  // TODO: implement doUpdate()
-  // TODO: Trigger other changes based on the remoteUrl changing - perhaps it calls facet(NFC.class).clear() at this point?
 
   @Override
   protected void doStart() throws Exception {
