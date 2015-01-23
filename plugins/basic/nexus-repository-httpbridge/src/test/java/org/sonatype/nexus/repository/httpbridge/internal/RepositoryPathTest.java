@@ -94,11 +94,6 @@ public class RepositoryPathTest
   }
 
   @Test
-  public void pathWithQuery() {
-    assertPath("/repo/foo/bar/baz?a=b", "repo", "/foo/bar/baz?a=b");
-  }
-
-  @Test
   public void relativePath() {
     assertPath("/repo/foo/../bar/../baz", "repo", "/baz");
   }
