@@ -92,6 +92,7 @@ class NestedAttributesMapTest
     }
     catch (Exception e) {
       log e.message
+      assert e.message.contains('baz')
       assert e.message.contains("foo${SEPARATOR}bar")
     }
 
@@ -101,6 +102,7 @@ class NestedAttributesMapTest
     }
     catch (Exception e) {
       log e.message
+      assert e.message.contains('baz')
       assert e.message.contains("foo${SEPARATOR}bar${SEPARATOR}qux")
     }
   }
