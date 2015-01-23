@@ -43,7 +43,6 @@ class HttpRequestAdapter
       getAttributes().set(name, httpServletRequest.getAttribute(name));
     }
 
-    // TODO: Can we tell if there is a payload or not from HttpServletRequest api?
     this.payload = new HttpRequestPayloadAdapter(httpServletRequest);
   }
 
