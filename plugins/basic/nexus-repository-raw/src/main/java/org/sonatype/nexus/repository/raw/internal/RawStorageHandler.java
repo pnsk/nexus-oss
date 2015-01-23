@@ -49,7 +49,7 @@ public class RawStorageHandler
   @Nonnull
   @Override
   public Response handle(final @Nonnull Context context) throws Exception {
-    String name = normalizePath(contentName(context));
+    String name = contentName(context);
     String method = context.getRequest().getAction();
 
     Repository repository = context.getRepository();
@@ -87,15 +87,6 @@ public class RawStorageHandler
       default:
         return HttpResponses.methodNotAllowed(method, GET, PUT, DELETE);
     }
-  }
-
-  /**
-   * Normalize the incoming URI, eliminating "." and ".." references as per {@link URI#normalize()}.
-   */
-  private String normalizePath(final String name) throws URISyntaxException {
-    final URI uri = new URI(name);
-    final URI normalized = uri.normalize();
-    return normalized.toString();
   }
 
   /**

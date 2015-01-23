@@ -79,7 +79,7 @@ class RepositoryPath
     String repo = input.substring(1, i);
     String path = normalize(input.substring(i, input.length()));
 
-    // if normalization suceeded return success
+    // if normalization succeeded return success
     if (path != null) {
       return new RepositoryPath(repo, path);
     }
