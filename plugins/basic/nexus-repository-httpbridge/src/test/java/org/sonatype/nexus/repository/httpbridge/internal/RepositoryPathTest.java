@@ -109,4 +109,9 @@ public class RepositoryPathTest
   public void dotReference2() {
     assertPath("/repo/foo/././baz", "repo", "/foo/baz");
   }
+
+  @Test
+  public void fileWithDot() {
+    assertPath("/repo/foo/baz.bar", "repo", "/foo/baz.bar");
+  }
 }
