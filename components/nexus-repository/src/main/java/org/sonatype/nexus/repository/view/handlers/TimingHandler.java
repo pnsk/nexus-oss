@@ -34,6 +34,8 @@ public class TimingHandler
   extends ComponentSupport
   implements Handler
 {
+  public static final String ELAPSED_KEY = TimingHandler.class.getCanonicalName() + "#elapsed";
+
   @Nonnull
   @Override
   public Response handle(final @Nonnull Context context) throws Exception {
@@ -43,7 +45,9 @@ public class TimingHandler
       return context.proceed();
     }
     finally {
-      log.trace("Timing: {}", watch);
+      String elapsed = watch.toString();
+      context.getAttributes().set(ELAPSED_KEY, elapsed);
+      log.trace("Timing: {}", elapsed);
     }
   }
 }
