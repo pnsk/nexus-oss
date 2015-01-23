@@ -32,7 +32,5 @@ Ext.define('NX.coreui.view.repositorycma.RepositoryCMAFeature', {
 
   actions: [
     { xtype: 'button', text: NX.I18n.get('ADMIN_REPOSITORIES_DETAILS_DELETE_BUTTON'), glyph: 'xf056@FontAwesome' /* fa-minus-circle */, action: 'delete', disabled: true }
-  ],
-
-  createWizard: { xtype: 'nx-coreui-repositorycma-add' }
+  ]
 });

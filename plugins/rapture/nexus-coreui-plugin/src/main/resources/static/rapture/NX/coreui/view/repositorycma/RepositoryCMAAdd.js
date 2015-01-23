@@ -24,7 +24,7 @@ Ext.define('NX.coreui.view.repositorycma.RepositoryCMAAdd', {
     'NX.Conditions',
     'NX.I18n'
   ],
-  ui: 'inset',
+  ui: 'nx-inset',
 
   defaultFocus: 'recipe',
 
