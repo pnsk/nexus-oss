@@ -80,7 +80,7 @@ public class HttpResponses
   // Not Found: 404
 
   public static Response notFound(final @Nullable String message) {
-    return new Response(new Status(false, NOT_FOUND, message));
+    return new Response(Status.failure(NOT_FOUND, message));
   }
 
   public static Response notFound() {
