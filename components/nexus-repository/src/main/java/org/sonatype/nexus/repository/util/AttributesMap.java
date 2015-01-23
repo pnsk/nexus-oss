@@ -212,7 +212,9 @@ public class AttributesMap
       return remove(key);
     }
     Object replaced = backing.put(key, value);
-    log.trace("Set: {}={} ({})", key, value, value.getClass().getName());
+    if (log.isTraceEnabled()) {
+      log.trace("Set: {}={} ({})", key, value, value.getClass().getName());
+    }
     return replaced;
   }
 
