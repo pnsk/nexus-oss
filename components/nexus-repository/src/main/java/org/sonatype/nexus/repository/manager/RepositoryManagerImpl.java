@@ -231,6 +231,8 @@ public class RepositoryManagerImpl
     log.debug("Creating repository: {} -> {}", repositoryName, configuration);
 
     //securityHelper.ensurePermitted(permission(repositoryName, ADD));
+
+    // FIXME: This can leave storage/tracked inconsistent if new repository/init fails
     store.create(configuration);
     Repository repository = newRepository(configuration);
     securityResource.add(repository);
