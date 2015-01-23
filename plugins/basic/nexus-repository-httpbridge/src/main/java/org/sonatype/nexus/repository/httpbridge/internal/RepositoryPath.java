@@ -88,15 +88,10 @@ class RepositoryPath
     return null;
   }
 
-  private static Splitter splitter = Splitter.on('/');
+  private static final Splitter splitter = Splitter.on('/');
 
   @Nullable
   private static String normalize(final String input) {
-    // if input contains no dots return asis
-    if (input.indexOf('.') == -1) {
-      return input;
-    }
-
     // Parts stack
     LinkedList<String> parts = Lists.newLinkedList();
 
