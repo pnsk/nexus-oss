@@ -26,6 +26,8 @@ import org.sonatype.sisu.goodies.common.ComponentSupport;
 
 import com.google.common.collect.Sets;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Keeps track of added and to-be-deleted blobs so they can be deleted as appropriate when the transaction ends,
  * via commit or rollback.
@@ -37,12 +39,15 @@ class BlobTx
 {
   private final BlobStoreManager blobStoreManager;
 
+  private final String blobkStoreId;
+
   private final Set<BlobRef> newlyCreatedBlobs = Sets.newHashSet();
 
   private final Set<BlobRef> deletionRequests = Sets.newHashSet();
 
-  public BlobTx(BlobStoreManager blobStoreManager) {
-    this.blobStoreManager = blobStoreManager;
+  public BlobTx(final BlobStoreManager blobStoreManager, final String blobStoreId) {
+    this.blobStoreManager = checkNotNull(blobStoreManager);
+    this.blobkStoreId = checkNotNull(blobStoreId);
   }
 
   public BlobRef create(InputStream inputStream, Map<String, String> headers) {
@@ -88,6 +93,6 @@ class BlobTx
   }
 
   private BlobStore blobStore() {
-    return blobStoreManager.get("default");
+    return blobStoreManager.get(blobkStoreId);
   }
 }

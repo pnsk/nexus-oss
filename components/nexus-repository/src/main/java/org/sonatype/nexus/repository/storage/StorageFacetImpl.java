@@ -50,11 +50,13 @@ public class StorageFacetImpl
 
   private final Provider<DatabaseInstance> databaseInstanceProvider;
 
+  private String blobStoreId;
+
   private Object bucketId;
 
   @Inject
   public StorageFacetImpl(final BlobStoreManager blobStoreManager,
-                          @Named(ComponentDatabase.NAME) Provider<DatabaseInstance> databaseInstanceProvider) {
+                          final @Named(ComponentDatabase.NAME) Provider<DatabaseInstance> databaseInstanceProvider) {
     this.blobStoreManager = checkNotNull(blobStoreManager);
     this.databaseInstanceProvider = checkNotNull(databaseInstanceProvider);
   }
@@ -63,6 +65,9 @@ public class StorageFacetImpl
   protected void doInit() throws Exception {
     initSchema();
     initBucket();
+
+    // TODO: Read from configuration
+    blobStoreId = "default";
   }
 
   private void initSchema() {
@@ -145,7 +150,7 @@ public class StorageFacetImpl
   @Override
   @Guarded(by=STARTED)
   public StorageTx openTx() {
-    return new StorageTxImpl(new BlobTx(blobStoreManager), openGraphTx(), bucketId);
+    return new StorageTxImpl(new BlobTx(blobStoreManager, blobStoreId), openGraphTx(), bucketId);
   }
 
   private GraphTx openGraphTx() {
