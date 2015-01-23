@@ -86,7 +86,7 @@ public class ViewServlet
   {
     String uri = httpRequest.getRequestURI();
     if (httpRequest.getQueryString() != null) {
-      uri = String.format("%s?%s", uri, httpRequest.getQueryString());
+      uri = uri + "?" + httpRequest.getQueryString();
     }
 
     if (log.isDebugEnabled()) {
