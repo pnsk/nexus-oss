@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.sonatype.nexus.repository.util.AttributeKey;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Handler;
 import org.sonatype.nexus.repository.view.Response;
@@ -34,7 +35,7 @@ public class TimingHandler
   extends ComponentSupport
   implements Handler
 {
-  public static final String ELAPSED_KEY = TimingHandler.class.getCanonicalName() + "#elapsed";
+  public static final String ELAPSED_KEY = AttributeKey.get(TimingHandler.class, "elapsed");
 
   @Nonnull
   @Override

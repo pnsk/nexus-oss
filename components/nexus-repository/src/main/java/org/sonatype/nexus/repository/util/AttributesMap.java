@@ -49,15 +49,6 @@ public class AttributesMap
   }
 
   /**
-   * Return the key for given type-key.
-   */
-  private String key(final Class type) {
-    checkNotNull(type);
-    // TODO: Strip off anonymous class turds?
-    return type.getName();
-  }
-
-  /**
    * Coerce value to type.
    */
   @SuppressWarnings("unchecked")
@@ -97,7 +88,7 @@ public class AttributesMap
    */
   @Nullable
   public <T> T get(final Class<T> type) {
-    Object value = get(key(type));
+    Object value = get(AttributeKey.get(type));
     return type.cast(value);
   }
 
@@ -190,7 +181,7 @@ public class AttributesMap
    */
   public <T> T require(final Class<T> type) {
     T value = get(type);
-    checkState(value != null, "Missing: %s", key(type));
+    checkState(value != null, "Missing: %s", AttributeKey.get(type));
     return value;
   }
 
@@ -230,7 +221,7 @@ public class AttributesMap
    */
   @Nullable
   public <T> Object set(final Class<T> type, final @Nullable T value) {
-    return set(key(type), value);
+    return set(AttributeKey.get(type), value);
   }
 
   /**
@@ -251,7 +242,7 @@ public class AttributesMap
    */
   @Nullable
   public Object remove(final Class type) {
-    return remove(key(type));
+    return remove(AttributeKey.get(type));
   }
 
   /**
@@ -266,7 +257,7 @@ public class AttributesMap
    * Check if attributes contains given type-key.
    */
   public boolean contains(final Class type) {
-    return contains(key(type));
+    return contains(AttributeKey.get(type));
   }
 
   /**
