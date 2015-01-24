@@ -36,4 +36,6 @@ public interface GroupFacet
    * Return list of (non-transitive) member repositories.
    */
   List<Repository> members();
+
+  // TODO: Expose transitive members?
 }

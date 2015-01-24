@@ -53,6 +53,8 @@ public class GroupFacetImpl
     this.repositoryManager = checkNotNull(repositoryManager);
   }
 
+  // TODO: Check for compatibility and cyclic-references
+
   @Override
   protected void doConfigure() throws Exception {
     NestedAttributesMap attributes = getRepository().getConfiguration().attributes(CONFIG_KEY);

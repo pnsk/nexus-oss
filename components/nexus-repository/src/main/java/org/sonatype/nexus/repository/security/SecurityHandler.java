@@ -43,6 +43,9 @@ public class SecurityHandler
     Repository repository = context.getRepository();
     SecurityFacet securityFacet = repository.facet(SecurityFacet.class);
 
+    // TODO: May need to check/set some authorized flag in request-context to support group security?
+    // TODO: NX2 group security applies to all members, so checks on members when accessed via group are not checked
+
     if (securityFacet.permitted(context.getRequest(), repository)) {
       try {
         return context.proceed();
