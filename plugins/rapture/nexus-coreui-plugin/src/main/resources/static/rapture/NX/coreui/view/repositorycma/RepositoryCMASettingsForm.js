@@ -53,7 +53,7 @@ Ext.define('NX.coreui.view.repositorycma.RepositoryCMASettingsForm', {
         fieldLabel: NX.I18n.get('ADMIN_REPOSITORIES_CMA_SETTINGS_ATTRIBUTES'),
         height: 300,
         allowBlank: true,
-        cls: 'log-viewer-field'
+        cls: 'nx-log-viewer-field'
       }
     ];
 
