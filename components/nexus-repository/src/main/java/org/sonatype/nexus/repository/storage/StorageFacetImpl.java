@@ -24,6 +24,7 @@ import org.sonatype.nexus.common.stateguard.Guarded;
 import org.sonatype.nexus.orient.DatabaseInstance;
 import org.sonatype.nexus.orient.graph.GraphTx;
 import org.sonatype.nexus.repository.FacetSupport;
+import org.sonatype.nexus.repository.util.NestedAttributesMap;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -48,11 +49,13 @@ public class StorageFacetImpl
     extends FacetSupport
     implements StorageFacet
 {
+  public static final String CONFIG_KEY = "storage";
+
   private final BlobStoreManager blobStoreManager;
 
   private final Provider<DatabaseInstance> databaseInstanceProvider;
 
-  private String blobStoreId;
+  private String blobStoreName;
 
   private Object bucketId;
 
@@ -65,12 +68,17 @@ public class StorageFacetImpl
   }
 
   @Override
+  protected void doConfigure() throws Exception {
+    NestedAttributesMap attributes = getRepository().getConfiguration().attributes(CONFIG_KEY);
+    blobStoreName = attributes.get("blobStoreName", String.class, "default");
+    log.debug("BLOB-store name: {}", blobStoreName);
+  }
+
+  @Override
   protected void doInit() throws Exception {
     initSchema();
     initBucket();
-
-    // TODO: Read from configuration
-    blobStoreId = "default";
+    super.doInit();
   }
 
   private void initSchema() {
@@ -156,7 +164,7 @@ public class StorageFacetImpl
   @Override
   @Guarded(by = STARTED)
   public StorageTx openTx() {
-    BlobStore blobStore = blobStoreManager.get(blobStoreId);
+    BlobStore blobStore = blobStoreManager.get(blobStoreName);
     return new StorageTxImpl(new BlobTx(blobStore), openGraphTx(), bucketId);
   }
 
