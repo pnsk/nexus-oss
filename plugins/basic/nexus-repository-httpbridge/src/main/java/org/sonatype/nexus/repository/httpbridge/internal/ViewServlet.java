@@ -136,6 +136,11 @@ public class ViewServlet
     sender.send(response, httpResponse);
   }
 
+  /**
+   * Send with default sender.
+   *
+   * Needed in a few places _before_ we have a repository instance to determine its specific sender.
+   */
   private void send(final Response response, final HttpServletResponse httpResponse)
       throws ServletException, IOException
   {
