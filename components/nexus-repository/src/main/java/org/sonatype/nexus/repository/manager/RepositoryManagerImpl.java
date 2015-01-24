@@ -123,6 +123,9 @@ public class RepositoryManagerImpl
     // verify required facets
     repository.facet(ViewFacet.class);
 
+    // configure security
+    securityResource.add(repository);
+
     return repository;
   }
 
@@ -156,7 +159,6 @@ public class RepositoryManagerImpl
     for (Configuration configuration : configurations) {
       log.debug("Restoring repository: {}", configuration);
       Repository repository = newRepository(configuration);
-      securityResource.add(repository);
       track(repository);
 
       eventBus.post(new RepositoryLoadedEvent(repository));
@@ -235,7 +237,6 @@ public class RepositoryManagerImpl
     // FIXME: This can leave storage/tracked inconsistent if new repository/init fails
     store.create(configuration);
     Repository repository = newRepository(configuration);
-    securityResource.add(repository);
     track(repository);
 
     repository.start();
