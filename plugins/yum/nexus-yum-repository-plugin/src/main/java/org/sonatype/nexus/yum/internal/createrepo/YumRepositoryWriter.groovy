@@ -38,14 +38,15 @@ implements Closeable
   YumRepositoryWriter(final File outputDir) {
     XMLOutputFactory factory = XMLOutputFactory.newInstance()
     pw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'primary.xml')), "UTF8"))
-    fw = factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'files.xml')), "UTF8")
-    ow = factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'others.xml')), "UTF8")
-    rw = factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'repomd.xml')), "UTF8")
+    fw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'files.xml')), "UTF8"))
+    ow = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'other.xml')), "UTF8"))
+    rw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'repomd.xml')), "UTF8"))
   }
 
   void push(final YumPackage yumPackage) {
     maybeStart()
     writePrimary(yumPackage)
+    writeFiles(yumPackage)
   }
 
   private def writePrimary(final YumPackage yumPackage) {
@@ -53,7 +54,29 @@ implements Closeable
     pw.writeAttribute('type', 'rpm')
     writeBase(yumPackage)
     writeFormat(yumPackage)
+    writeOther(yumPackage)
     pw.writeEndElement()
+  }
+
+  private def writeFiles(final YumPackage yumPackage) {
+    fw.writeStartElement('package')
+    fw.writeAttribute('pkgid', yumPackage.checksum)
+    fw.writeAttribute('name', yumPackage.name)
+    fw.writeAttribute('arch', yumPackage.arch)
+    writeEl(fw, 'version', null, ['epoch': yumPackage.epoch, 'ver': yumPackage.version, 'rel': yumPackage.release])
+    writeFiles(fw, yumPackage, false)
+    fw.writeEndElement()
+  }
+
+  private def writeOther(final YumPackage yumPackage) {
+    ow.writeStartElement('package')
+    ow.writeAttribute('pkgid', yumPackage.checksum)
+    ow.writeAttribute('name', yumPackage.name)
+    ow.writeAttribute('arch', yumPackage.arch)
+    yumPackage.changes.each { changelog ->
+      writeEl(ow, 'changelog', changelog.text, ['author': changelog.author, 'date': changelog.date])
+    }
+    fw.writeEndElement()
   }
 
   private def writeBase(final YumPackage yumPackage) {
@@ -86,7 +109,7 @@ implements Closeable
     pw.writeEndElement()
   }
 
-  def writePCO(final List<YumPackage.Entry> entries, final String type) {
+  private def writePCO(final List<YumPackage.Entry> entries, final String type) {
     if (entries) {
       pw.writeStartElement('rpm:' + type)
       entries.each { entry ->
@@ -156,8 +179,13 @@ implements Closeable
       pw.writeAttribute('xmlns', 'http://linux.duke.edu/metadata/common')
       pw.writeAttribute('xmlns:rpm', 'http://linux.duke.edu/metadata/rpm')
 
-      fw.writeStartDocument()
-      ow.writeStartDocument()
+      fw.writeStartDocument('UTF-8', '1.0')
+      fw.writeStartElement('filelists')
+      fw.writeAttribute('xmlns', 'http://linux.duke.edu/metadata/filelists')
+
+      ow.writeStartDocument('UTF-8', '1.0')
+      ow.writeStartElement('otherdata')
+      ow.writeAttribute('xmlns', 'http://linux.duke.edu/metadata/other')
     }
   }
 
