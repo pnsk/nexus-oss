@@ -131,7 +131,12 @@ implements Closeable
           flagsStr = 'GE'
         }
 
-        writeEl(pw, 'rpm:entry', null, ['name': entry.name, 'flags': flagsStr, 'epoch': entry.epoch, 'ver': entry.version, 'rel': entry.release])
+        writeEl(pw, 'rpm:entry', null, [
+            'name': entry.name,
+            'flags': flagsStr,
+            'epoch': entry.epoch, 'ver': entry.version, 'rel': entry.release,
+            'pre': entry.pre ? '1' : null
+        ])
       }
       pw.writeEndElement()
     }
