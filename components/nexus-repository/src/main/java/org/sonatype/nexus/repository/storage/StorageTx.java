@@ -19,6 +19,7 @@ import javax.annotation.Nullable;
 
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
+import org.sonatype.nexus.repository.Repository;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
@@ -88,6 +89,23 @@ public interface StorageTx
   OrientVertex findAssetWithProperty(String propName, Object propValue, Vertex bucket);
 
   /**
+   * Gets all assets in the specified repositories that match the given where clause.
+   *
+   * @param whereClause an OrientDB select query, minus the "select from X where " prefix. Rather than passing values
+   *                    in directly, they should be specified as :labeled portions of the where clause (e.g. a = :aVal).
+   * @param parameters the name-value pairs specifying the values for any :labeled portions of the where clause.
+   * @param repositories the repositories to limit the results to. If null or empty, results won't be limited
+   *                     by repository.
+   * @param querySuffix the part of the query after the where clause, which may by used for ordering and paging
+   *                    as per the OrientDB select query syntax.
+   * @see <a href="https://github.com/orientechnologies/orientdb/wiki/SQL-Query">OrientDB SELECT Query Documentation</a>
+   */
+  Iterable<OrientVertex> findAssets(@Nullable String whereClause,
+                                    @Nullable Map<String, Object> parameters,
+                                    @Nullable Iterable<Repository> repositories,
+                                    @Nullable String querySuffix);
+
+  /**
    * Gets a component by id, owned by the specified bucket, or {@code null} if not found.
    */
   @Nullable
@@ -98,6 +116,23 @@ public interface StorageTx
    */
   @Nullable
   OrientVertex findComponentWithProperty(String propName, Object propValue, Vertex bucket);
+
+  /**
+   * Gets all component in the specified repositories that match the given where clause.
+   *
+   * @param whereClause an OrientDB query, minus the "select from X where " prefix. Rather than passing values
+   *                    in directly, they should be specified as :labeled portions of the where clause (e.g. a = :aVal).
+   * @param parameters the name-value pairs specifying the values for any :labeled portions of the where clause.
+   * @param repositories the repositories to limit the results to. If null or empty, results won't be limited
+   *                     by repository.
+   * @param querySuffix the part of the query after the where clause, which may by used for ordering and paging
+   *                    as per the OrientDB select query syntax.
+   * @see <a href="https://github.com/orientechnologies/orientdb/wiki/SQL-Query">OrientDB SELECT Query Documentation</a>
+   */
+  Iterable<OrientVertex> findComponents(@Nullable String whereClause,
+                                        @Nullable Map<String, Object> parameters,
+                                        @Nullable Iterable<Repository> repositories,
+                                        @Nullable String querySuffix);
 
   /**
    * Gets a vertex by id, optionally limited by class, or {@code null} if not found.

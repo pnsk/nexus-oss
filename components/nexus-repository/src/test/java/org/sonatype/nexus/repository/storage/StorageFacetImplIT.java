@@ -20,10 +20,13 @@ import org.sonatype.nexus.blobstore.api.BlobStore;
 import org.sonatype.nexus.blobstore.api.BlobStoreManager;
 import org.sonatype.nexus.orient.DatabaseInstanceRule;
 import org.sonatype.nexus.repository.Repository;
+import org.sonatype.nexus.repository.config.Configuration;
+import org.sonatype.nexus.repository.util.NestedAttributesMap;
 import org.sonatype.sisu.goodies.eventbus.EventBus;
 import org.sonatype.sisu.litmus.testsupport.TestSupport;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.inject.util.Providers;
@@ -59,6 +62,10 @@ public class StorageFacetImplIT
 
   protected StorageFacetImpl underTest;
 
+  protected Repository testRepository1 = mock(Repository.class);
+
+  protected Repository testRepository2 = mock(Repository.class);
+
   @Before
   public void setUp() throws Exception {
     BlobStoreManager mockBlobStoreManager = mock(BlobStoreManager.class);
@@ -68,9 +75,17 @@ public class StorageFacetImplIT
         Providers.of(database.getInstance())
     );
     underTest.installDependencies(mock(EventBus.class));
-    Repository mockRepository = mock(Repository.class);
-    when(mockRepository.getName()).thenReturn("test-repository");
-    underTest.init(mockRepository);
+
+    NestedAttributesMap storageAttributes = new NestedAttributesMap(
+        "storage", ImmutableMap.of("blobStoreName", (Object) "default"));
+    Configuration testConfiguration = mock(Configuration.class);
+    when(testConfiguration.attributes(anyString())).thenReturn(storageAttributes);
+
+    when(testRepository1.getName()).thenReturn("test-repository-1");
+    when(testRepository1.getConfiguration()).thenReturn(testConfiguration);
+    when(testRepository2.getName()).thenReturn("test-repository-2");
+    when(testRepository2.getConfiguration()).thenReturn(testConfiguration);
+    underTest.init(testRepository1);
     underTest.start();
   }
 
@@ -85,6 +100,76 @@ public class StorageFacetImplIT
       // We should have one bucket, which was auto-created for the repository during initialization
       checkSize(tx.browseVertices(null), 1);
       checkSize(tx.browseVertices(V_BUCKET), 1);
+    }
+  }
+
+  @Test
+  public void findAssets() throws Exception {
+    // Setup: add an asset in both repositories
+    try (StorageTx tx = underTest.openTx()) {
+      checkSize(tx.browseVertices(V_BUCKET), 1);
+      OrientVertex asset1 = tx.createAsset(tx.getBucket());
+      asset1.setProperty("name", "asset1");
+      asset1.setProperty("number", 42);
+      tx.commit();
+    }
+
+    underTest.init(testRepository2);
+    try (StorageTx tx = underTest.openTx()) {
+      checkSize(tx.browseVertices(V_BUCKET), 2);
+      OrientVertex asset2 = tx.createAsset(tx.getBucket());
+      asset2.setProperty("name", "asset2");
+      asset2.setProperty("number", 42);
+      tx.commit();
+    }
+
+    // Queries
+    try (StorageTx tx = underTest.openTx()) {
+
+      // Find assets with name = "asset1"
+
+      // ..in testRepository1, should yield 1 match
+      checkSize(tx.findAssets("name = :name", ImmutableMap.of("name", (Object) "asset1"),
+          ImmutableSet.of(testRepository1), null), 1);
+      // ...in testRepository2, should yield 0 matches
+      checkSize(tx.findAssets("name = :name", ImmutableMap.of("name", (Object) "asset1"),
+          ImmutableSet.of(testRepository2), null), 0);
+      // ..in testRepository1 or testRepository2, should yeild 1 match
+      checkSize(tx.findAssets("name = :name", ImmutableMap.of("name", (Object) "asset1"),
+          ImmutableSet.of(testRepository1, testRepository2), null), 1);
+      // ..in any repository should yeild 2 matches
+      checkSize(tx.findAssets("name = :name", ImmutableMap.of("name", (Object) "asset1"), null, null), 1);
+
+      // Find assets with number = 42
+
+      // ..in testRepository1, should yield 1 match
+      checkSize(tx.findAssets("number = :number", ImmutableMap.of("number", (Object) 42),
+          ImmutableSet.of(testRepository1), null), 1);
+      // ..in testRepository2, should yield 1 match
+      checkSize(tx.findAssets("number = :number", ImmutableMap.of("number", (Object) 42),
+          ImmutableSet.of(testRepository2), null), 1);
+      // ..in testRepository1 or testRepository2, should yield 2 matches
+      checkSize(tx.findAssets("number = :number", ImmutableMap.of("number", (Object) 42),
+          ImmutableSet.of(testRepository1, testRepository2), null), 2);
+      // ..in any repository, should yield 2 matches
+      checkSize(tx.findAssets("number = :number", ImmutableMap.of("number", (Object) 42),
+          ImmutableSet.of(testRepository1, testRepository2), null), 2);
+
+      // Find assets in any repository with name = "foo" or number = 42
+      String whereClause = "name = :name or number = :number";
+      Map<String, Object> parameters = ImmutableMap.of("name", (Object) "foo", "number", 42);
+
+      // ..in ascending order by name with limit 1, should return asset1
+      String suffix = "order by name limit 1";
+      List<OrientVertex> results = Lists.newArrayList(tx.findAssets(whereClause, parameters, null, suffix));
+      checkSize(results, 1);
+      assertThat((String) results.get(0).getProperty("name"), is("asset1"));
+
+      // ..in descending order by name with limit 1, should return asset2
+      suffix = "order by name desc limit 1";
+      results = Lists.newArrayList(tx.findAssets(whereClause, parameters, null, suffix));
+      checkSize(results, 1);
+      assertThat((String) results.get(0).getProperty("name"), is("asset2"));
     }
   }
 

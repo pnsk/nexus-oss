@@ -13,6 +13,7 @@
 package org.sonatype.nexus.repository.storage;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -24,19 +25,24 @@ import org.sonatype.nexus.common.stateguard.StateGuard;
 import org.sonatype.nexus.common.stateguard.StateGuardAware;
 import org.sonatype.nexus.common.stateguard.Transitions;
 import org.sonatype.nexus.orient.graph.GraphTx;
+import org.sonatype.nexus.repository.Repository;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.sonatype.nexus.repository.storage.StorageFacet.E_OWNS_ASSET;
 import static org.sonatype.nexus.repository.storage.StorageFacet.E_OWNS_COMPONENT;
+import static org.sonatype.nexus.repository.storage.StorageFacet.P_REPOSITORY_NAME;
 import static org.sonatype.nexus.repository.storage.StorageFacet.V_ASSET;
 import static org.sonatype.nexus.repository.storage.StorageFacet.V_COMPONENT;
 import static org.sonatype.nexus.repository.storage.StorageTxImpl.State.CLOSED;
@@ -181,6 +187,59 @@ public class StorageTxImpl
     return Iterables.getFirst(vertices, null);
   }
 
+  @Override
+  @Guarded(by=OPEN)
+  public Iterable<OrientVertex> findAssets(@Nullable String whereClause,
+                                           @Nullable Map<String, Object> parameters,
+                                           @Nullable Iterable<Repository> repositories,
+                                           @Nullable String querySuffix) {
+    return findVertices(V_ASSET, whereClause, parameters, E_OWNS_ASSET, repositories, querySuffix);
+  }
+
+  private Iterable<OrientVertex> findVertices(String className,
+                                              @Nullable String whereClause,
+                                              @Nullable Map<String, Object> parameters,
+                                              @Nullable String edgeLabel,
+                                              @Nullable Iterable<Repository> repositories,
+                                              @Nullable String querySuffix) {
+    StringBuilder query = new StringBuilder();
+    query.append("select from ").append(className);
+    if (whereClause != null) {
+      query.append(" where ").append(whereClause);
+    }
+
+    if (repositories != null) {
+      List<String> bucketConstraints = Lists.newArrayList(
+          Iterables.transform(repositories, new Function<Repository, String>()
+          {
+            @Override
+            public String apply(final Repository repository) {
+              return String.format("%s = '%s'", P_REPOSITORY_NAME, repository.getName());
+            }
+          }).iterator());
+      if (bucketConstraints.size() > 0) {
+        checkArgument(edgeLabel != null);
+        if (whereClause == null) {
+          query.append(" where");
+        }
+        else {
+          query.append(" and");
+        }
+        query.append(" in('").append(edgeLabel).append("') contains (");
+        query.append(Joiner.on(" or ").join(bucketConstraints));
+        query.append(")");
+      }
+    }
+
+    if (querySuffix != null) {
+      query.append(" ").append(querySuffix);
+    }
+
+    String queryString = query.toString();
+    log.debug("Executing query: {}, with parameters: {}", queryString, parameters);
+    return graphTx.command(new OCommandSQL(queryString)).execute(parameters);
+  }
+
   @Nullable
   @Override
   @Guarded(by=OPEN)
@@ -197,6 +256,15 @@ public class StorageTxImpl
   @Guarded(by=OPEN)
   public OrientVertex findComponentWithProperty(final String propName, final Object propValue, final Vertex bucket) {
     return findWithPropertyOwnedBy(V_COMPONENT, propName, propValue, E_OWNS_COMPONENT, bucket);
+  }
+
+  @Override
+  @Guarded(by=OPEN)
+  public Iterable<OrientVertex> findComponents(@Nullable String whereClause,
+                                               @Nullable Map<String, Object> parameters,
+                                               @Nullable Iterable<Repository> repositories,
+                                               @Nullable String querySuffix) {
+    return findVertices(V_COMPONENT, whereClause, parameters, E_OWNS_COMPONENT, repositories, querySuffix);
   }
 
   @Nullable
