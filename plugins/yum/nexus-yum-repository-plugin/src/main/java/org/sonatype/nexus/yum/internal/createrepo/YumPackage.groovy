@@ -69,7 +69,7 @@ class YumPackage
   static class File {
     String name
     FileType type
-    String primary
+    boolean primary
   }
 
   static enum FileType {

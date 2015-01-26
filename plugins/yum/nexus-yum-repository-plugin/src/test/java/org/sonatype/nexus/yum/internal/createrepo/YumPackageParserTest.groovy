@@ -13,7 +13,6 @@
 package org.sonatype.nexus.yum.internal.createrepo
 
 import org.junit.Test
-import org.redline_rpm.header.Flags
 import org.sonatype.sisu.litmus.testsupport.TestSupport
 
 class YumPackageParserTest
@@ -24,6 +23,10 @@ extends TestSupport
   void 'parse package'() {
     File rpm = util.resolveFile('src/test/ut-resources/rpms/ant/1.7.1-13/ant-1.7.1-13.el6.i686.rpm')
     YumPackage yumPackage = new YumPackageParser().parse(rpm)
+    new YumRepositoryWriter(util.createTempDir('repodata')).withCloseable { YumRepositoryWriter writer ->
+      writer.push(yumPackage)
+    }
+
   }
 
 }

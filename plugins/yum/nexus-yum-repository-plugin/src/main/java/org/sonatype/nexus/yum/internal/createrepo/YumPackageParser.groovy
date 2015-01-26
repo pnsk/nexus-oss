@@ -44,7 +44,7 @@ class YumPackageParser
         //println format
         Signature signature = format.signature
         Header header = format.header
-        return new YumPackage(
+        return fixRequires(new YumPackage(
             checksum: checksum,
             checksum_type: 'sha256',
             name: asString(header, HeaderTag.NAME),
@@ -74,7 +74,7 @@ class YumPackageParser
             obsoletes: parseDeps(header, HeaderTag.OBSOLETENAME, HeaderTag.OBSOLETEVERSION, HeaderTag.OBSOLETEFLAGS),
             files: parseFiles(header),
             changes: parseChanges(header)
-        )
+        ))
       }
     }
   }
@@ -94,8 +94,9 @@ class YumPackageParser
       String path = dirnames[dirindexes[i]] + name
       def type = YumPackage.FileType.file
       def flag = fileflags[i]
-      def mode = filemodes[i]
-      if (!(mode & 0x0040000)) {
+      // signed to unsigned
+      def mode = filemodes[i] + 0xFFFF + 1
+      if (mode & 0x4000) {
         type = YumPackage.FileType.dir
       }
       else if (flag & 0x40) {
@@ -104,9 +105,11 @@ class YumPackageParser
       files << new YumPackage.File(
           name: path,
           type: type,
-          primary: type != YumPackage.FileType.ghost && (path.contains('bin/') || path.startsWith('/etc/') || (type == YumPackage.FileType.file && path == '/usr/lib/sendmail'))
+          primary: (type != YumPackage.FileType.ghost) && (path.contains('bin/') || path.startsWith('/etc/') || (type == YumPackage.FileType.file && path == '/usr/lib/sendmail'))
       )
     }
+    // sort by name ASC
+    files.sort { a, b -> a.name.compareTo(b.name) }
     return files
   }
 
@@ -131,6 +134,8 @@ class YumPackageParser
           pre: flag & (Flags.PREREQ | Flags.SCRIPT_PRE | Flags.SCRIPT_POST)
       )
     }
+    // sort by name ASC
+    provides.sort { a, b -> a.name.compareTo(b.name) }
     return provides
   }
 
@@ -149,7 +154,37 @@ class YumPackageParser
           text: texts[i]
       )
     }
+    // sort by date ASC
+    changes.sort { a, b -> a.date.compareTo(b.date) }
     return changes
+  }
+
+  def fixRequires(final YumPackage yumPackage) {
+    if (yumPackage.requires) {
+      def provideNames = yumPackage.provides?.collectEntries { [it.name, it] }
+      def fileNames = yumPackage.files?.collect { it.name }
+      yumPackage.requires = yumPackage.requires.findResults { YumPackage.Entry item ->
+        if (item.name.startsWith('rpmlib(')) {
+          return null
+        }
+        // requires a file included in rpm
+        if (item.name.startsWith('/') && fileNames.contains(item.name) && !item.flags) {
+          return null
+        }
+        // require something the rpm provides
+        if (provideNames.containsKey(item.name)) {
+          if (!item.flags) {
+            return null
+          }
+          YumPackage.Entry provide = provideNames.get(item.name)
+          if (item.epoch == provide.epoch && item.version == provide.version && item.release == provide.release) {
+            return null
+          }
+        }
+        return item
+      }
+    }
+    return yumPackage
   }
 
   def parseVersion(final String fullVersion) {
@@ -167,10 +202,10 @@ class YumPackageParser
       def j = fullVersion.indexOf('-')
       if (j != -1) {
         release = fullVersion.substring(j + 1)
-        version = fullVersion.substring(Math.max(i, 0), j)
+        version = fullVersion.substring(Math.max(i + 1, 0), j)
       }
       else {
-        version = fullVersion.substring(Math.max(i, 0))
+        version = fullVersion.substring(Math.max(i + 1, 0))
       }
     }
     return [epoch, version, release]
