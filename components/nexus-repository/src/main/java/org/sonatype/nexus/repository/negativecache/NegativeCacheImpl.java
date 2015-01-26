@@ -12,11 +12,15 @@
  */
 package org.sonatype.nexus.repository.negativecache;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.sonatype.nexus.repository.FacetSupport;
 
 /**
  * @since 3.0
  */
+@Named
 public class NegativeCacheImpl
     extends FacetSupport
     implements NegativeCacheFacet
