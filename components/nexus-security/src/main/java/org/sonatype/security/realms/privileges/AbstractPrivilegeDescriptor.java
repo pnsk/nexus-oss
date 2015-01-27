@@ -22,6 +22,8 @@ import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.realms.validator.ConfigurationIdGenerator;
 import org.sonatype.security.realms.validator.SecurityValidationContext;
 
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.permission.WildcardPermission;
 import org.codehaus.plexus.util.StringUtils;
 
 public abstract class AbstractPrivilegeDescriptor
@@ -32,6 +34,13 @@ public abstract class AbstractPrivilegeDescriptor
   @Inject
   public void installDependencies(final ConfigurationIdGenerator idGenerator) {
     this.idGenerator = idGenerator;
+  }
+
+  @Override
+  public Permission createPermission(final CPrivilege privilege) {
+    assert privilege != null;
+    assert getType().equals(privilege.getType());
+    return new WildcardPermission(buildPermission(privilege));
   }
 
   public ValidationResponse validatePrivilege(CPrivilege privilege, SecurityValidationContext ctx, boolean update) {

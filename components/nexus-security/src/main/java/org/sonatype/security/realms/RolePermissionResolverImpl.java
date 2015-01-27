@@ -27,7 +27,6 @@ import javax.inject.Singleton;
 
 import org.sonatype.security.authorization.NoSuchPrivilegeException;
 import org.sonatype.security.authorization.NoSuchRoleException;
-import org.sonatype.security.authorization.PermissionFactory;
 import org.sonatype.security.events.AuthorizationConfigurationChanged;
 import org.sonatype.security.events.SecurityConfigurationChanged;
 import org.sonatype.security.model.CPrivilege;
@@ -61,19 +60,15 @@ public class RolePermissionResolverImpl
 
   private final List<PrivilegeDescriptor> privilegeDescriptors;
 
-  private final PermissionFactory permissionFactory;
-
   private final Map<String, Collection<Permission>> permissionsCache;
 
   @Inject
   public RolePermissionResolverImpl(final ConfigurationManager configuration,
                                     final List<PrivilegeDescriptor> privilegeDescriptors,
-                                    final @Named("caching") PermissionFactory permissionFactory,
                                     final EventBus eventBus)
   {
     this.configuration = checkNotNull(configuration);
     this.privilegeDescriptors = checkNotNull(privilegeDescriptors);
-    this.permissionFactory = checkNotNull(permissionFactory);
     this.permissionsCache = new MapMaker().weakValues().makeMap();
     eventBus.register(this);
   }
@@ -160,8 +155,7 @@ public class RolePermissionResolverImpl
       CPrivilege privilege = configuration.readPrivilege(privilegeId);
       PrivilegeDescriptor descriptor = descriptor(privilege.getType());
       if (descriptor != null) {
-        String permission = descriptor.buildPermission(privilege);
-        return permissionFactory.create(permission);
+        return descriptor.createPermission(privilege);
       }
     }
     catch (NoSuchPrivilegeException e) {
