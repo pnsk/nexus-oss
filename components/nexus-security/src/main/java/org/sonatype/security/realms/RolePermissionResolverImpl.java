@@ -45,6 +45,8 @@ import com.google.common.eventbus.Subscribe;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Default {@link RolePermissionResolver}.
  */
@@ -69,9 +71,9 @@ public class RolePermissionResolverImpl
                                     final @Named("caching") PermissionFactory permissionFactory,
                                     final EventBus eventBus)
   {
-    this.configuration = configuration;
-    this.privilegeDescriptors = privilegeDescriptors;
-    this.permissionFactory = permissionFactory;
+    this.configuration = checkNotNull(configuration);
+    this.privilegeDescriptors = checkNotNull(privilegeDescriptors);
+    this.permissionFactory = checkNotNull(permissionFactory);
     this.permissionsCache = new MapMaker().weakValues().makeMap();
     eventBus.register(this);
   }
@@ -91,6 +93,8 @@ public class RolePermissionResolverImpl
   }
 
   public Collection<Permission> resolvePermissionsInRole(final String roleString) {
+    checkNotNull(roleString);
+
     final Set<Permission> permissions = Sets.newLinkedHashSet();
     final LinkedList<String> rolesToProcess = Lists.newLinkedList();
     final Set<String> processedRoleIds = Sets.newLinkedHashSet();
@@ -136,16 +140,22 @@ public class RolePermissionResolverImpl
 
   @Nullable
   private PrivilegeDescriptor descriptor(final String privilegeType) {
+    assert privilegeType != null;
+
     for (PrivilegeDescriptor descriptor : privilegeDescriptors) {
       if (privilegeType.equals(descriptor.getType())) {
         return descriptor;
       }
     }
+
+    log.warn("Missing privilege-descriptor for type: {}", privilegeType);
     return null;
   }
 
   @Nullable
   private Permission permission(final String privilegeId) {
+    assert privilegeId != null;
+
     try {
       CPrivilege privilege = configuration.readPrivilege(privilegeId);
       PrivilegeDescriptor descriptor = descriptor(privilege.getType());
