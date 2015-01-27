@@ -21,6 +21,7 @@ import groovy.transform.ToString
 class YumPackage
 {
 
+  String pkgid
   String checksum
   String name
   String arch

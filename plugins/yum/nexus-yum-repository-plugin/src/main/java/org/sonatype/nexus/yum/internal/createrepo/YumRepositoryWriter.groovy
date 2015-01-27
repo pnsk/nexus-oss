@@ -12,10 +12,15 @@
  */
 package org.sonatype.nexus.yum.internal.createrepo
 
+import com.google.common.io.CountingOutputStream
 import javanet.staxutils.IndentingXMLStreamWriter
+import org.sonatype.nexus.util.DigesterUtils
 
 import javax.xml.stream.XMLOutputFactory
 import javax.xml.stream.XMLStreamWriter
+import java.security.DigestOutputStream
+import java.security.MessageDigest
+import java.util.zip.GZIPOutputStream
 
 /**
  * @since 3.0
@@ -23,6 +28,12 @@ import javax.xml.stream.XMLStreamWriter
 class YumRepositoryWriter
 implements Closeable
 {
+
+  private Output po
+
+  private Output fo
+
+  private Output oo
 
   private XMLStreamWriter pw
 
@@ -37,9 +48,15 @@ implements Closeable
 
   YumRepositoryWriter(final File outputDir) {
     XMLOutputFactory factory = XMLOutputFactory.newInstance()
-    pw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'primary.xml')), "UTF8"))
-    fw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'files.xml')), "UTF8"))
-    ow = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'other.xml')), "UTF8"))
+    po = new Output(new FileOutputStream(new File(outputDir, 'primary.xml.gz')))
+    pw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(po.stream, "UTF8"))
+
+    fo = new Output(new FileOutputStream(new File(outputDir, 'files.xml.gz')))
+    fw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(fo.stream, "UTF8"))
+
+    oo = new Output(new FileOutputStream(new File(outputDir, 'other.xml.gz')))
+    ow = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(oo.stream, "UTF8"))
+
     rw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'repomd.xml')), "UTF8"))
   }
 
@@ -60,7 +77,7 @@ implements Closeable
 
   private def writeFiles(final YumPackage yumPackage) {
     fw.writeStartElement('package')
-    fw.writeAttribute('pkgid', yumPackage.checksum)
+    fw.writeAttribute('pkgid', yumPackage.pkgid)
     fw.writeAttribute('name', yumPackage.name)
     fw.writeAttribute('arch', yumPackage.arch)
     writeEl(fw, 'version', null, ['epoch': yumPackage.epoch, 'ver': yumPackage.version, 'rel': yumPackage.release])
@@ -70,7 +87,7 @@ implements Closeable
 
   private def writeOther(final YumPackage yumPackage) {
     ow.writeStartElement('package')
-    ow.writeAttribute('pkgid', yumPackage.checksum)
+    ow.writeAttribute('pkgid', yumPackage.pkgid)
     ow.writeAttribute('name', yumPackage.name)
     ow.writeAttribute('arch', yumPackage.arch)
     yumPackage.changes.each { changelog ->
@@ -158,7 +175,7 @@ implements Closeable
     }
   }
 
-  private def writeEl(XMLStreamWriter writer, final String name, final String text, final Map<String, Object> attrib) {
+  private def writeEl(XMLStreamWriter writer, final String name, final Object text, final Map<String, Object> attrib) {
     writer.writeStartElement(name)
     attrib?.each { key, value ->
       if (value) {
@@ -166,13 +183,25 @@ implements Closeable
       }
     }
     if (text) {
-      writer.writeCharacters(text)
+      writer.writeCharacters(text.toString())
     }
     writer.writeEndElement()
   }
 
-  private def writeEl(XMLStreamWriter writer, final String name, final String text) {
+  private def writeEl(XMLStreamWriter writer, final String name, final Object text) {
     writeEl(writer, name, text, null)
+  }
+
+  private def writeData(final Output output, final String type, final int timestamp) {
+    rw.writeStartElement('data')
+    rw.writeAttribute('type', type)
+    writeEl(rw, 'checksum', output.compressedChecksum, ['type': 'sha256'])
+    writeEl(rw, 'open-checksum', output.openChecksum, ['type': 'sha256'])
+    writeEl(rw, 'location', null, ['href': "repodata/${type}.xml.gz"])
+    writeEl(rw, 'timestamp', timestamp)
+    writeEl(rw, 'size', output.compressedSize)
+    writeEl(rw, 'open-size', output.openSize)
+    rw.writeEndElement()
   }
 
   private def maybeStart() {
@@ -199,21 +228,66 @@ implements Closeable
     maybeStart()
 
     assert !closed
-
     closed = true
 
+    int timestamp = System.currentTimeMillis() / 1000
+
     pw.writeEndDocument()
+    pw.close()
+    po.stream.close()
 
     fw.writeEndDocument()
-    ow.writeEndDocument()
-
-    pw.close()
     fw.close()
-    ow.close()
+    fo.stream.close()
 
-    rw.writeStartDocument()
+    ow.writeEndDocument()
+    ow.close()
+    oo.stream.close()
+
+    rw.writeStartDocument('UTF-8', '1.0')
+    rw.writeStartElement('repomd')
+    rw.writeAttribute('xmlns', 'http://linux.duke.edu/metadata/repo')
+    rw.writeAttribute('xmlns:rpm', 'http://linux.duke.edu/metadata/rpm')
+    writeData(po, 'primary', timestamp)
+    writeData(fo, 'files', timestamp)
+    writeData(oo, 'other', timestamp)
     rw.writeEndDocument()
     rw.close()
+  }
+
+  private static class Output
+  {
+    private CountingOutputStream openSizeStream
+    private CountingOutputStream compressedSizeStream
+    private DigestOutputStream openDigestStream
+    private DigestOutputStream compressedDigestStream
+
+    Output(final OutputStream stream) {
+      compressedDigestStream = new DigestOutputStream(stream, MessageDigest.getInstance("SHA-256"))
+      compressedSizeStream = new CountingOutputStream(compressedDigestStream)
+      openDigestStream = new DigestOutputStream(new GZIPOutputStream(compressedSizeStream), MessageDigest.getInstance("SHA-256"))
+      openSizeStream = new CountingOutputStream(openDigestStream)
+    }
+
+    OutputStream getStream() {
+      return openSizeStream
+    }
+
+    long getOpenSize() {
+      return openSizeStream.count
+    }
+
+    long getCompressedSize() {
+      return compressedSizeStream.count
+    }
+
+    String getOpenChecksum() {
+      return DigesterUtils.getDigestAsString(openDigestStream.messageDigest.digest())
+    }
+
+    String getCompressedChecksum() {
+      return DigesterUtils.getDigestAsString(compressedDigestStream.messageDigest.digest())
+    }
   }
 
 }

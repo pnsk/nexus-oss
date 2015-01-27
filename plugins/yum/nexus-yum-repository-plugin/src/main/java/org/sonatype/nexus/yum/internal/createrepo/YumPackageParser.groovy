@@ -45,6 +45,7 @@ class YumPackageParser
         Signature signature = format.signature
         Header header = format.header
         return fixRequires(new YumPackage(
+            pkgid: checksum,
             checksum: checksum,
             checksum_type: 'sha256',
             name: asString(header, HeaderTag.NAME),
