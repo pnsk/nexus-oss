@@ -15,6 +15,7 @@ package org.sonatype.nexus.repository.raw.internal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -31,10 +32,14 @@ import org.sonatype.nexus.repository.storage.StorageTx;
 import org.sonatype.nexus.repository.view.Context;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import org.joda.time.DateTime;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.sonatype.nexus.repository.storage.StorageFacet.E_PART_OF_COMPONENT;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_BLOB_REF;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_CONTENT_TYPE;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_LAST_MODIFIED;
@@ -57,14 +62,15 @@ public class RawStorageFacetImpl
   @Override
   public RawContent get(final String path) {
     try (StorageTx tx = getStorage().openTx()) {
-      final Vertex asset = tx.findAssetWithProperty(P_PATH, path, tx.getBucket());
-      if (asset == null) {
+      final OrientVertex component = tx.findComponentWithProperty(P_PATH, path, tx.getBucket());
+      if (component == null) {
         return null;
       }
 
+      final OrientVertex asset = getAsset(component);
       final BlobRef blobRef = getBlobRef(path, asset);
       final Blob blob = tx.getBlob(blobRef);
-      checkState(blob != null, "asset at path %s refers to missing blob %s", path, blobRef);
+      checkState(blob != null, "asset of component with at path %s refers to missing blob %s", path, blobRef);
 
       return marshall(asset, blob);
     }
@@ -74,13 +80,22 @@ public class RawStorageFacetImpl
   @Override
   public RawContent put(final String path, final RawContent content) throws IOException {
     try (StorageTx tx = getStorage().openTx()) {
-      Vertex bucket = tx.getBucket();
-      Vertex asset = tx.findAssetWithProperty(P_PATH, path, bucket);
-      if (asset == null) {
+      OrientVertex bucket = tx.getBucket();
+      OrientVertex component = tx.findComponentWithProperty(P_PATH, path, bucket);
+      OrientVertex asset;
+      if (component == null) {
+        // CREATE
+        component = tx.createComponent(bucket);
+
+        // TODO: Set common component props at top level, set other props as format-specific attributes?
+        component.setProperty(P_PATH, path);
+
         asset = tx.createAsset(bucket);
-        asset.setProperty(P_PATH, path);
+        asset.addEdge(E_PART_OF_COMPONENT, component);
       }
       else {
+        // UPDATE
+        asset = getAsset(component);
         final BlobRef oldBlobRef = getBlobRef(path, asset);
         tx.deleteBlob(oldBlobRef);
       }
@@ -111,17 +126,17 @@ public class RawStorageFacetImpl
   @Override
   public boolean delete(final String path) throws IOException {
     try (StorageTx tx = getStorage().openTx()) {
-      final Vertex asset = tx.findAssetWithProperty(P_PATH, path, tx.getBucket());
-      if (asset == null) {
+      final OrientVertex component = tx.findComponentWithProperty(P_PATH, path, tx.getBucket());
+      if (component == null) {
         return false;
       }
-
+      OrientVertex asset = getAsset(component);
 
       tx.deleteBlob(getBlobRef(path, asset));
       tx.deleteVertex(asset);
+      tx.deleteVertex(component);
 
       tx.commit();
-
 
       return true;
     }
@@ -136,13 +151,19 @@ public class RawStorageFacetImpl
     return getRepository().facet(StorageFacet.class);
   }
 
-  private BlobRef getBlobRef(final String path, final Vertex asset) {
+  private BlobRef getBlobRef(final String path, final OrientVertex asset) {
     String blobRefStr = asset.getProperty(P_BLOB_REF);
-    checkState(blobRefStr != null, "asset at path %s has missing blob reference", path);
+    checkState(blobRefStr != null, "asset of component at path %s has missing blob reference", path);
     return BlobRef.parse(blobRefStr);
   }
 
-  private RawContent marshall(final Vertex asset, final Blob blob) {
+  private OrientVertex getAsset(OrientVertex component) {
+    List<Vertex> vertices = Lists.newArrayList(component.getVertices(Direction.IN, E_PART_OF_COMPONENT));
+    checkState(!vertices.isEmpty());
+    return (OrientVertex) vertices.get(0);
+  }
+
+  private RawContent marshall(final OrientVertex asset, final Blob blob) {
     final String contentType = asset.getProperty(P_CONTENT_TYPE);
 
     final Date date = asset.getProperty(P_LAST_MODIFIED);
