@@ -10,16 +10,16 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.security.realms;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,9 +34,12 @@ import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.model.CRole;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
 import org.sonatype.security.realms.tools.ConfigurationManager;
+import org.sonatype.sisu.goodies.common.ComponentSupport;
 import org.sonatype.sisu.goodies.eventbus.EventBus;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.Sets;
 import com.google.common.eventbus.AllowConcurrentEvents;
 import com.google.common.eventbus.Subscribe;
 import org.apache.shiro.authz.Permission;
@@ -49,6 +52,7 @@ import org.apache.shiro.authz.permission.RolePermissionResolver;
 @Typed(RolePermissionResolver.class)
 @Named("default")
 public class RolePermissionResolverImpl
+    extends ComponentSupport
     implements RolePermissionResolver
 {
   private final ConfigurationManager configuration;
@@ -75,25 +79,25 @@ public class RolePermissionResolverImpl
   @AllowConcurrentEvents
   @Subscribe
   public void on(final AuthorizationConfigurationChanged event) {
-    permissionsCache.clear(); // invalidate previous results
+    // invalidate previous results
+    permissionsCache.clear();
   }
 
   @AllowConcurrentEvents
   @Subscribe
   public void on(final SecurityConfigurationChanged event) {
-    permissionsCache.clear(); // invalidate previous results
+    // invalidate previous results
+    permissionsCache.clear();
   }
 
   public Collection<Permission> resolvePermissionsInRole(final String roleString) {
-    final Set<Permission> permissions = new LinkedHashSet<Permission>();
-    resolvePermissionsInRole(roleString, permissions);
-    return permissions;
-  }
+    final Set<Permission> permissions = Sets.newLinkedHashSet();
+    final LinkedList<String> rolesToProcess = Lists.newLinkedList();
+    final Set<String> processedRoleIds = Sets.newLinkedHashSet();
 
-  protected void resolvePermissionsInRole(final String roleString, final Collection<Permission> permissions) {
-    final LinkedList<String> rolesToProcess = new LinkedList<String>();
-    rolesToProcess.add(roleString); // initial role
-    final Set<String> processedRoleIds = new LinkedHashSet<String>();
+    // initial role
+    rolesToProcess.add(roleString);
+
     while (!rolesToProcess.isEmpty()) {
       final String roleId = rolesToProcess.removeFirst();
       if (processedRoleIds.add(roleId)) {
@@ -109,35 +113,51 @@ public class RolePermissionResolverImpl
 
           // process the roles this role has recursively
           rolesToProcess.addAll(role.getRoles());
+
           // add the permissions this role has
           for (String privilegeId : role.getPrivileges()) {
-            Set<Permission> set = getPermissions(privilegeId);
-            permissions.addAll(set);
+            Permission permission = permission(privilegeId);
+            if (permission != null) {
+              permissions.add(permission);
+            }
           }
         }
         catch (NoSuchRoleException e) {
-          // skip
+          log.trace("Ignoring missing role: {}", roleId, e);
         }
       }
     }
 
     // cache result of (non-trivial) computation
     permissionsCache.put(roleString, permissions);
+
+    return permissions;
   }
 
-  protected Set<Permission> getPermissions(final String privilegeId) {
-    try {
-      final CPrivilege privilege = configuration.readPrivilege(privilegeId);
-      for (PrivilegeDescriptor descriptor : privilegeDescriptors) {
-        final String permission = descriptor.buildPermission(privilege);
-        if (permission != null) {
-          return Collections.singleton(permissionFactory.create(permission));
-        }
+  @Nullable
+  private PrivilegeDescriptor descriptor(final String privilegeType) {
+    for (PrivilegeDescriptor descriptor : privilegeDescriptors) {
+      if (privilegeType.equals(descriptor.getType())) {
+        return descriptor;
       }
-      return Collections.emptySet();
+    }
+    return null;
+  }
+
+  @Nullable
+  private Permission permission(final String privilegeId) {
+    try {
+      CPrivilege privilege = configuration.readPrivilege(privilegeId);
+      PrivilegeDescriptor descriptor = descriptor(privilege.getType());
+      if (descriptor != null) {
+        String permission = descriptor.buildPermission(privilege);
+        return permissionFactory.create(permission);
+      }
     }
     catch (NoSuchPrivilegeException e) {
-      return Collections.emptySet();
+      log.trace("Ignoring missing privilege: {}", privilegeId, e);
     }
+
+    return null;
   }
 }
