@@ -12,22 +12,20 @@
  */
 package org.sonatype.nexus.repository.proxy;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Named;
 
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.httpclient.HttpClientFacet;
 import org.sonatype.nexus.repository.util.NestedAttributesMap;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Payload;
+import org.sonatype.nexus.repository.view.payloads.BytesPayload;
 import org.sonatype.nexus.repository.view.payloads.HttpEntityPayload;
-import org.sonatype.nexus.repository.view.payloads.StreamPayload;
 
 import com.google.common.io.ByteStreams;
 import org.apache.http.HttpEntity;
@@ -44,7 +42,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @since 3.0
  */
-@Named
 public abstract class ProxyFacetSupport
     extends FacetSupport
     implements ProxyFacet
@@ -100,7 +97,7 @@ public abstract class ProxyFacetSupport
 
     Payload content = getCachedPayload(context);
 
-    if (content == null || isStale(content)) {
+    if (content == null || isStale(context)) {
       try {
         final Payload remote = fetch(context);
         if (remote != null) {
@@ -156,6 +153,9 @@ public abstract class ProxyFacetSupport
         EntityUtils.consume(entity);
       }
     }
+    else if (status.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
+      indicateUpToDate(context);
+    }
 
     return payload;
   }
@@ -181,26 +181,24 @@ public abstract class ProxyFacetSupport
    */
   private Payload readFully(final Payload payload) throws IOException {
     try (InputStream stream = payload.openInputStream()) {
-      final byte[] bytes = ByteStreams.toByteArray(stream);
-      return new StreamPayload(new ByteArrayInputStream(bytes), bytes.length, payload.getContentType(),
-          payload.getLastModified());
+      return new BytesPayload(ByteStreams.toByteArray(stream), payload.getContentType(), payload.getLastModified());
     }
   }
 
-  private boolean isStale(Payload payload) {
+  private boolean isStale(final Context context) throws IOException {
     if (artifactMaxAgeMinutes < 0) {
       log.trace("Artifact max age checking disabled.");
       return false;
     }
 
-    final DateTime lastModified = payload.getLastModified();
+    final DateTime lastUpdated = getCachedPayloadLastUpdatedDate(context);
 
-    if (lastModified == null) {
+    if (lastUpdated == null) {
       log.debug("Artifact last modified date unknown.");
       return true;
     }
 
     final DateTime earliestFreshDate = new DateTime().minusMinutes(artifactMaxAgeMinutes);
-    return lastModified.isBefore(earliestFreshDate);
+    return lastUpdated.isBefore(earliestFreshDate);
   }
 }

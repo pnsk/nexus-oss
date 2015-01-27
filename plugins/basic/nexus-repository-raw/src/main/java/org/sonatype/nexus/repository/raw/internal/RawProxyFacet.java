@@ -48,13 +48,15 @@ public class RawProxyFacet
   }
 
   @Override
-  protected DateTime getCachedPayloadLastUpdatedDate(final Context context) {
-    return null;
+  protected DateTime getCachedPayloadLastUpdatedDate(final Context context) throws IOException {
+    // TODO: This isn't quite right; add to RawStorageFacet to add this method
+    return storage().get(componentPath(context)).getLastModified();
   }
 
   @Override
   protected void indicateUpToDate(final Context context) {
-
+    // TODO: Implement this, adding a new method to RawStorageFacet
+    log.warn("indicateUpToDate not implemented");
   }
 
   @Override

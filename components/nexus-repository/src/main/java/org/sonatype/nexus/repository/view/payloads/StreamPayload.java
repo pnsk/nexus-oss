@@ -22,6 +22,7 @@ import org.sonatype.nexus.repository.view.Payload;
 import org.joda.time.DateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Stream payload.
@@ -39,6 +40,8 @@ public class StreamPayload
 
   private final DateTime lastModified;
 
+  private boolean opened = false;
+
   public StreamPayload(final InputStream stream, final long size, final @Nullable String contentType,
                        final @Nullable DateTime lastModified)
   {
@@ -49,7 +52,9 @@ public class StreamPayload
   }
 
   @Override
-  public InputStream openInputStream() throws IOException {
+  public synchronized InputStream openInputStream() throws IOException {
+    checkState(!opened, "This payload's stream has been opened already.");
+    opened = true;
     return stream;
   }
 

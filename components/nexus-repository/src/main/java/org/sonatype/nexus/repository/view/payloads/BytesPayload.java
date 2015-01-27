@@ -36,9 +36,16 @@ public class BytesPayload
 
   private final String contentType;
 
-  public BytesPayload(final byte[] content, final @Nullable String contentType) {
+  private final DateTime lastModified;
+
+  public BytesPayload(final byte[] content, final String contentType) {
+    this(content, contentType, null);
+  }
+
+  public BytesPayload(final byte[] content, final @Nullable String contentType, final DateTime lastModified) {
     this.content = checkNotNull(content);
     this.contentType = contentType;
+    this.lastModified = lastModified;
   }
 
   @Override
@@ -60,7 +67,7 @@ public class BytesPayload
   @Nullable
   @Override
   public DateTime getLastModified() {
-    return null;
+    return lastModified;
   }
 
   @Override
@@ -68,6 +75,7 @@ public class BytesPayload
     return getClass().getSimpleName() + "{" +
         "size=" + getSize() +
         ", contentType='" + contentType + '\'' +
+        ", lastModified='" + lastModified + '\'' +
         '}';
   }
 }
