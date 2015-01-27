@@ -26,18 +26,14 @@ import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.negativecache.NegativeCacheKey;
 import org.sonatype.nexus.repository.negativecache.NegativeCacheKeySource;
 import org.sonatype.nexus.repository.raw.RawContent;
-import org.sonatype.nexus.repository.raw.internal.proxy.Locator;
-import org.sonatype.nexus.repository.raw.internal.proxy.LocatorFacet;
 import org.sonatype.nexus.repository.storage.StorageFacet;
 import org.sonatype.nexus.repository.storage.StorageTx;
 import org.sonatype.nexus.repository.view.Context;
-import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher;
 
 import com.google.common.collect.ImmutableMap;
 import com.tinkerpop.blueprints.Vertex;
 import org.joda.time.DateTime;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_BLOB_REF;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_CONTENT_TYPE;
@@ -51,7 +47,7 @@ import static org.sonatype.nexus.repository.storage.StorageFacet.P_PATH;
  */
 public class RawStorageFacetImpl
     extends FacetSupport
-    implements RawStorageFacet, LocatorFacet, NegativeCacheKeySource
+    implements RawStorageFacet, NegativeCacheKeySource
 {
   @Inject
   public RawStorageFacetImpl() {
@@ -128,51 +124,6 @@ public class RawStorageFacetImpl
 
 
       return true;
-    }
-  }
-
-  @Override
-  public Locator locator(final Context context) {
-    // TODO: This is incorrect, it should get the "name" that the TokenParser (see RawProxyRecipe), as this starts
-    // with a leading slash and messes up the proxy's remoteUrl.resolves(name).
-    final TokenMatcher.State require = context.getAttributes().require(TokenMatcher.State.class);
-
-    final String name = require.getTokens().get("name");
-
-    return new RawLocator(name);
-  }
-
-  /**
-   * A {@link Locator} based on the path.
-   */
-  public static class RawLocator
-      implements Locator
-  {
-    private final String path;
-
-    public RawLocator(final String path) {
-      this.path = checkNotNull(path);
-    }
-
-    @Override
-    public String describe() {
-      return path;
-    }
-
-    @Override
-    public String uri() {
-      return path;
-    }
-
-    public String path() {
-      return path;
-    }
-
-    @Override
-    public String toString() {
-      return "RawLocator{" +
-          "path='" + path + '\'' +
-          '}';
     }
   }
 

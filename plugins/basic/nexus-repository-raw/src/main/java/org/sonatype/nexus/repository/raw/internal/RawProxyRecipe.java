@@ -28,8 +28,7 @@ import org.sonatype.nexus.repository.Type;
 import org.sonatype.nexus.repository.httpclient.HttpClientFacet;
 import org.sonatype.nexus.repository.negativecache.NegativeCacheHandler;
 import org.sonatype.nexus.repository.negativecache.NegativeCacheImpl;
-import org.sonatype.nexus.repository.raw.internal.proxy.ProxyFacetImpl;
-import org.sonatype.nexus.repository.raw.internal.proxy.ProxyHandler;
+import org.sonatype.nexus.repository.proxy.ProxyHandler;
 import org.sonatype.nexus.repository.security.SecurityHandler;
 import org.sonatype.nexus.repository.storage.StorageFacetImpl;
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet;
@@ -83,9 +82,8 @@ public class RawProxyRecipe
 
                         final Provider<NegativeCacheImpl> negativeCache,
 
-                        final Provider<ProxyFacetImpl> proxyFacet,
+                        final Provider<RawProxyFacet> proxyFacet,
                         final Provider<HttpClientFacet> httpClient,
-                        final Provider<RawPayloadStorage> payloadStorageFacet,
 
                         final Provider<RawStorageFacetImpl> rawStorageFacet,
                         final Provider<StorageFacetImpl> storageFacet)
@@ -103,7 +101,6 @@ public class RawProxyRecipe
     facetProviders.add(checkNotNull(httpClient));
     facetProviders.add(checkNotNull(negativeCache));
     facetProviders.add(checkNotNull(proxyFacet));
-    facetProviders.add(checkNotNull(payloadStorageFacet));
     facetProviders.add(checkNotNull(rawStorageFacet));
     facetProviders.add(checkNotNull(storageFacet));
   }

@@ -10,23 +10,20 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.raw.internal.proxy;
+package org.sonatype.nexus.repository.proxy;
 
 import java.io.IOException;
 
 import org.sonatype.nexus.repository.Facet;
+import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Payload;
 
 /**
  * @since 3.0
  */
 @Facet.Exposed
-public interface PayloadStorage
+public interface ProxyFacet
     extends Facet
 {
-  Payload get(Locator locator) throws IOException;
-
-  Payload put(Locator locator, Payload payload) throws IOException;
-
-  boolean delete(Locator locator);
+  Payload get(Context context) throws IOException;
 }

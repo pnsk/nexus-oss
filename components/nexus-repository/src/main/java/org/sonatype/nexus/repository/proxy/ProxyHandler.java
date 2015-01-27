@@ -10,7 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.raw.internal.proxy;
+package org.sonatype.nexus.repository.proxy;
 
 import javax.annotation.Nonnull;
 
@@ -42,24 +42,16 @@ public class ProxyHandler
       return HttpResponses.methodNotAllowed(action, GET);
     }
 
-    final Locator locator = locator(context);
-
-    final Payload payload = proxyFacet(context).get(locator);
+    final Payload payload = proxyFacet(context).get(context);
 
     if (payload != null) {
       return HttpResponses.ok(payload);
     }
 
-    return HttpResponses.notFound(locator.describe());
+    return HttpResponses.notFound();
   }
 
   private ProxyFacet proxyFacet(final Context context) {
     return context.getRepository().facet(ProxyFacet.class);
   }
-
-  private Locator locator(final Context context) {
-    final LocatorFacet facet = context.getRepository().facet(LocatorFacet.class);
-    return facet.locator(context);
-  }
-
 }

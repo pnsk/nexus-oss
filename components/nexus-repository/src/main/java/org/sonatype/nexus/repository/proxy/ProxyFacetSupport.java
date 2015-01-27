@@ -10,18 +10,21 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.raw.internal.proxy;
+package org.sonatype.nexus.repository.proxy;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Named;
 
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.httpclient.HttpClientFacet;
 import org.sonatype.nexus.repository.util.NestedAttributesMap;
+import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Payload;
 import org.sonatype.nexus.repository.view.payloads.HttpEntityPayload;
 import org.sonatype.nexus.repository.view.payloads.StreamPayload;
@@ -41,7 +44,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @since 3.0
  */
-public class ProxyFacetImpl
+@Named
+public abstract class ProxyFacetSupport
     extends FacetSupport
     implements ProxyFacet
 {
@@ -53,8 +57,6 @@ public class ProxyFacetImpl
 
   private HttpClientFacet httpClient;
 
-  private PayloadStorage localStorage;
-
   @Override
   protected void doConfigure() throws Exception {
     NestedAttributesMap attributes = getRepository().getConfiguration().attributes(CONFIG_KEY);
@@ -62,7 +64,6 @@ public class ProxyFacetImpl
     if (!url.endsWith("/")) {
       url = url + "/";
     }
-
 
     final URI newRemoteURI = new URI(url);
     if (remoteUrl != null && !remoteUrl.equals(newRemoteURI)) {
@@ -81,13 +82,11 @@ public class ProxyFacetImpl
   @Override
   protected void doStart() throws Exception {
     httpClient = getRepository().facet(HttpClientFacet.class);
-    localStorage = getRepository().facet(PayloadStorage.class);
   }
 
   @Override
   protected void doStop() throws Exception {
     httpClient = null;
-    localStorage = null;
   }
 
   @Override
@@ -96,33 +95,46 @@ public class ProxyFacetImpl
   }
 
   @Override
-  public Payload get(final Locator locator) throws IOException {
-    checkNotNull(locator);
+  public Payload get(final Context context) throws IOException {
+    checkNotNull(context);
 
-    Payload content = localStorage.get(locator);
+    Payload content = getCachedPayload(context);
 
     if (content == null || isStale(content)) {
       try {
-        final Payload remote = fetch(locator);
+        final Payload remote = fetch(context);
         if (remote != null) {
 
           // TODO: Introduce content validation.. perhaps content's type not matching path's implied type.
 
-          content = localStorage.put(locator, remote);
+          store(context, remote);
+
+          content = remote;
         }
       }
       catch (IOException e) {
-        log.warn("Failed to fetch: {}", locator, e);
+        log.warn("Failed to fetch: {}", getUrl(context), e);
       }
     }
     return content;
   }
 
+  /**
+   * If we have the content cached locally already, return that - otherwise {@code null}.
+   */
+  protected abstract Payload getCachedPayload(final Context context) throws IOException;
+
+  /**
+   * Store a new Payload, freshly fetched from the remote URL. The Context indicates which component
+   * was being requested.
+   */
+  protected abstract void store(final Context context, final Payload payload) throws IOException;
+
   @Nullable
-  private Payload fetch(final Locator locator) throws IOException {
+  protected Payload fetch(final Context context) throws IOException {
     HttpClient client = httpClient.getHttpClient();
 
-    HttpGet request = new HttpGet(remoteUrl.resolve(locator.uri()));
+    HttpGet request = new HttpGet(remoteUrl.resolve(getUrl(context)));
     log.debug("Fetching: {}", request);
 
     HttpResponse response = client.execute(request);
@@ -147,6 +159,22 @@ public class ProxyFacetImpl
 
     return payload;
   }
+
+  /**
+   * For whatever component/asset is implied by the Context, return the date it was last deemed up to date, or {@code
+   * null} if it isn't present.
+   */
+  protected abstract DateTime getCachedPayloadLastUpdatedDate(final Context context) throws IOException;
+
+  /**
+   * For whatever component/asset
+   */
+  protected abstract void indicateUpToDate(final Context context) throws IOException;
+
+  /**
+   * Provide the relative URL to the
+   */
+  protected abstract String getUrl(final @Nonnull Context context);
 
   /**
    * Read an incoming Payload into memory.

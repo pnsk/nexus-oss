@@ -14,12 +14,16 @@ package org.sonatype.nexus.repository.raw.internal;
 
 import java.io.IOException;
 
-import org.sonatype.nexus.repository.FacetSupport;
+import javax.annotation.Nonnull;
+import javax.inject.Named;
+
+import org.sonatype.nexus.repository.proxy.ProxyFacetSupport;
 import org.sonatype.nexus.repository.raw.RawContent;
-import org.sonatype.nexus.repository.raw.internal.RawStorageFacetImpl.RawLocator;
-import org.sonatype.nexus.repository.raw.internal.proxy.Locator;
-import org.sonatype.nexus.repository.raw.internal.proxy.PayloadStorage;
+import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Payload;
+import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher;
+
+import org.joda.time.DateTime;
 
 import static org.sonatype.nexus.repository.raw.internal.RawContentPayloadMarshaller.toContent;
 import static org.sonatype.nexus.repository.raw.internal.RawContentPayloadMarshaller.toPayload;
@@ -27,16 +31,15 @@ import static org.sonatype.nexus.repository.raw.internal.RawContentPayloadMarsha
 /**
  * @since 3.0
  */
-public class RawPayloadStorage
-    extends FacetSupport
-    implements PayloadStorage
+@Named
+public class RawProxyFacet
+    extends ProxyFacetSupport
 {
   @Override
-  public Payload get(final Locator locator) throws IOException {
+  protected Payload getCachedPayload(final Context context) throws IOException {
+    final String path = componentPath(context);
 
-    final RawLocator rawLocator = (RawLocator) locator;
-
-    final RawContent rawContent = storage().get(rawLocator.path());
+    final RawContent rawContent = storage().get(path);
     if (rawContent == null) {
       return null;
     }
@@ -45,17 +48,32 @@ public class RawPayloadStorage
   }
 
   @Override
-  public Payload put(final Locator locator, final Payload payload) throws IOException {
-    final RawLocator rawLocator = (RawLocator) locator;
-
-    final RawContent put = storage().put(rawLocator.path(), toContent(payload));
-
-    return toPayload(put);
+  protected DateTime getCachedPayloadLastUpdatedDate(final Context context) {
+    return null;
   }
 
   @Override
-  public boolean delete(final Locator locator) {
-    throw new UnsupportedOperationException("not implemented");
+  protected void indicateUpToDate(final Context context) {
+
+  }
+
+  @Override
+  protected void store(final Context context, final Payload payload) throws IOException {
+    final String path = componentPath(context);
+    storage().put(path, toContent(payload));
+  }
+
+  @Override
+  protected String getUrl(final @Nonnull Context context) {
+    return componentPath(context);
+  }
+
+  /**
+   * Determines what 'component' this request relates to.
+   */
+  private String componentPath(final Context context) {
+    final TokenMatcher.State tokenMatcherState = context.getAttributes().require(TokenMatcher.State.class);
+    return tokenMatcherState.getTokens().get("name");
   }
 
   private RawStorageFacet storage() {
