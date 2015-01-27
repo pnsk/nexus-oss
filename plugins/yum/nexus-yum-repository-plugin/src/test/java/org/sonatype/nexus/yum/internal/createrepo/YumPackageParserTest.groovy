@@ -22,7 +22,11 @@ extends TestSupport
   @Test
   void 'parse package'() {
     File rpm = util.resolveFile('src/test/ut-resources/rpms/ant/1.7.1-13/ant-1.7.1-13.el6.i686.rpm')
-    YumPackage yumPackage = new YumPackageParser().parse(rpm)
+    YumPackage yumPackage = new YumPackageParser().parse(
+        new FileInputStream(rpm),
+        'Packages/ant-1.7.1-13.el6.i686.rpm',
+        rpm.lastModified()
+    )
     new YumRepositoryWriter(util.createTempDir('repodata')).withCloseable { YumRepositoryWriter writer ->
       writer.push(yumPackage)
     }

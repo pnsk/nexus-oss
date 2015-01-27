@@ -22,6 +22,7 @@ class YumPackage
 {
 
   String pkgid
+  String location
   String checksum
   String name
   String arch

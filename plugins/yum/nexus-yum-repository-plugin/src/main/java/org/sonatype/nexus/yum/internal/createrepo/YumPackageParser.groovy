@@ -12,6 +12,7 @@
  */
 package org.sonatype.nexus.yum.internal.createrepo
 
+import com.google.common.io.CountingInputStream
 import org.redline_rpm.ReadableChannelWrapper
 import org.redline_rpm.header.AbstractHeader
 import org.redline_rpm.header.AbstractHeader.Tag
@@ -22,6 +23,8 @@ import org.redline_rpm.header.Signature
 import org.sonatype.nexus.util.DigesterUtils
 
 import java.nio.channels.Channels
+import java.security.DigestInputStream
+import java.security.MessageDigest
 
 import static org.redline_rpm.ChannelWrapper.Key
 import static org.redline_rpm.header.Header.HeaderTag
@@ -32,21 +35,24 @@ import static org.redline_rpm.header.Header.HeaderTag
 class YumPackageParser
 {
 
-  YumPackage parse(final File rpm) {
-    String checksum
-    new FileInputStream(rpm).withStream { InputStream rpmStream ->
-      checksum = DigesterUtils.getDigest('SHA-256', rpmStream)
-    }
-    new FileInputStream(rpm).withStream { InputStream rpmStream ->
+  YumPackage parse(final InputStream rpm, final String location, final long lastModified) {
+    YumPackage yumPackage = null
+    def countingStream = new CountingInputStream(rpm)
+    def digestStream = new DigestInputStream(countingStream, MessageDigest.getInstance('SHA-256'))
+    digestStream.withStream { InputStream rpmStream ->
       ReadableChannelWrapper rcw = new ReadableChannelWrapper(Channels.newChannel(rpmStream))
       rcw.withCloseable {
         Format format = read(rcw)
-        //println format
         Signature signature = format.signature
         Header header = format.header
-        return fixRequires(new YumPackage(
-            pkgid: checksum,
-            checksum: checksum,
+
+        // read all remaining content so we get proper size/checksum
+        byte[] buffer = new byte[1024]
+        while (rpmStream.read(buffer) != -1) {
+        }
+
+        yumPackage = fixRequires(new YumPackage(
+            location: location,
             checksum_type: 'sha256',
             name: asString(header, HeaderTag.NAME),
             arch: asString(header, HeaderTag.ARCH),
@@ -56,7 +62,7 @@ class YumPackageParser
             summary: asString(header, HeaderTag.SUMMARY),
             description: asString(header, HeaderTag.DESCRIPTION),
             url: asString(header, HeaderTag.URL),
-            time_file: rpm.lastModified() / 1000,
+            time_file: lastModified / 1000,
             time_build: asInt(header, HeaderTag.BUILDTIME),
             rpm_license: asString(header, HeaderTag.LICENSE),
             rpm_vendor: asString(header, HeaderTag.VENDOR),
@@ -66,7 +72,6 @@ class YumPackageParser
             rpm_header_start: signature.getEndPos() + header.getStartPos(),
             rpm_header_end: header.getEndPos(),
             rpm_packager: asString(header, HeaderTag.PACKAGER),
-            size_package: rpm.length(),
             size_installed: asInt(header, HeaderTag.SIZE),
             size_archive: asInt(signature, Signature.SignatureTag.PAYLOADSIZE),
             provides: parseDeps(header, HeaderTag.PROVIDENAME, HeaderTag.PROVIDEVERSION, HeaderTag.PROVIDEFLAGS),
@@ -78,6 +83,12 @@ class YumPackageParser
         ))
       }
     }
+    yumPackage.with {
+      checksum = DigesterUtils.getDigestAsString(digestStream.messageDigest.digest())
+      pkgid = checksum
+      size_package = countingStream.count
+    }
+    return yumPackage
   }
 
   def parseFiles(final Header header) {

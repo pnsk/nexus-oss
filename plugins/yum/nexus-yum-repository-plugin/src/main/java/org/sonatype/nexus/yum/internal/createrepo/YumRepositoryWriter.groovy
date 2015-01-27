@@ -107,7 +107,7 @@ implements Closeable
     writeEl(pw, 'url', yumPackage.url)
     writeEl(pw, 'time', null, ['file': yumPackage.time_file, 'build': yumPackage.time_build])
     writeEl(pw, 'size', null, ['package': yumPackage.size_package, 'installed': yumPackage.size_installed, 'archive': yumPackage.size_archive])
-    // TODO location el
+    writeEl(pw, 'location', null, ['href': yumPackage.location])
   }
 
   private def writeFormat(final YumPackage yumPackage) {
