@@ -38,14 +38,17 @@ public class ApplicationPrivilegeDescriptor
 {
   public static final String TYPE = "method";
 
+  @Override
   public String getName() {
     return "Application";
   }
 
+  @Override
   public String getType() {
     return TYPE;
   }
 
+  @Override
   public List<PrivilegePropertyDescriptor> getPropertyDescriptors() {
     return Lists.newArrayList(
         new ApplicationPrivilegeMethodPropertyDescriptor(),
@@ -53,6 +56,7 @@ public class ApplicationPrivilegeDescriptor
     );
   }
 
+  @Override
   public String buildPermission(CPrivilege privilege) {
     if (!TYPE.equals(privilege.getType())) {
       return null;
