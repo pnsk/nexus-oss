@@ -33,6 +33,7 @@ import org.sonatype.nexus.repository.negativecache.NegativeCacheKeySource;
 import org.sonatype.nexus.repository.raw.RawContent;
 import org.sonatype.nexus.repository.storage.StorageFacet;
 import org.sonatype.nexus.repository.storage.StorageTx;
+import org.sonatype.nexus.repository.util.NestedAttributesMap;
 import org.sonatype.nexus.repository.view.Context;
 
 import com.google.common.collect.ImmutableMap;
@@ -64,13 +65,24 @@ public class RawContentFacetImpl
     extends FacetSupport
     implements RawContentFacet, NegativeCacheKeySource
 {
+
   private final static String RAW = "raw";
 
+  public static final String CONFIG_KEY = "rawContent";
+
   private final MimeSupport mimeSupport;
+
+  private boolean strictContentTypeValidation = false;
 
   @Inject
   public RawContentFacetImpl(MimeSupport mimeSupport) {
     this.mimeSupport = checkNotNull(mimeSupport);
+  }
+
+  @Override
+  protected void doConfigure() throws Exception {
+    NestedAttributesMap attributes = getRepository().getConfiguration().attributes(CONFIG_KEY);
+    this.strictContentTypeValidation = checkNotNull(attributes.require("strictContentTypeValidation", Boolean.class));
   }
 
   @Nullable
@@ -154,7 +166,7 @@ public class RawContentFacetImpl
         log.trace("Mime support implies content type {}", contentType);
       }
 
-      if (contentType == null) {
+      if (contentType == null && strictContentTypeValidation) {
         throw new InvalidContentException(String.format("Content type could not be determined."));
       }
     }
@@ -162,8 +174,10 @@ public class RawContentFacetImpl
       final List<String> types = mimeSupport.detectMimeTypes(content.openInputStream(), path);
       if (!types.isEmpty() && !types.contains(contentType)) {
         log.debug("Discovered content type {} ", types.get(0));
-        throw new InvalidContentException(
-            String.format("Declared content type %s, but declared %s.", contentType, types.get(0)));
+        if (strictContentTypeValidation) {
+          throw new InvalidContentException(
+              String.format("Declared content type %s, but declared %s.", contentType, types.get(0)));
+        }
       }
     }
     return contentType;

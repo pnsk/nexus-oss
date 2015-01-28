@@ -15,8 +15,8 @@
 # Configure Repositories
 
     orient:connect plocal:../sonatype-work/nexus/db/config admin admin
-    orient:insert 'into repository_configuration SET repository_name="rawhosted", recipe_name="raw-hosted"'
-    orient:insert 'into repository_configuration SET repository_name="rawproxy", recipe_name="raw-proxy", attributes={"proxy":{"remoteUrl":"http://repo1.maven.org/maven2/junit/junit","artifactMaxAge":120}}'
+    orient:insert 'into repository_configuration SET repository_name="rawhosted", recipe_name="raw-hosted", attributes={"rawContent":{"strictContentTypeValidation":true}}'
+    orient:insert 'into repository_configuration SET repository_name="rawproxy", recipe_name="raw-proxy", attributes={"rawContent":{"strictContentTypeValidation":false},"proxy":{"remoteUrl":"http://repo1.maven.org/maven2/junit/junit","artifactMaxAge":120}}'
     system:shutdown --force --reboot
 
 # Interact
