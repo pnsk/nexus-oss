@@ -56,10 +56,12 @@ public class ConfiguredUsersUserManager
     this.configuration = configuration;
   }
 
+  @Override
   public String getSource() {
     return SOURCE;
   }
 
+  @Override
   public Set<User> listUsers() {
     Set<User> users = new HashSet<User>();
 
@@ -86,6 +88,7 @@ public class ConfiguredUsersUserManager
     return users;
   }
 
+  @Override
   public Set<String> listUserIds() {
     Set<String> userIds = new HashSet<String>();
 
@@ -106,11 +109,13 @@ public class ConfiguredUsersUserManager
     return userIds;
   }
 
+  @Override
   public User getUser(String userId) {
     // this resource will only list the users
     return null;
   }
 
+  @Override
   public Set<User> searchUsers(UserSearchCriteria criteria) {
     // we only want to do this if the criteria is set to the source
     if (this.getSource().equals(criteria.getSource())) {
@@ -125,6 +130,7 @@ public class ConfiguredUsersUserManager
     return this.securitySystem;
   }
 
+  @Override
   protected boolean matchesCriteria(final String userId,
                                     final String userSource,
                                     final Collection<String> usersRoles,
@@ -151,6 +157,7 @@ public class ConfiguredUsersUserManager
     return true;
   }
 
+  @Override
   public String getAuthenticationRealmName() {
     return null;
   }
