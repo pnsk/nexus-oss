@@ -183,8 +183,11 @@ public class GenerateMetadataTask
         YumStore yumStore = yum.getYumStore();
         syncYumPackages(yumStore);
         try (YumRepositoryWriter writer = new YumRepositoryWriter(repoTmpRepodataDir)) {
+          String version = getVersion();
           for (YumPackage yumPackage : yumStore.get()) {
-            writer.push(yumPackage);
+            if (version == null || hasRequiredVersion(version, yumPackage.getLocation())) {
+              writer.push(yumPackage);
+            }
           }
         }
 
@@ -223,6 +226,11 @@ public class GenerateMetadataTask
     finally {
       mdUid.getLock().unlock();
     }
+  }
+
+  private boolean hasRequiredVersion(final String version, String path) {
+    String[] segments = path.split("\\/");
+    return (segments.length >= 2) && version.equals(segments[segments.length - 2]);
   }
 
   private void syncYumPackages(final YumStore yumStore) {
