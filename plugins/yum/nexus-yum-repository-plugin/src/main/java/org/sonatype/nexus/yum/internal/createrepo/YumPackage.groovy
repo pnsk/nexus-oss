@@ -45,8 +45,6 @@ class YumPackage
   Integer size_package
   Integer size_installed
   Integer size_archive
-  String location_href
-  String location_base
   String checksum_type
 
   List<Entry> provides
@@ -56,6 +54,10 @@ class YumPackage
 
   List<File> files
   List<ChangeLog> changes
+
+  String getUniqueId(){
+    return "${name}:${epoch}:${version}:${release}"
+  }
 
   @ToString(includePackage = false, includeNames = true)
   static class Entry {

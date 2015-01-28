@@ -34,6 +34,8 @@ import org.sonatype.nexus.scheduling.TaskInfo;
 import org.sonatype.nexus.scheduling.TaskScheduler;
 import org.sonatype.nexus.yum.YumHosted;
 import org.sonatype.nexus.yum.YumRepository;
+import org.sonatype.nexus.yum.internal.createrepo.YumStore;
+import org.sonatype.nexus.yum.internal.createrepo.YumStoreImpl;
 import org.sonatype.nexus.yum.internal.task.GenerateMetadataTask;
 import org.sonatype.nexus.yum.internal.task.GenerateMetadataTaskDescriptor;
 
@@ -69,6 +71,8 @@ public class YumHostedImpl
   private final HostedRepository repository;
 
   private final File temporaryDirectory;
+
+  private final YumStore yumStore;
 
   private boolean processDeletes;
 
@@ -110,6 +114,8 @@ public class YumHostedImpl
     this.baseDir = RepositoryUtils.getBaseDir(repository);
 
     this.yumGroupsDefinitionFile = null;
+
+    this.yumStore = new YumStoreImpl();
 
     repository.registerRequestStrategy(
         BlockSqliteDatabasesRequestStrategy.class.getName(), checkNotNull(blockSqliteDatabasesRequestStrategy)
@@ -189,6 +195,11 @@ public class YumHostedImpl
   @Override
   public YumRepository getYumRepository() throws Exception {
     return getYumRepository(null);
+  }
+
+  @Override
+  public YumStore getYumStore() {
+    return yumStore;
   }
 
   TaskInfo<YumRepository> createYumRepository(final String version,

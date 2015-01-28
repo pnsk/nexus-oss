@@ -15,9 +15,6 @@ package org.sonatype.nexus.yum.internal.createrepo;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
 import com.google.common.collect.Maps;
@@ -25,7 +22,6 @@ import com.google.common.collect.Maps;
 /**
  * @since 3.0
  */
-@Named
 public class YumStoreImpl
     extends ComponentSupport
     implements YumStore
@@ -33,7 +29,6 @@ public class YumStoreImpl
 
   private final Map<String, YumPackage> yumPackages;
 
-  @Inject
   public YumStoreImpl() {
     yumPackages = Maps.newHashMap();
   }

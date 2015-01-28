@@ -27,6 +27,8 @@ import org.sonatype.nexus.proxy.repository.Repository;
 import org.sonatype.nexus.scheduling.TaskScheduler;
 import org.sonatype.nexus.yum.YumGroup;
 import org.sonatype.nexus.yum.YumRepository;
+import org.sonatype.nexus.yum.internal.createrepo.YumStore;
+import org.sonatype.nexus.yum.internal.createrepo.YumStoreImpl;
 import org.sonatype.nexus.yum.internal.task.MergeMetadataTask;
 
 import com.google.inject.assistedinject.Assisted;
@@ -106,6 +108,12 @@ public class YumGroupImpl
     finally {
       lock.readLock().unlock();
     }
+  }
+
+  @Override
+  public YumStore getYumStore() {
+    // TODO
+    return new YumStoreImpl();
   }
 
   @Override

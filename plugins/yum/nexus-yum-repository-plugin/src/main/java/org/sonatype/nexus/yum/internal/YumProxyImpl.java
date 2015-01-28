@@ -23,6 +23,8 @@ import org.sonatype.nexus.proxy.repository.ProxyRepository;
 import org.sonatype.nexus.proxy.repository.Repository;
 import org.sonatype.nexus.yum.YumProxy;
 import org.sonatype.nexus.yum.YumRepository;
+import org.sonatype.nexus.yum.internal.createrepo.YumStore;
+import org.sonatype.nexus.yum.internal.createrepo.YumStoreImpl;
 
 import com.google.inject.assistedinject.Assisted;
 
@@ -74,6 +76,12 @@ public class YumProxyImpl
   @Override
   public YumRepository getYumRepository() {
     return yumRepository;
+  }
+
+  @Override
+  public YumStore getYumStore() {
+    // TODO
+    return new YumStoreImpl();
   }
 
 }

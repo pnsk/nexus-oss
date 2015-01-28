@@ -50,10 +50,8 @@ import org.sonatype.nexus.yum.internal.createrepo.YumPackage;
 import org.sonatype.nexus.yum.internal.createrepo.YumPackageParser;
 import org.sonatype.nexus.yum.internal.createrepo.YumRepositoryWriter;
 import org.sonatype.nexus.yum.internal.createrepo.YumStore;
-import org.sonatype.nexus.yum.internal.createrepo.YumStoreManager;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -111,16 +109,12 @@ public class GenerateMetadataTask
 
   private final Manager routingManager;
 
-  private final YumStoreManager yumStoreManager;
-
   @Inject
   public GenerateMetadataTask(final YumRegistry yumRegistry,
-                              final YumStoreManager yumStoreManager,
                               final RpmScanner scanner,
                               final Manager routingManager)
   {
     this.yumRegistry = checkNotNull(yumRegistry);
-    this.yumStoreManager = checkNotNull(yumStoreManager);
     this.scanner = checkNotNull(scanner);
     this.routingManager = checkNotNull(routingManager);
 
@@ -154,18 +148,20 @@ public class GenerateMetadataTask
       throws Exception
   {
     String repositoryId = getRepositoryId();
+    checkState(
+        repositoryId != null,
+        "Metadata regeneration can only be run when repository id is set"
+    );
 
-    if (!StringUtils.isEmpty(repositoryId)) {
-      checkState(
-          yumRegistry.isRegistered(repositoryId),
-          "Metadata regeneration can only be run on repositories that have an enabled 'Yum: Generate Metadata' capability"
-      );
-      Yum yum = yumRegistry.get(repositoryId);
-      checkState(
-          yum.getNexusRepository().getRepositoryKind().isFacetAvailable(HostedRepository.class),
-          "Metadata generation can only be run on hosted repositories"
-      );
-    }
+    checkState(
+        yumRegistry.isRegistered(repositoryId),
+        "Metadata regeneration can only be run on repositories that have an enabled 'Yum: Generate Metadata' capability"
+    );
+    Yum yum = yumRegistry.get(repositoryId);
+    checkState(
+        yum.getNexusRepository().getRepositoryKind().isFacetAvailable(HostedRepository.class),
+        "Metadata generation can only be run on hosted repositories"
+    );
 
     setDefaults();
 
@@ -184,9 +180,9 @@ public class GenerateMetadataTask
       DirSupport.mkdir(repoTmpRepodataDir);
 
       try {
-        syncYumPackages();
+        YumStore yumStore = yum.getYumStore();
+        syncYumPackages(yumStore);
         try (YumRepositoryWriter writer = new YumRepositoryWriter(repoTmpRepodataDir)) {
-          YumStore yumStore = yumStoreManager.get(repository.getId());
           for (YumPackage yumPackage : yumStore.get()) {
             writer.push(yumPackage);
           }
@@ -229,7 +225,7 @@ public class GenerateMetadataTask
     }
   }
 
-  private void syncYumPackages() {
+  private void syncYumPackages(final YumStore yumStore) {
     Set<File> files = null;
     File rpmDir = new File(getRpmDir());
     if (shouldForceFullScan()) {
@@ -243,7 +239,6 @@ public class GenerateMetadataTask
       }
     }
     if (files != null) {
-      YumStore yumStore = yumStoreManager.get(getRepositoryId());
       for (File file : files) {
         String location = RpmScanner.getRelativePath(rpmDir, file.getAbsoluteFile());
         try {
@@ -261,7 +256,6 @@ public class GenerateMetadataTask
 
     String removedPath = getRemovedFile();
     if (removedPath != null) {
-      YumStore yumStore = yumStoreManager.get(getRepositoryId());
       yumStore.delete(removedPath);
     }
   }
@@ -310,29 +304,6 @@ public class GenerateMetadataTask
         );
       }
     }
-  }
-
-  private String getRepositoryIdVersion() {
-    return getRepositoryId() + (isNotBlank(getVersion()) ? ("-version-" + getVersion()) : "");
-  }
-
-  private File createPackageDir() {
-    return getCacheDir(PACKAGE_FILE_DIR_NAME);
-  }
-
-  private File getCacheDir(final String name) {
-    final File cacheDir = new File(getCacheDir(), name);
-    try {
-      DirSupport.mkdir(cacheDir.toPath());
-    }
-    catch (IOException e) {
-      throw Throwables.propagate(e);
-    }
-    return cacheDir;
-  }
-
-  private File getCacheDir() {
-    return new File(yumRegistry.getTemporaryDirectory(), CACHE_DIR_PREFIX + getRepositoryId());
   }
 
   public String getRepositoryId() {
