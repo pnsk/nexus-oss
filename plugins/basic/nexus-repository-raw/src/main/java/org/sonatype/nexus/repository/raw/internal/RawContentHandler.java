@@ -41,7 +41,7 @@ import static org.sonatype.nexus.repository.raw.internal.RawContentPayloadMarsha
  */
 @Named
 @Singleton
-public class RawStorageHandler
+public class RawContentHandler
     extends ComponentSupport
     implements Handler
 {
@@ -54,7 +54,7 @@ public class RawStorageHandler
     Repository repository = context.getRepository();
     log.debug("{} repository '{}' content-name: {}", method, repository.getName(), name);
 
-    RawStorageFacet storage = repository.facet(RawStorageFacet.class);
+    RawContentFacet storage = repository.facet(RawContentFacet.class);
     RawIndexFacet index = repository.facet(RawIndexFacet.class);
 
     switch (method) {

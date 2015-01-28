@@ -50,7 +50,7 @@ public class RawHostedRecipe
 
   private final Provider<RawIndexFacet> rawIndexFacet;
 
-  private final Provider<RawStorageFacetImpl> rawStorageFacet;
+  private final Provider<RawContentFacetImpl> rawContentFacet;
 
   private final Provider<StorageFacetImpl> storageFacet;
 
@@ -58,7 +58,7 @@ public class RawHostedRecipe
 
   private final SecurityHandler securityHandler;
 
-  private final RawStorageHandler rawStorageHandler;
+  private final RawContentHandler rawContentHandler;
 
   @Inject
   public RawHostedRecipe(@Named(HostedType.NAME) final Type type,
@@ -66,21 +66,21 @@ public class RawHostedRecipe
                          final Provider<RawSecurityFacet> securityFacet,
                          final Provider<ConfigurableViewFacet> viewFacet,
                          final Provider<RawIndexFacet> rawIndexFacet,
-                         final Provider<RawStorageFacetImpl> rawStorageFacet,
+                         final Provider<RawContentFacetImpl> rawContentFacet,
                          final Provider<StorageFacetImpl> storageFacet,
                          final TimingHandler timingHandler,
                          final SecurityHandler securityHandler,
-                         final RawStorageHandler rawStorageHandler)
+                         final RawContentHandler rawContentHandler)
   {
     super(type, format);
 
     this.securityFacet = checkNotNull(securityFacet);
     this.viewFacet = checkNotNull(viewFacet);
-    this.rawStorageFacet = checkNotNull(rawStorageFacet);
+    this.rawContentFacet = checkNotNull(rawContentFacet);
     this.storageFacet = checkNotNull(storageFacet);
     this.timingHandler = checkNotNull(timingHandler);
     this.securityHandler = checkNotNull(securityHandler);
-    this.rawStorageHandler = checkNotNull(rawStorageHandler);
+    this.rawContentHandler = checkNotNull(rawContentHandler);
     this.rawIndexFacet = checkNotNull(rawIndexFacet);
   }
 
@@ -93,7 +93,7 @@ public class RawHostedRecipe
 
     repository.attach(configure(viewFacet.get()));
     repository.attach(rawIndexFacet.get());
-    repository.attach(rawStorageFacet.get());
+    repository.attach(rawContentFacet.get());
     repository.attach(storageFacet.get());
   }
 
@@ -107,7 +107,7 @@ public class RawHostedRecipe
         .matcher(new TokenMatcher("/{name:.+}"))
         .handler(timingHandler)
         .handler(securityHandler)
-        .handler(rawStorageHandler)
+        .handler(rawContentHandler)
         .create());
 
     builder.defaultHandlers(

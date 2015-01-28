@@ -85,7 +85,7 @@ public class RawProxyRecipe
                         final Provider<RawProxyFacet> proxyFacet,
                         final Provider<HttpClientFacet> httpClient,
 
-                        final Provider<RawStorageFacetImpl> rawStorageFacet,
+                        final Provider<RawContentFacetImpl> rawContentFacet,
                         final Provider<StorageFacetImpl> storageFacet)
   {
     super(type, format);
@@ -101,7 +101,7 @@ public class RawProxyRecipe
     facetProviders.add(checkNotNull(httpClient));
     facetProviders.add(checkNotNull(negativeCache));
     facetProviders.add(checkNotNull(proxyFacet));
-    facetProviders.add(checkNotNull(rawStorageFacet));
+    facetProviders.add(checkNotNull(rawContentFacet));
     facetProviders.add(checkNotNull(storageFacet));
   }
 

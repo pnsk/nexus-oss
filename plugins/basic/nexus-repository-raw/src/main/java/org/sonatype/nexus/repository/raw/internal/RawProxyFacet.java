@@ -78,7 +78,7 @@ public class RawProxyFacet
     return tokenMatcherState.getTokens().get("name");
   }
 
-  private RawStorageFacet storage() {
-    return getRepository().facet(RawStorageFacet.class);
+  private RawContentFacet storage() {
+    return getRepository().facet(RawContentFacet.class);
   }
 }

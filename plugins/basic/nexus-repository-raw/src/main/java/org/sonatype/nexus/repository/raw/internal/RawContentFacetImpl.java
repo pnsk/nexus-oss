@@ -56,20 +56,20 @@ import static org.sonatype.nexus.repository.storage.StorageFacet.P_NAME;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_PATH;
 
 /**
- * A {@link RawStorageFacet} that persists to a {@link StorageFacet}.
+ * A {@link RawContentFacet} that persists to a {@link StorageFacet}.
  *
  * @since 3.0
  */
-public class RawStorageFacetImpl
+public class RawContentFacetImpl
     extends FacetSupport
-    implements RawStorageFacet, NegativeCacheKeySource
+    implements RawContentFacet, NegativeCacheKeySource
 {
   private final static String RAW = "raw";
 
   private final MimeSupport mimeSupport;
 
   @Inject
-  public RawStorageFacetImpl(MimeSupport mimeSupport) {
+  public RawContentFacetImpl(MimeSupport mimeSupport) {
     this.mimeSupport = checkNotNull(mimeSupport);
   }
 
@@ -162,7 +162,8 @@ public class RawStorageFacetImpl
       final List<String> types = mimeSupport.detectMimeTypes(content.openInputStream(), path);
       if (!types.isEmpty() && !types.contains(contentType)) {
         log.debug("Discovered content type {} ", types.get(0));
-        throw new InvalidContentException(String.format("Content type %s does not match binary data.", contentType));
+        throw new InvalidContentException(
+            String.format("Declared content type %s, but declared %s.", contentType, types.get(0)));
       }
     }
     return contentType;

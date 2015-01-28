@@ -35,3 +35,7 @@
 
     curl -v --user 'admin:admin123' -X GET http://localhost:8081/repository/rawproxy/4.12/junit-4.12.pom
     curl -v --user 'admin:admin123' -X GET http://localhost:8081/repository/rawproxy/maven-metadata.xml
+
+# unproxied equivalents
+    curl -v -X GET http://repo1.maven.org/maven2/junit/junit/4.12/junit-4.12.pom
+    curl -v -X GET http://repo1.maven.org/maven2/junit/junit/maven-metadata.xml
