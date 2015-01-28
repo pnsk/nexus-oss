@@ -46,18 +46,18 @@ implements Closeable
   private boolean open
   private boolean closed
 
-  YumRepositoryWriter(final File outputDir) {
+  YumRepositoryWriter(final File repoDir) {
     XMLOutputFactory factory = XMLOutputFactory.newInstance()
-    po = new Output(new FileOutputStream(new File(outputDir, 'primary.xml.gz')))
+    po = new Output(new FileOutputStream(new File(repoDir, 'primary.xml.gz')))
     pw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(po.stream, "UTF8"))
 
-    fo = new Output(new FileOutputStream(new File(outputDir, 'files.xml.gz')))
+    fo = new Output(new FileOutputStream(new File(repoDir, 'files.xml.gz')))
     fw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(fo.stream, "UTF8"))
 
-    oo = new Output(new FileOutputStream(new File(outputDir, 'other.xml.gz')))
+    oo = new Output(new FileOutputStream(new File(repoDir, 'other.xml.gz')))
     ow = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(oo.stream, "UTF8"))
 
-    rw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(outputDir, 'repomd.xml')), "UTF8"))
+    rw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(repoDir, 'repomd.xml')), "UTF8"))
   }
 
   void push(final YumPackage yumPackage) {
