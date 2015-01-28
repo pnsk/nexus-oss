@@ -17,13 +17,13 @@ import java.io.IOException;
 import javax.annotation.Nullable;
 
 import org.sonatype.nexus.repository.Facet;
+import org.sonatype.nexus.repository.content.InvalidContentException;
 import org.sonatype.nexus.repository.raw.RawContent;
-import org.sonatype.nexus.repository.raw.RawContentImpl;
 
 import org.joda.time.DateTime;
 
 /**
- * Provides persistent storage for {@link RawContentImpl}.
+ * Provides persistent storage for {@link RawContent}.
  *
  * TODO: Consider better naming so we don't get muddled up with RawStorageFacet/StorageFacet/FooStorageFacet/etc.
  *
@@ -36,7 +36,7 @@ public interface RawStorageFacet
   @Nullable
   RawContent get(String path) throws IOException;
 
-  void put(String path, RawContent content) throws IOException;
+  void put(String path, RawContent content) throws IOException, InvalidContentException;
 
   void updateLastUpdated(String path, final DateTime lastUpdated) throws IOException;
 

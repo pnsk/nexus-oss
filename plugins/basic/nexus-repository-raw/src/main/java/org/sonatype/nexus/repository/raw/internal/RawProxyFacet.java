@@ -17,6 +17,7 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.inject.Named;
 
+import org.sonatype.nexus.repository.content.InvalidContentException;
 import org.sonatype.nexus.repository.proxy.ProxyFacetSupport;
 import org.sonatype.nexus.repository.raw.RawContent;
 import org.sonatype.nexus.repository.view.Context;
@@ -54,13 +55,12 @@ public class RawProxyFacet
   }
 
   @Override
-  protected void indicateUpToDate(final Context context) {
-    // TODO: Implement this, adding a new method to RawStorageFacet
-    log.warn("indicateUpToDate not implemented");
+  protected void indicateUpToDate(final Context context) throws IOException {
+    storage().updateLastUpdated(componentPath(context), new DateTime());
   }
 
   @Override
-  protected void store(final Context context, final Payload payload) throws IOException {
+  protected void store(final Context context, final Payload payload) throws IOException, InvalidContentException {
     final String path = componentPath(context);
     storage().put(path, toContent(payload, new DateTime()));
   }

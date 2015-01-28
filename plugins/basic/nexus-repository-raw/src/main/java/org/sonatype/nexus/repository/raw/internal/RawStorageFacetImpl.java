@@ -18,13 +18,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
 import org.sonatype.nexus.blobstore.api.BlobStore;
+import org.sonatype.nexus.mime.MimeSupport;
 import org.sonatype.nexus.repository.FacetSupport;
+import org.sonatype.nexus.repository.content.InvalidContentException;
 import org.sonatype.nexus.repository.negativecache.NegativeCacheKey;
 import org.sonatype.nexus.repository.negativecache.NegativeCacheKeySource;
 import org.sonatype.nexus.repository.raw.RawContent;
@@ -40,6 +43,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import org.joda.time.DateTime;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.sonatype.nexus.repository.storage.StorageFacet.E_PART_OF_COMPONENT;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_ATTRIBUTES;
@@ -62,8 +66,11 @@ public class RawStorageFacetImpl
 {
   private final static String RAW = "raw";
 
+  private final MimeSupport mimeSupport;
+
   @Inject
-  public RawStorageFacetImpl() {
+  public RawStorageFacetImpl(MimeSupport mimeSupport) {
+    this.mimeSupport = checkNotNull(mimeSupport);
   }
 
   @Nullable
@@ -86,7 +93,7 @@ public class RawStorageFacetImpl
 
   @Nullable
   @Override
-  public void put(final String path, final RawContent content) throws IOException {
+  public void put(final String path, final RawContent content) throws IOException, InvalidContentException {
     try (StorageTx tx = getStorage().openTx()) {
       final OrientVertex bucket = tx.getBucket();
       OrientVertex component = getComponent(tx, path, bucket);
@@ -122,9 +129,7 @@ public class RawStorageFacetImpl
       final BlobRef newBlobRef = tx.createBlob(content.openInputStream(), headers);
 
       asset.setProperty(P_BLOB_REF, newBlobRef.toString());
-      if (content.getContentType() != null) {
-        asset.setProperty(P_CONTENT_TYPE, content.getContentType());
-      }
+      asset.setProperty(P_CONTENT_TYPE, determineContentType(path, content));
 
       final DateTime lastUpdated = content.getLastUpdated();
       if (lastUpdated != null) {
@@ -133,6 +138,34 @@ public class RawStorageFacetImpl
 
       tx.commit();
     }
+  }
+
+  /**
+   * Determines or confirms the content type for the content, or throws {@link InvalidContentException} if it cannot.
+   */
+  @Nonnull
+  private String determineContentType(final String path, final RawContent content) throws IOException {
+    String contentType = content.getContentType();
+
+    if (contentType == null) {
+      log.trace("Content PUT to {} has no content type.", path);
+      try (InputStream is = content.openInputStream()) {
+        contentType = mimeSupport.detectMimeType(is, path);
+        log.trace("Mime support implies content type {}", contentType);
+      }
+
+      if (contentType == null) {
+        throw new InvalidContentException(String.format("Content type could not be determined."));
+      }
+    }
+    else {
+      final List<String> types = mimeSupport.detectMimeTypes(content.openInputStream(), path);
+      if (!types.isEmpty() && !types.contains(contentType)) {
+        log.debug("Discovered content type {} ", types.get(0));
+        throw new InvalidContentException(String.format("Content type %s does not match binary data.", contentType));
+      }
+    }
+    return contentType;
   }
 
   private String getGroup(String path) {

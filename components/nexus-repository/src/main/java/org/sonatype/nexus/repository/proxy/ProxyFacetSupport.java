@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.sonatype.nexus.repository.FacetSupport;
+import org.sonatype.nexus.repository.content.InvalidContentException;
 import org.sonatype.nexus.repository.httpclient.HttpClientFacet;
 import org.sonatype.nexus.repository.util.NestedAttributesMap;
 import org.sonatype.nexus.repository.view.Context;
@@ -125,7 +126,8 @@ public abstract class ProxyFacetSupport
    * Store a new Payload, freshly fetched from the remote URL. The Context indicates which component
    * was being requested.
    */
-  protected abstract void store(final Context context, final Payload payload) throws IOException;
+  protected abstract void store(final Context context, final Payload payload)
+      throws IOException, InvalidContentException;
 
   @Nullable
   protected Payload fetch(final Context context) throws IOException {
