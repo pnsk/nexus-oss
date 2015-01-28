@@ -34,8 +34,4 @@ public interface Payload
 
   @Nullable
   String getContentType();
-
-  @Deprecated
-  @Nullable
-  DateTime getLastModified();
 }

@@ -49,8 +49,8 @@ public class RawProxyFacet
 
   @Override
   protected DateTime getCachedPayloadLastUpdatedDate(final Context context) throws IOException {
-    // TODO: This isn't quite right; add to RawStorageFacet to add this method
-    return storage().get(componentPath(context)).getLastModified();
+    final RawContent rawContent = storage().get(componentPath(context));
+    return rawContent != null ? rawContent.getLastUpdated() : null;
   }
 
   @Override
@@ -62,7 +62,7 @@ public class RawProxyFacet
   @Override
   protected void store(final Context context, final Payload payload) throws IOException {
     final String path = componentPath(context);
-    storage().put(path, toContent(payload));
+    storage().put(path, toContent(payload, new DateTime()));
   }
 
   @Override

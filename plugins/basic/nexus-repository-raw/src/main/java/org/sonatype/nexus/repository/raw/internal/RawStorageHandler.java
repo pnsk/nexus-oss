@@ -12,9 +12,6 @@
  */
 package org.sonatype.nexus.repository.raw.internal;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import javax.annotation.Nonnull;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -27,6 +24,8 @@ import org.sonatype.nexus.repository.view.Handler;
 import org.sonatype.nexus.repository.view.Response;
 import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
+
+import org.joda.time.DateTime;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.sonatype.nexus.repository.http.HttpMethods.DELETE;
@@ -68,7 +67,7 @@ public class RawStorageHandler
       }
 
       case PUT: {
-        RawContent content = toContent(context.getRequest().getPayload());
+        RawContent content = toContent(context.getRequest().getPayload(), new DateTime());
 
         storage.put(name, content);
         index.put(name);

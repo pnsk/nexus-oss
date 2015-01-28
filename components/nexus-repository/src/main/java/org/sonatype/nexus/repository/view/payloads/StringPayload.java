@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import org.sonatype.nexus.repository.view.Payload;
 
 import com.google.common.base.Charsets;
-import org.joda.time.DateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,7 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @since 3.0
  */
 public class StringPayload
-  implements Payload
+    implements Payload
 {
   private final String content;
 
@@ -70,11 +69,6 @@ public class StringPayload
     return contentType;
   }
 
-  @Nullable
-  @Override
-  public DateTime getLastModified() {
-    return null;
-  }
   @Override
   public String toString() {
     return getClass().getSimpleName() + "{" +

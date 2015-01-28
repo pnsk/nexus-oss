@@ -32,7 +32,7 @@ public class RawContentPayloadMarshaller
 {
   private RawContentPayloadMarshaller() { }
 
-  public static RawContent toContent(final Payload payload) {
+  public static RawContent toContent(final Payload payload, final DateTime updatedDate) {
     return new RawContent()
     {
       @Override
@@ -51,8 +51,8 @@ public class RawContentPayloadMarshaller
       }
 
       @Override
-      public DateTime getLastModified() {
-        return payload.getLastModified();
+      public DateTime getLastUpdated() {
+        return updatedDate;
       }
     };
   }
@@ -61,7 +61,6 @@ public class RawContentPayloadMarshaller
     checkNotNull(content);
     return new StreamPayload(content.openInputStream(),
         content.getSize(),
-        content.getContentType(),
-        content.getLastModified());
+        content.getContentType());
   }
 }

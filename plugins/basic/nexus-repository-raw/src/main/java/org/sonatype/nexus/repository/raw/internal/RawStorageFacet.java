@@ -20,10 +20,12 @@ import org.sonatype.nexus.repository.Facet;
 import org.sonatype.nexus.repository.raw.RawContent;
 import org.sonatype.nexus.repository.raw.RawContentImpl;
 
+import org.joda.time.DateTime;
+
 /**
  * Provides persistent storage for {@link RawContentImpl}.
  *
- *  TODO: Consider better naming so we don't get muddled up with RawStorageFacet/StorageFacet/FooStorageFacet/etc.
+ * TODO: Consider better naming so we don't get muddled up with RawStorageFacet/StorageFacet/FooStorageFacet/etc.
  *
  * @since 3.0
  */
@@ -34,7 +36,9 @@ public interface RawStorageFacet
   @Nullable
   RawContent get(String path) throws IOException;
 
-  RawContent put(String path, RawContent content) throws IOException;
+  void put(String path, RawContent content) throws IOException;
+
+  void updateLastUpdated(String path, final DateTime lastUpdated) throws IOException;
 
   boolean delete(String path) throws IOException;
 }

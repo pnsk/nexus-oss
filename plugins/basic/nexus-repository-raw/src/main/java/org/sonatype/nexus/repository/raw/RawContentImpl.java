@@ -32,7 +32,8 @@ public class RawContentImpl
 
   private final byte[] bytes;
 
-  private final DateTime lastModified;
+  // TODO FIX FIX FIX
+  private final DateTime lastUpdated=null;
 
   public RawContentImpl(final Payload payload) throws IOException {
     checkNotNull(payload);
@@ -40,7 +41,6 @@ public class RawContentImpl
     try (InputStream input = checkNotNull(payload.openInputStream())) {
       this.bytes = ByteStreams.toByteArray(input);
     }
-    this.lastModified = payload.getLastModified();
   }
 
   @Override
@@ -54,8 +54,8 @@ public class RawContentImpl
   }
 
   @Override
-  public DateTime getLastModified() {
-    return lastModified;
+  public DateTime getLastUpdated() {
+    return lastUpdated;
   }
 
   @Override
@@ -68,7 +68,7 @@ public class RawContentImpl
     return getClass().getSimpleName() + "{" +
         "type='" + type + '\'' +
         ", size=" + bytes.length +
-        ", lastModified=" + lastModified +
+        ", lastUpdated=" + lastUpdated +
         '}';
   }
 }

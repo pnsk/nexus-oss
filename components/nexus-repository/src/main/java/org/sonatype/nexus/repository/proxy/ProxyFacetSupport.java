@@ -181,7 +181,7 @@ public abstract class ProxyFacetSupport
    */
   private Payload readFully(final Payload payload) throws IOException {
     try (InputStream stream = payload.openInputStream()) {
-      return new BytesPayload(ByteStreams.toByteArray(stream), payload.getContentType(), payload.getLastModified());
+      return new BytesPayload(ByteStreams.toByteArray(stream), payload.getContentType());
     }
   }
 

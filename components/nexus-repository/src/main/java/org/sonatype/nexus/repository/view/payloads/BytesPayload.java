@@ -20,8 +20,6 @@ import javax.annotation.Nullable;
 
 import org.sonatype.nexus.repository.view.Payload;
 
-import org.joda.time.DateTime;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -36,16 +34,9 @@ public class BytesPayload
 
   private final String contentType;
 
-  private final DateTime lastModified;
-
-  public BytesPayload(final byte[] content, final String contentType) {
-    this(content, contentType, null);
-  }
-
-  public BytesPayload(final byte[] content, final @Nullable String contentType, final DateTime lastModified) {
+  public BytesPayload(final byte[] content, final @Nullable String contentType) {
     this.content = checkNotNull(content);
     this.contentType = contentType;
-    this.lastModified = lastModified;
   }
 
   @Override
@@ -64,18 +55,11 @@ public class BytesPayload
     return contentType;
   }
 
-  @Nullable
-  @Override
-  public DateTime getLastModified() {
-    return lastModified;
-  }
-
   @Override
   public String toString() {
     return getClass().getSimpleName() + "{" +
         "size=" + getSize() +
         ", contentType='" + contentType + '\'' +
-        ", lastModified='" + lastModified + '\'' +
         '}';
   }
 }

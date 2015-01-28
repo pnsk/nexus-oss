@@ -43,7 +43,7 @@ public interface StorageFacet
 
   static String P_GROUP = "group";
 
-  static String P_LAST_MODIFIED = "last_modified";
+  static String P_LAST_UPDATED = "last_updated";
 
   static String P_NAME = "name";
 

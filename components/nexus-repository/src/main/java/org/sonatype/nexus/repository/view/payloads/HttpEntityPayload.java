@@ -14,7 +14,6 @@ package org.sonatype.nexus.repository.view.payloads;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 
 import javax.annotation.Nullable;
 
@@ -23,8 +22,6 @@ import org.sonatype.nexus.repository.view.Payload;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.utils.DateUtils;
-import org.joda.time.DateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -53,22 +50,6 @@ public class HttpEntityPayload
   @Override
   public long getSize() {
     return entity.getContentLength();
-  }
-
-  @Nullable
-  @Override
-  public DateTime getLastModified() {
-    final Header header = response.getFirstHeader("Last-Modified");
-    if (header == null) {
-      return null;
-    }
-
-    final Date date = DateUtils.parseDate(header.getValue());
-    if (date == null) {
-      return null;
-    }
-
-    return new DateTime(date.getTime());
   }
 
   @Nullable

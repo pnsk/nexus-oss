@@ -47,7 +47,7 @@ import static org.sonatype.nexus.repository.storage.StorageFacet.P_BLOB_REF;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_CONTENT_TYPE;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_FORMAT;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_GROUP;
-import static org.sonatype.nexus.repository.storage.StorageFacet.P_LAST_MODIFIED;
+import static org.sonatype.nexus.repository.storage.StorageFacet.P_LAST_UPDATED;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_NAME;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_PATH;
 
@@ -86,7 +86,7 @@ public class RawStorageFacetImpl
 
   @Nullable
   @Override
-  public RawContent put(final String path, final RawContent content) throws IOException {
+  public void put(final String path, final RawContent content) throws IOException {
     try (StorageTx tx = getStorage().openTx()) {
       final OrientVertex bucket = tx.getBucket();
       OrientVertex component = getComponent(tx, path, bucket);
@@ -126,14 +126,12 @@ public class RawStorageFacetImpl
         asset.setProperty(P_CONTENT_TYPE, content.getContentType());
       }
 
-      final DateTime lastModified = content.getLastModified();
-      if (lastModified != null) {
-        asset.setProperty(P_LAST_MODIFIED, new Date(lastModified.getMillis()));
+      final DateTime lastUpdated = content.getLastUpdated();
+      if (lastUpdated != null) {
+        asset.setProperty(P_LAST_UPDATED, new Date(lastUpdated.getMillis()));
       }
 
       tx.commit();
-
-      return marshall(asset, tx.getBlob(newBlobRef));
     }
   }
 
@@ -179,6 +177,27 @@ public class RawStorageFacetImpl
   }
 
   @Override
+  public void updateLastUpdated(final String path, final DateTime lastUpdated) throws IOException {
+    try (StorageTx tx = getStorage().openTx()) {
+      OrientVertex bucket = tx.getBucket();
+      OrientVertex component = tx.findComponentWithProperty(P_PATH, path, bucket);
+
+      if (component == null) {
+        log.debug("Updating lastUpdated time for nonexistant raw component {}", path);
+        return;
+      }
+
+      OrientVertex asset = getAsset(component);
+
+      if (lastUpdated != null) {
+        asset.setProperty(P_LAST_UPDATED, new Date(lastUpdated.getMillis()));
+      }
+
+      tx.commit();
+    }
+  }
+
+  @Override
   public NegativeCacheKey cacheKey(final Context context) {
     return new NegativeCacheKey(context.getRequest().getPath());
   }
@@ -208,8 +227,8 @@ public class RawStorageFacetImpl
   private RawContent marshall(final OrientVertex asset, final Blob blob) {
     final String contentType = asset.getProperty(P_CONTENT_TYPE);
 
-    final Date date = asset.getProperty(P_LAST_MODIFIED);
-    final DateTime lastModified = date == null ? null : new DateTime(date.getTime());
+    final Date date = asset.getProperty(P_LAST_UPDATED);
+    final DateTime lastUpdated = date == null ? null : new DateTime(date.getTime());
 
     return new RawContent()
     {
@@ -229,8 +248,8 @@ public class RawStorageFacetImpl
       }
 
       @Override
-      public DateTime getLastModified() {
-        return lastModified;
+      public DateTime getLastUpdated() {
+        return lastUpdated;
       }
     };
   }
