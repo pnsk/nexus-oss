@@ -51,6 +51,9 @@ import org.codehaus.plexus.util.StringUtils;
 
 import static com.google.common.base.Preconditions.checkState;
 
+/**
+ * Default {@link ConfigurationManager}.
+ */
 @Named
 @Singleton
 public class DefaultConfigurationManager
