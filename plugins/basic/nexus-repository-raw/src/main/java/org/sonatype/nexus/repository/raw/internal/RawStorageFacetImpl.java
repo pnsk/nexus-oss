@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ import org.sonatype.nexus.repository.view.Context;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
@@ -40,9 +42,13 @@ import org.joda.time.DateTime;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.sonatype.nexus.repository.storage.StorageFacet.E_PART_OF_COMPONENT;
+import static org.sonatype.nexus.repository.storage.StorageFacet.P_ATTRIBUTES;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_BLOB_REF;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_CONTENT_TYPE;
+import static org.sonatype.nexus.repository.storage.StorageFacet.P_FORMAT;
+import static org.sonatype.nexus.repository.storage.StorageFacet.P_GROUP;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_LAST_MODIFIED;
+import static org.sonatype.nexus.repository.storage.StorageFacet.P_NAME;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_PATH;
 
 /**
@@ -54,6 +60,8 @@ public class RawStorageFacetImpl
     extends FacetSupport
     implements RawStorageFacet, NegativeCacheKeySource
 {
+  private final static String RAW = "raw";
+
   @Inject
   public RawStorageFacetImpl() {
   }
@@ -62,7 +70,7 @@ public class RawStorageFacetImpl
   @Override
   public RawContent get(final String path) {
     try (StorageTx tx = getStorage().openTx()) {
-      final OrientVertex component = tx.findComponentWithProperty(P_PATH, path, tx.getBucket());
+      final OrientVertex component = getComponent(tx, path, tx.getBucket());
       if (component == null) {
         return null;
       }
@@ -80,15 +88,22 @@ public class RawStorageFacetImpl
   @Override
   public RawContent put(final String path, final RawContent content) throws IOException {
     try (StorageTx tx = getStorage().openTx()) {
-      OrientVertex bucket = tx.getBucket();
-      OrientVertex component = tx.findComponentWithProperty(P_PATH, path, bucket);
+      final OrientVertex bucket = tx.getBucket();
+      OrientVertex component = getComponent(tx, path, bucket);
       OrientVertex asset;
       if (component == null) {
         // CREATE
         component = tx.createComponent(bucket);
 
-        // TODO: Set common component props at top level, set other props as format-specific attributes?
-        component.setProperty(P_PATH, path);
+        // Set normalized properties: format, group, and name (version is undefined for "raw" components)
+        component.setProperty(P_FORMAT, RAW);
+        component.setProperty(P_GROUP, getGroup(path));
+        component.setProperty(P_NAME, getName(path));
+
+        // Set attributes map to contain "raw" format-specific metadata (in this case, path)
+        Map<String, String> rawAttributes = ImmutableMap.of(P_PATH, path);
+        Map<String, Map<String, String>> attributes = ImmutableMap.of(RAW, rawAttributes);
+        component.setProperty(P_ATTRIBUTES, attributes, OType.EMBEDDEDMAP);
 
         asset = tx.createAsset(bucket);
         asset.addEdge(E_PART_OF_COMPONENT, component);
@@ -122,11 +137,32 @@ public class RawStorageFacetImpl
     }
   }
 
+  private String getGroup(String path) {
+    StringBuilder group = new StringBuilder();
+    if (!path.startsWith("/")) {
+      group.append("/");
+    }
+    int i = path.lastIndexOf("/");
+    if (i != -1) {
+      group.append(path.substring(0, i));
+    }
+    return group.toString();
+  }
+
+  private String getName(String path) {
+    int i = path.lastIndexOf("/");
+    if (i != -1) {
+      return path.substring(i + 1);
+    }
+    else {
+      return path;
+    }
+  }
 
   @Override
   public boolean delete(final String path) throws IOException {
     try (StorageTx tx = getStorage().openTx()) {
-      final OrientVertex component = tx.findComponentWithProperty(P_PATH, path, tx.getBucket());
+      final OrientVertex component = getComponent(tx, path, tx.getBucket());
       if (component == null) {
         return false;
       }
@@ -161,6 +197,12 @@ public class RawStorageFacetImpl
     List<Vertex> vertices = Lists.newArrayList(component.getVertices(Direction.IN, E_PART_OF_COMPONENT));
     checkState(!vertices.isEmpty());
     return (OrientVertex) vertices.get(0);
+  }
+
+  // TODO: Consider a top-level indexed property (e.g. "locator") to make these common lookups fast
+  private OrientVertex getComponent(StorageTx tx, String path, OrientVertex bucket) {
+    String property = String.format("%s.%s.%s", P_ATTRIBUTES, RAW, P_PATH);
+    return tx.findComponentWithProperty(property, path, bucket);
   }
 
   private RawContent marshall(final OrientVertex asset, final Blob blob) {

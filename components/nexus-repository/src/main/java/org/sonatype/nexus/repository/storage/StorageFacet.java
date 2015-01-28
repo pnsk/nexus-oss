@@ -33,15 +33,25 @@ public interface StorageFacet
 
   static String E_PART_OF_COMPONENT = "part_of_component";
 
+  static String P_ATTRIBUTES = "attributes";
+
   static String P_BLOB_REF = "blob_ref";
 
   static String P_CONTENT_TYPE = "content_type";
 
+  static String P_FORMAT = "name";
+
+  static String P_GROUP = "group";
+
   static String P_LAST_MODIFIED = "last_modified";
+
+  static String P_NAME = "name";
 
   static String P_PATH = "path";
 
   static String P_REPOSITORY_NAME = "repository_name";
+
+  static String P_VERSION = "version";
 
   static String V_ASSET = "asset";
 
