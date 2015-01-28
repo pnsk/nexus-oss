@@ -39,14 +39,6 @@
       <artifactId>nexus-ehcache</artifactId>
     </dependency>
 
-    <!--
-    TODO: Remove; used only for StringUtils.isNotEmpty(),  StringUtils.isEmpty()
-    -->
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.sonatype.sisu.goodies</groupId>
       <artifactId>goodies-crypto</artifactId>
