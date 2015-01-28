@@ -60,7 +60,15 @@ public class RolePermissionResolverImpl
 
   private final List<PrivilegeDescriptor> privilegeDescriptors;
 
-  private final Map<String, Collection<Permission>> permissionsCache;
+  /**
+   * Privilege-id to permission cache.
+   */
+  private final Map<String,Permission> permissionsCache = new MapMaker().weakValues().makeMap();
+
+  /**
+   * Role-id to role permissions cache.
+   */
+  private final Map<String, Collection<Permission>> rolePermissionsCache = new MapMaker().weakValues().makeMap();
 
   @Inject
   public RolePermissionResolverImpl(final ConfigurationManager configuration,
@@ -69,22 +77,27 @@ public class RolePermissionResolverImpl
   {
     this.configuration = checkNotNull(configuration);
     this.privilegeDescriptors = checkNotNull(privilegeDescriptors);
-    this.permissionsCache = new MapMaker().weakValues().makeMap();
     eventBus.register(this);
+  }
+
+  /**
+   * Invalidate caches.
+   */
+  private void invalidate() {
+    permissionsCache.clear();
+    rolePermissionsCache.clear();
   }
 
   @AllowConcurrentEvents
   @Subscribe
   public void on(final AuthorizationConfigurationChanged event) {
-    // invalidate previous results
-    permissionsCache.clear();
+    invalidate();
   }
 
   @AllowConcurrentEvents
   @Subscribe
   public void on(final SecurityConfigurationChanged event) {
-    // invalidate previous results
-    permissionsCache.clear();
+    invalidate();
   }
 
   public Collection<Permission> resolvePermissionsInRole(final String roleString) {
@@ -104,7 +117,7 @@ public class RolePermissionResolverImpl
           final CRole role = configuration.readRole(roleId);
 
           // check memory-sensitive cache (after readRole to allow for the dirty check)
-          final Collection<Permission> cachedPermissions = permissionsCache.get(roleId);
+          final Collection<Permission> cachedPermissions = rolePermissionsCache.get(roleId);
           if (cachedPermissions != null) {
             permissions.addAll(cachedPermissions);
             continue; // use cached results
@@ -128,11 +141,14 @@ public class RolePermissionResolverImpl
     }
 
     // cache result of (non-trivial) computation
-    permissionsCache.put(roleString, permissions);
+    rolePermissionsCache.put(roleString, permissions);
 
     return permissions;
   }
 
+  /**
+   * Returns the descriptor for the given privilege-type or {@code null}.
+   */
   @Nullable
   private PrivilegeDescriptor descriptor(final String privilegeType) {
     assert privilegeType != null;
@@ -147,22 +163,28 @@ public class RolePermissionResolverImpl
     return null;
   }
 
+  /**
+   * Returns the permission for the given privilege-id or {@code null}.
+   */
   @Nullable
   private Permission permission(final String privilegeId) {
     assert privilegeId != null;
 
-    // TODO: Consider cache here?
-    try {
-      CPrivilege privilege = configuration.readPrivilege(privilegeId);
-      PrivilegeDescriptor descriptor = descriptor(privilege.getType());
-      if (descriptor != null) {
-        return descriptor.createPermission(privilege);
+    Permission permission = permissionsCache.get(privilegeId);
+    if (permission == null) {
+      try {
+        CPrivilege privilege = configuration.readPrivilege(privilegeId);
+        PrivilegeDescriptor descriptor = descriptor(privilege.getType());
+        if (descriptor != null) {
+          permission = descriptor.createPermission(privilege);
+          permissionsCache.put(privilegeId, permission);
+        }
+      }
+      catch (NoSuchPrivilegeException e) {
+        log.trace("Ignoring missing privilege: {}", privilegeId, e);
       }
     }
-    catch (NoSuchPrivilegeException e) {
-      log.trace("Ignoring missing privilege: {}", privilegeId, e);
-    }
 
-    return null;
+    return permission;
   }
 }
