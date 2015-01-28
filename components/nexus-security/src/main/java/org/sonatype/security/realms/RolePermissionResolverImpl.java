@@ -151,6 +151,7 @@ public class RolePermissionResolverImpl
   private Permission permission(final String privilegeId) {
     assert privilegeId != null;
 
+    // TODO: Consider cache here?
     try {
       CPrivilege privilege = configuration.readPrivilege(privilegeId);
       PrivilegeDescriptor descriptor = descriptor(privilege.getType());

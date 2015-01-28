@@ -18,12 +18,12 @@ import javax.inject.Inject;
 
 import org.sonatype.configuration.validation.ValidationMessage;
 import org.sonatype.configuration.validation.ValidationResponse;
+import org.sonatype.security.authorization.WildcardPermission2;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.realms.validator.ConfigurationIdGenerator;
 import org.sonatype.security.realms.validator.SecurityValidationContext;
 
 import org.apache.shiro.authz.Permission;
-import org.apache.shiro.authz.permission.WildcardPermission;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -43,17 +43,7 @@ public abstract class AbstractPrivilegeDescriptor
   public Permission createPermission(final CPrivilege privilege) {
     assert privilege != null;
     assert getType().equals(privilege.getType());
-
-    // return wildcard permission with cached hash-code
-    return new WildcardPermission(buildPermission(privilege))
-    {
-      private final int cachedHash = super.hashCode();
-
-      @Override
-      public int hashCode() {
-        return cachedHash;
-      }
-    };
+    return new WildcardPermission2(buildPermission(privilege));
   }
 
   public ValidationResponse validatePrivilege(CPrivilege privilege, SecurityValidationContext ctx, boolean update) {
