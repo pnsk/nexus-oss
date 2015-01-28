@@ -12,8 +12,6 @@
  */
 package org.sonatype.nexus.common.text;
 
-import com.google.common.base.Strings;
-
 /**
  * String helpers.
  *
@@ -24,7 +22,7 @@ public class Strings2
   private Strings2() {}
 
   public static boolean isEmpty(final String value) {
-    return Strings.nullToEmpty(value).trim().isEmpty();
+    return value == null || value.trim().isEmpty();
   }
 
   public static boolean isNotEmpty(final String value) {
