@@ -27,6 +27,7 @@ public class GraphTx
 {
   public GraphTx(final ODatabaseDocumentTx db) {
     super(db);
+    setUseLightweightEdges(true);
   }
 
   @Override

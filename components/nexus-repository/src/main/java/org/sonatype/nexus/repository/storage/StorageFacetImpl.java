@@ -84,6 +84,7 @@ public class StorageFacetImpl
   private void initSchema() {
     // initialize the graph schema if needed
     final CheckedGraphNoTx graph = new CheckedGraphNoTx(databaseInstanceProvider.get().acquire());
+    graph.setUseLightweightEdges(true);
     try {
       initVertexType(graph, V_ASSET, new Predicate<OrientVertexType>()
       {
