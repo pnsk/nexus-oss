@@ -26,6 +26,9 @@ import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.permission.WildcardPermission;
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * Abstract {@link PrivilegeDescriptor}.
+ */
 public abstract class AbstractPrivilegeDescriptor
     implements PrivilegeDescriptor
 {
@@ -40,7 +43,17 @@ public abstract class AbstractPrivilegeDescriptor
   public Permission createPermission(final CPrivilege privilege) {
     assert privilege != null;
     assert getType().equals(privilege.getType());
-    return new WildcardPermission(buildPermission(privilege));
+
+    // return wildcard permission with cached hash-code
+    return new WildcardPermission(buildPermission(privilege))
+    {
+      private final int cachedHash = super.hashCode();
+
+      @Override
+      public int hashCode() {
+        return cachedHash;
+      }
+    };
   }
 
   public ValidationResponse validatePrivilege(CPrivilege privilege, SecurityValidationContext ctx, boolean update) {
