@@ -86,6 +86,7 @@ public class RolePermissionResolverImpl
   private void invalidate() {
     permissionsCache.clear();
     rolePermissionsCache.clear();
+    log.trace("Cache invalidated");
   }
 
   @AllowConcurrentEvents
@@ -100,6 +101,7 @@ public class RolePermissionResolverImpl
     invalidate();
   }
 
+  @Override
   public Collection<Permission> resolvePermissionsInRole(final String roleString) {
     checkNotNull(roleString);
 
