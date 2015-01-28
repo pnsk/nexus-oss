@@ -35,6 +35,14 @@
     </dependency>
 
     <dependency>
+      <groupId>org.sonatype.nexus</groupId>
+      <artifactId>nexus-ehcache</artifactId>
+    </dependency>
+
+    <!--
+    TODO: Remove; used only for StringUtils.isNotEmpty(),  StringUtils.isEmpty() and CollectionUtils.intersection()
+    -->
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
     </dependency>
@@ -55,11 +63,6 @@
     <dependency>
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
 
     <dependency>
@@ -97,28 +100,20 @@
       <artifactId>shiro-guice</artifactId>
     </dependency>
 
+    <!--
+    Shiro uses JCL
+    -->
     <dependency>
-      <groupId>org.sonatype.nexus</groupId>
-      <artifactId>nexus-ehcache</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
     </dependency>
 
     <!--
-      Shiro needs beanutils to run, but we have to use our
-      as Shiro's is excluded in nexus-builduspport-shiro
+    Shiro requires beanutils, ensure we get the right version.
     -->
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
     </dependency>
 
     <dependency>
