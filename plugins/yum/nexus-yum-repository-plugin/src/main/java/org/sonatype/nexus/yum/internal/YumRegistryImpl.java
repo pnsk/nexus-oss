@@ -30,6 +30,7 @@ import org.sonatype.nexus.proxy.repository.HostedRepository;
 import org.sonatype.nexus.proxy.repository.ProxyRepository;
 import org.sonatype.nexus.yum.Yum;
 import org.sonatype.nexus.yum.YumRegistry;
+import org.sonatype.nexus.yum.internal.createrepo.YumStoreManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -54,6 +55,8 @@ public class YumRegistryImpl
 
   private final YumFactory yumFactory;
 
+  private final YumStoreManager yumStoreManager;
+
   private int maxNumberOfParallelThreads;
 
   private String createrepoPath;
@@ -62,10 +65,12 @@ public class YumRegistryImpl
 
   @Inject
   public YumRegistryImpl(final NexusConfiguration nexusConfiguration,
-                         final YumFactory yumFactory)
+                         final YumFactory yumFactory,
+                         final YumStoreManager yumStoreManager)
   {
     this.nexusConfiguration = checkNotNull(nexusConfiguration);
     this.yumFactory = checkNotNull(yumFactory);
+    this.yumStoreManager = checkNotNull(yumStoreManager);
     this.maxNumberOfParallelThreads = DEFAULT_MAX_NUMBER_PARALLEL_THREADS;
   }
 
@@ -87,6 +92,7 @@ public class YumRegistryImpl
       }
 
       yums.put(repository.getId(), yum);
+      yumStoreManager.add(repository.getId());
 
       LOG.info("Registered repository '{}' as Yum repository", repository.getId());
 
@@ -101,6 +107,7 @@ public class YumRegistryImpl
   public Yum unregister(final String repositoryId) {
     final Yum yum = yums.remove(repositoryId);
     if (yum != null) {
+      yumStoreManager.delete(repositoryId);
       yum.getNexusRepository().unregisterRequestStrategy(ProxyMetadataRequestStrategy.class.getName());
       yum.getNexusRepository().unregisterRequestStrategy(MergeMetadataRequestStrategy.class.getName());
       LOG.info("Unregistered repository '{}' as Yum repository", repositoryId);

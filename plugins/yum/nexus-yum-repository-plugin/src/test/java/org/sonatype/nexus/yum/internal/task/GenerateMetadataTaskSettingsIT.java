@@ -29,6 +29,7 @@ import org.sonatype.nexus.yum.Yum;
 import org.sonatype.nexus.yum.YumRegistry;
 import org.sonatype.nexus.yum.YumRepository;
 import org.sonatype.nexus.yum.internal.RpmScanner;
+import org.sonatype.nexus.yum.internal.createrepo.YumStoreManager;
 import org.sonatype.nexus.yum.internal.support.YumNexusTestSupport;
 
 import com.google.common.collect.ImmutableList;
@@ -106,9 +107,9 @@ public class GenerateMetadataTaskSettingsIT
     // given
     GenerateMetadataTask task = new GenerateMetadataTask(
         mock(YumRegistry.class),
+        mock(YumStoreManager.class),
         mock(RpmScanner.class),
-        mock(Manager.class),
-        mock(CommandLineExecutor.class)
+        mock(Manager.class)
     );
     task.setRepositoryRegistry(repoRegistry());
     task.setRpmDir(rpmsDir().getAbsolutePath());
@@ -125,9 +126,9 @@ public class GenerateMetadataTaskSettingsIT
     // given
     GenerateMetadataTask task = new GenerateMetadataTask(
         mock(YumRegistry.class),
+        mock(YumStoreManager.class),
         mock(RpmScanner.class),
-        mock(Manager.class),
-        mock(CommandLineExecutor.class)
+        mock(Manager.class)
     );
     task.setRepositoryRegistry(repoRegistry());
     task.setRepositoryId(REPO);
@@ -144,9 +145,9 @@ public class GenerateMetadataTaskSettingsIT
   {
     GenerateMetadataTask task = new GenerateMetadataTask(
         mock(YumRegistry.class),
+        mock(YumStoreManager.class),
         mock(RpmScanner.class),
-        mock(Manager.class),
-        mock(CommandLineExecutor.class)
+        mock(Manager.class)
     );
     task.setRepositoryRegistry(repoRegistry());
     task.setRepositoryId(REPO);
@@ -172,9 +173,9 @@ public class GenerateMetadataTaskSettingsIT
 
     GenerateMetadataTask task = new GenerateMetadataTask(
         yumRegistry,
+        mock(YumStoreManager.class),
         mock(RpmScanner.class),
-        mock(Manager.class),
-        mock(CommandLineExecutor.class)
+        mock(Manager.class)
     );
     task.setRepositoryRegistry(repoRegistry());
     task.setRepositoryId(REPO);
@@ -223,9 +224,9 @@ public class GenerateMetadataTaskSettingsIT
 
     GenerateMetadataTask task = new GenerateMetadataTask(
         yumRegistry,
+        mock(YumStoreManager.class),
         mock(RpmScanner.class),
-        mock(Manager.class),
-        mock(CommandLineExecutor.class)
+        mock(Manager.class)
     )
     {
       @Override

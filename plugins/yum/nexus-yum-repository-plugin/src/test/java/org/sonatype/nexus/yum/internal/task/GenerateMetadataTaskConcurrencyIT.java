@@ -39,6 +39,7 @@ import org.sonatype.nexus.yum.YumHosted;
 import org.sonatype.nexus.yum.YumRegistry;
 import org.sonatype.nexus.yum.YumRepository;
 import org.sonatype.nexus.yum.internal.RpmScanner;
+import org.sonatype.nexus.yum.internal.createrepo.YumStoreManager;
 import org.sonatype.nexus.yum.internal.support.YumNexusTestSupport;
 
 import com.google.code.tempusfugit.temporal.Condition;
@@ -187,9 +188,9 @@ public class GenerateMetadataTaskConcurrencyIT
   {
     final GenerateMetadataTask task = new GenerateMetadataTask(
         yumRegistry,
+        mock(YumStoreManager.class),
         mock(RpmScanner.class),
-        mock(Manager.class),
-        mock(CommandLineExecutor.class)
+        mock(Manager.class)
     )
     {
       @Override

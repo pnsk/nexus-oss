@@ -13,11 +13,14 @@
 package org.sonatype.nexus.yum.internal.task;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -42,14 +45,19 @@ import org.sonatype.nexus.yum.YumRegistry;
 import org.sonatype.nexus.yum.YumRepository;
 import org.sonatype.nexus.yum.internal.ListFileFactory;
 import org.sonatype.nexus.yum.internal.RepositoryUtils;
-import org.sonatype.nexus.yum.internal.RpmListWriter;
 import org.sonatype.nexus.yum.internal.RpmScanner;
 import org.sonatype.nexus.yum.internal.YumRepositoryImpl;
+import org.sonatype.nexus.yum.internal.createrepo.YumPackage;
+import org.sonatype.nexus.yum.internal.createrepo.YumPackageParser;
+import org.sonatype.nexus.yum.internal.createrepo.YumRepositoryWriter;
+import org.sonatype.nexus.yum.internal.createrepo.YumStore;
+import org.sonatype.nexus.yum.internal.createrepo.YumStoreManager;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +98,8 @@ public class GenerateMetadataTask
 
   public static final String PARAM_ADDED_FILES = "addedFiles";
 
+  public static final String PARAM_REMOVED_FILE = "removedFile";
+
   public static final String PARAM_SINGLE_RPM_PER_DIR = "singleRpmPerDir";
 
   public static final String PARAM_FORCE_FULL_SCAN = "forceFullScan";
@@ -102,18 +112,18 @@ public class GenerateMetadataTask
 
   private final Manager routingManager;
 
-  private final CommandLineExecutor commandLineExecutor;
+  private final YumStoreManager yumStoreManager;
 
   @Inject
   public GenerateMetadataTask(final YumRegistry yumRegistry,
+                              final YumStoreManager yumStoreManager,
                               final RpmScanner scanner,
-                              final Manager routingManager,
-                              final CommandLineExecutor commandLineExecutor)
+                              final Manager routingManager)
   {
     this.yumRegistry = checkNotNull(yumRegistry);
+    this.yumStoreManager = checkNotNull(yumStoreManager);
     this.scanner = checkNotNull(scanner);
     this.routingManager = checkNotNull(routingManager);
-    this.commandLineExecutor = checkNotNull(commandLineExecutor);
 
     getConfiguration().setString(PARAM_SINGLE_RPM_PER_DIR, Boolean.toString(true));
   }
@@ -172,20 +182,16 @@ public class GenerateMetadataTask
       final File repoTmpDir = new File(repoBaseDir, REPO_TMP_FOLDER + File.separator + UUID.randomUUID().toString());
       DirSupport.mkdir(repoTmpDir);
       final File repoTmpRepodataDir = new File(repoTmpDir, PATH_OF_REPODATA);
+      DirSupport.mkdir(repoTmpRepodataDir);
 
       try {
-        // NEXUS-6680: Nuke cache dir if force rebuild in effect
-        if (shouldForceFullScan()) {
-          DirSupport.deleteIfExists(getCacheDir().toPath());
+        syncYumPackages();
+        try (YumRepositoryWriter writer = new YumRepositoryWriter(repoTmpRepodataDir)) {
+          YumStore yumStore = yumStoreManager.get(repository.getId());
+          for (YumPackage yumPackage : yumStore.get()) {
+            writer.push(yumPackage);
+          }
         }
-
-        // copy existing metadata to perform update
-        if (repoRepodataDir.isDirectory()) {
-          DirSupport.copy(repoRepodataDir.toPath(), repoTmpRepodataDir.toPath());
-        }
-
-        File rpmListFile = createRpmListFile();
-        commandLineExecutor.exec(buildCreateRepositoryCommand(repoTmpDir, rpmListFile));
 
         // at the end check for cancellation
         CancelableSupport.checkCancellation();
@@ -221,6 +227,43 @@ public class GenerateMetadataTask
     }
     finally {
       mdUid.getLock().unlock();
+    }
+  }
+
+  private void syncYumPackages() {
+    Set<File> files = null;
+    File rpmDir = new File(getRpmDir());
+    if (shouldForceFullScan()) {
+      files = scanner.scan(rpmDir);
+    }
+    else if (getAddedFiles() != null) {
+      String[] addedFiles = getAddedFiles().split(File.pathSeparator);
+      files = Sets.newHashSet();
+      for (String addedFile : addedFiles) {
+        files.add(new File(rpmDir, addedFile));
+      }
+    }
+    if (files != null) {
+      YumStore yumStore = yumStoreManager.get(getRepositoryId());
+      for (File file : files) {
+        String location = RpmScanner.getRelativePath(rpmDir, file.getAbsoluteFile());
+        try {
+          YumPackage yumPackage = new YumPackageParser().parse(
+              new FileInputStream(file), location, file.lastModified()
+          );
+          yumStore.delete(location);
+          yumStore.add(yumPackage);
+        }
+        catch (FileNotFoundException e) {
+          log.warn("Could not parse yum metadata for {}", location, e);
+        }
+      }
+    }
+
+    String removedPath = getRemovedFile();
+    if (removedPath != null) {
+      YumStore yumStore = yumStoreManager.get(getRepositoryId());
+      yumStore.delete(removedPath);
     }
   }
 
@@ -270,53 +313,8 @@ public class GenerateMetadataTask
     }
   }
 
-  private File createRpmListFile()
-      throws IOException
-  {
-    return new RpmListWriter(
-        new File(getRpmDir()),
-        getAddedFiles(),
-        getVersion(),
-        isSingleRpmPerDirectory(),
-        shouldForceFullScan(),
-        this,
-        scanner
-    ).writeList();
-  }
-
   private String getRepositoryIdVersion() {
     return getRepositoryId() + (isNotBlank(getVersion()) ? ("-version-" + getVersion()) : "");
-  }
-
-  private String buildCreateRepositoryCommand(File tmpDir, File packageList) {
-    StringBuilder commandLine = new StringBuilder();
-    commandLine.append(yumRegistry.getCreaterepoPath());
-    if (!shouldForceFullScan()) {
-      commandLine.append(" --update");
-    }
-    commandLine.append(" --verbose --no-database");
-    commandLine.append(" --outputdir ").append(tmpDir.getAbsolutePath());
-    commandLine.append(" --pkglist ").append(packageList.getAbsolutePath());
-    commandLine.append(" --cachedir ").append(createCacheDir().getAbsolutePath());
-    final String yumGroupsDefinitionFile = getYumGroupsDefinitionFile();
-    if (yumGroupsDefinitionFile != null) {
-      final File file = new File(getRepoDir().getAbsolutePath(), yumGroupsDefinitionFile);
-      final String path = file.getAbsolutePath();
-      if (file.exists()) {
-        if (file.getName().toLowerCase().endsWith(".xml")) {
-          commandLine.append(" --groupfile ").append(path);
-        }
-        else {
-          LOG.warn("Yum groups definition file '{}' must have an '.xml' extension, ignoring", path);
-        }
-      }
-      else {
-        LOG.warn("Yum groups definition file '{}' doesn't exist, ignoring", path);
-      }
-    }
-    commandLine.append(" ").append(getRpmDir());
-
-    return commandLine.toString();
   }
 
   @Override
@@ -338,7 +336,7 @@ public class GenerateMetadataTask
       DirSupport.mkdir(cacheDir.toPath());
     }
     catch (IOException e) {
-      Throwables.propagate(e);
+      throw Throwables.propagate(e);
     }
     return cacheDir;
   }
@@ -366,6 +364,14 @@ public class GenerateMetadataTask
 
   public void setAddedFiles(String addedFiles) {
     getConfiguration().setString(PARAM_ADDED_FILES, addedFiles);
+  }
+
+  public String getRemovedFile() {
+    return getConfiguration().getString(PARAM_REMOVED_FILE);
+  }
+
+  public void setRemovedFile(String removedFile) {
+    getConfiguration().setString(PARAM_REMOVED_FILE, removedFile);
   }
 
   public File getRepoDir() {

@@ -93,7 +93,7 @@ implements Closeable
     yumPackage.changes.each { changelog ->
       writeEl(ow, 'changelog', changelog.text, ['author': changelog.author, 'date': changelog.date])
     }
-    fw.writeEndElement()
+    ow.writeEndElement()
   }
 
   private def writeBase(final YumPackage yumPackage) {

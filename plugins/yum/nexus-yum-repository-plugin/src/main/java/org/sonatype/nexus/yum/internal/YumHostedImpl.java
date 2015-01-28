@@ -29,9 +29,9 @@ import javax.inject.Named;
 import org.sonatype.nexus.proxy.ResourceStoreRequest;
 import org.sonatype.nexus.proxy.repository.HostedRepository;
 import org.sonatype.nexus.proxy.repository.Repository;
-import org.sonatype.nexus.scheduling.TaskScheduler;
 import org.sonatype.nexus.scheduling.TaskConfiguration;
 import org.sonatype.nexus.scheduling.TaskInfo;
+import org.sonatype.nexus.scheduling.TaskScheduler;
 import org.sonatype.nexus.yum.YumHosted;
 import org.sonatype.nexus.yum.YumRepository;
 import org.sonatype.nexus.yum.internal.task.GenerateMetadataTask;
@@ -231,16 +231,11 @@ public class YumHostedImpl
       if (Objects.equals(taskInfo.getConfiguration().getRepositoryId(), task.getRepositoryId()) &&
           Objects.equals(taskInfo.getConfiguration().getString(GenerateMetadataTask.PARAM_VERSION), task.getString(
               GenerateMetadataTask.PARAM_VERSION))) {
-        final TaskConfiguration taskConfiguration =  mergeAddedFiles(taskInfo.getConfiguration(), task);
+        final TaskConfiguration taskConfiguration = mergeAddedFiles(taskInfo.getConfiguration(), task);
         return nexusScheduler.scheduleTask(taskConfiguration, taskInfo.getSchedule());
       }
     }
     return nexusScheduler.submit(task);
-  }
-
-  @Override
-  public TaskInfo<YumRepository> regenerate() {
-    return addRpmAndRegenerate(null);
   }
 
   @Override
@@ -257,6 +252,22 @@ public class YumHostedImpl
       task.setRpmDir(rpmBaseDir.getAbsolutePath());
       task.setRepositoryId(repository.getId());
       task.setAddedFiles(filePath);
+      task.setYumGroupsDefinitionFile(getYumGroupsDefinitionFile());
+      return submitTask(task.taskConfiguration());
+    }
+    catch (Exception e) {
+      throw new RuntimeException("Unable to create repository", e);
+    }
+  }
+
+  public TaskInfo<YumRepository> removeRpmAndRegenerate(@Nullable String filePath) {
+    try {
+      LOG.debug("Processing deleted rpm {}:{}", repository.getId(), filePath);
+      final File rpmBaseDir = RepositoryUtils.getBaseDir(repository);
+      final GenerateMetadataTask task = createTask();
+      task.setRpmDir(rpmBaseDir.getAbsolutePath());
+      task.setRepositoryId(repository.getId());
+      task.setRemovedFile(filePath);
       task.setYumGroupsDefinitionFile(getYumGroupsDefinitionFile());
       return submitTask(task.taskConfiguration());
     }
@@ -302,9 +313,8 @@ public class YumHostedImpl
   @Override
   public void regenerateWhenPathIsRemoved(String path) {
     if (shouldProcessDeletes()) {
-      LOG.debug("Processing deleted rpm {}:{}", repository.getId(), path);
       if (findDelayedParentDirectory(path) == null) {
-        regenerate();
+        removeRpmAndRegenerate(path);
       }
     }
   }
@@ -312,7 +322,6 @@ public class YumHostedImpl
   @Override
   public void regenerateWhenDirectoryIsRemoved(String path) {
     if (shouldProcessDeletes()) {
-      LOG.debug("Processing deleted dir {}:{}", repository.getId(), path);
       if (findDelayedParentDirectory(path) == null) {
         schedule(new DelayedDirectoryDeletionTask(path));
       }
@@ -368,7 +377,7 @@ public class YumHostedImpl
         LOG.debug(
             "Recreate yum repository {} because of removed path {}", getNexusRepository().getId(), path
         );
-        regenerate();
+        removeRpmAndRegenerate(path);
       }
       else if (executionCount < MAX_EXECUTION_COUNT) {
         LOG.debug(
