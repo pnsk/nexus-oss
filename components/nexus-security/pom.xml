@@ -40,7 +40,7 @@
     </dependency>
 
     <!--
-    TODO: Remove; used only for StringUtils.isNotEmpty(),  StringUtils.isEmpty() and CollectionUtils.intersection()
+    TODO: Remove; used only for StringUtils.isNotEmpty(),  StringUtils.isEmpty()
     -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>

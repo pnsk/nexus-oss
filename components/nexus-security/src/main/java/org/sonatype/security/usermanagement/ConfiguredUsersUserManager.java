@@ -26,7 +26,7 @@ import org.sonatype.security.SecuritySystem;
 import org.sonatype.security.model.CUserRoleMapping;
 import org.sonatype.security.realms.tools.ConfigurationManager;
 
-import org.codehaus.plexus.util.CollectionUtils;
+import com.google.common.collect.Sets;
 import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.sisu.Description;
 
@@ -149,7 +149,7 @@ public class ConfiguredUsersUserManager
       }
 
       // check the intersection of the roles
-      if (CollectionUtils.intersection(criteria.getOneOfRoleIds(), userRoles).isEmpty()) {
+      if (Sets.intersection(criteria.getOneOfRoleIds(), userRoles).isEmpty()) {
         return false;
       }
     }

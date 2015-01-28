@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.sonatype.sisu.goodies.common.ComponentSupport;
 
-import org.codehaus.plexus.util.CollectionUtils;
+import com.google.common.collect.Sets;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -76,7 +76,7 @@ public abstract class AbstractUserManager
       }
 
       // check the intersection of the roles
-      if (CollectionUtils.intersection(criteria.getOneOfRoleIds(), userRoles).isEmpty()) {
+      if (Sets.intersection(criteria.getOneOfRoleIds(), userRoles).isEmpty()) {
         return false;
       }
     }
