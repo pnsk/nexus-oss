@@ -39,7 +39,7 @@ public interface StorageFacet
 
   static String P_CONTENT_TYPE = "content_type";
 
-  static String P_FORMAT = "name";
+  static String P_FORMAT = "format";
 
   static String P_GROUP = "group";
 
