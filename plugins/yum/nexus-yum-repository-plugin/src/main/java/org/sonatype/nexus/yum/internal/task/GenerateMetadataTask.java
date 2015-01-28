@@ -208,15 +208,13 @@ public class GenerateMetadataTask
       // TODO dubious
       Thread.sleep(100);
 
-      if (repository != null) {
-        final MavenRepository mavenRepository = repository.adaptToFacet(MavenRepository.class);
-        if (mavenRepository != null) {
-          try {
-            routingManager.forceUpdatePrefixFile(mavenRepository);
-          }
-          catch (Exception e) {
-            log.warn("Could not update Whitelist for repository '{}'", mavenRepository, e);
-          }
+      final MavenRepository mavenRepository = repository.adaptToFacet(MavenRepository.class);
+      if (mavenRepository != null) {
+        try {
+          routingManager.forceUpdatePrefixFile(mavenRepository);
+        }
+        catch (Exception e) {
+          log.warn("Could not update Whitelist for repository '{}'", mavenRepository, e);
         }
       }
 
