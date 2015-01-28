@@ -50,7 +50,7 @@
     </dependency>
 
     <!--
-    FIXME: Why is this here?
+    NOTE: Here only for javax.enterprise.inject.Typed, consider removing use and dropping dependency?
     -->
     <dependency>
       <groupId>javax.enterprise</groupId>
