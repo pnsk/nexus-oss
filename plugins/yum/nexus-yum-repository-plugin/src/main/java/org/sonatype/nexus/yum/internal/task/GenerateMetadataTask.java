@@ -43,7 +43,6 @@ import org.sonatype.nexus.yum.Yum;
 import org.sonatype.nexus.yum.YumGroup;
 import org.sonatype.nexus.yum.YumRegistry;
 import org.sonatype.nexus.yum.YumRepository;
-import org.sonatype.nexus.yum.internal.ListFileFactory;
 import org.sonatype.nexus.yum.internal.RepositoryUtils;
 import org.sonatype.nexus.yum.internal.RpmScanner;
 import org.sonatype.nexus.yum.internal.YumRepositoryImpl;
@@ -79,7 +78,7 @@ import static org.sonatype.nexus.yum.Yum.PATH_OF_REPOMD_XML;
 @Named
 public class GenerateMetadataTask
     extends RepositoryTaskSupport<YumRepository>
-    implements ListFileFactory, Cancelable
+    implements Cancelable
 {
   // TODO: is defined in DefaultFSPeer. Do we want to expose it over there?
   private static final String REPO_TMP_FOLDER = ".nexus/tmp";
@@ -317,15 +316,6 @@ public class GenerateMetadataTask
     return getRepositoryId() + (isNotBlank(getVersion()) ? ("-version-" + getVersion()) : "");
   }
 
-  @Override
-  public File getRpmListFile() {
-    return new File(createPackageDir(), getRepositoryId() + ".txt");
-  }
-
-  private File createCacheDir() {
-    return getCacheDir(getRepositoryIdVersion());
-  }
-
   private File createPackageDir() {
     return getCacheDir(PACKAGE_FILE_DIR_NAME);
   }
@@ -343,11 +333,6 @@ public class GenerateMetadataTask
 
   private File getCacheDir() {
     return new File(yumRegistry.getTemporaryDirectory(), CACHE_DIR_PREFIX + getRepositoryId());
-  }
-
-  @Override
-  public File getRpmListFile(String version) {
-    return new File(createPackageDir(), getRepositoryId() + "-" + version + ".txt");
   }
 
   public String getRepositoryId() {
