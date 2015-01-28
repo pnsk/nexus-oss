@@ -17,7 +17,7 @@ package org.sonatype.nexus.common.text;
  *
  * @since 3.0
  */
-public class Strings2
+public final class Strings2
 {
   private Strings2() {}
 
