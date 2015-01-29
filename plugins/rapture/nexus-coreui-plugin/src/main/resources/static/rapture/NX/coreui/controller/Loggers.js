@@ -128,7 +128,7 @@ Ext.define('NX.coreui.controller.Loggers', {
     me.loadStore();
     if (operation.success) {
       Ext.Array.each(operation.records, function (model) {
-        NX.Messages.add({ text: 'Logger ' + operation.action + 'd: ' + model.get('name'), type: 'success' });
+        NX.Messages.add({ text: NX.I18n.format('ADMIN_LOGGING_WRITE_SUCCESS', operation.action, model.get('name')), type: 'success' });
       });
     }
   },
@@ -194,11 +194,11 @@ Ext.define('NX.coreui.controller.Loggers', {
         selection = list.getSelectionModel().getSelection();
 
     if (selection.length) {
-      NX.Dialogs.askConfirmation('Confirm deletion?', selection[0].get('name'), function () {
+      NX.Dialogs.askConfirmation(NX.I18n.get('ADMIN_LOGGING_DELETE_CONFIRM'), selection[0].get('name'), function () {
         NX.direct.logging_Loggers.remove(selection[0].getId(), function (response) {
           me.loadStore();
           if (Ext.isObject(response) && response.success) {
-            NX.Messages.add({ text: 'Logger deleted: ' + selection[0].get('name'), type: 'success' });
+            NX.Messages.add({ text: NX.I18n.format('ADMIN_LOGGING_DELETE_SUCCESS', selection[0].get('name')), type: 'success' });
           }
         });
       });
@@ -216,7 +216,7 @@ Ext.define('NX.coreui.controller.Loggers', {
       NX.direct.logging_Loggers.reset(function (response) {
         me.loadStore();
         if (Ext.isObject(response) && response.success) {
-          NX.Messages.add({ text: 'Loggers had been reset', type: 'success' });
+          NX.Messages.add({ text: NX.I18n.get('ADMIN_LOGGING_RESET_SUCCESS'), type: 'success' });
         }
       });
     });

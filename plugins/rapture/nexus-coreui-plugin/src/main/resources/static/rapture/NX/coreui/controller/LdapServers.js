@@ -381,13 +381,13 @@ Ext.define('NX.coreui.controller.LdapServers', {
         values = win.values,
         url = values.protocol + '://' + values.host + ':' + values.port;
 
-    form.getEl().mask('Checking login on ' + url);
+    form.getEl().mask(NX.I18n.format('ADMIN_LDAP_DETAILS_VERIFY_LOGIN_MASK', url));
 
     NX.direct.ldap_LdapServer.verifyLogin(values, userName, userPass, function(response) {
       form.getEl().unmask();
       if (Ext.isObject(response) && response.success) {
         win.close();
-        NX.Messages.add({ text: 'LDAP login completed successfully on: ' + url, type: 'success' });
+        NX.Messages.add({ text: NX.I18n.format('ADMIN_LDAP_DETAILS_VERIFY_LOGIN_SUCCESS', url), type: 'success' });
       }
     });
   }
