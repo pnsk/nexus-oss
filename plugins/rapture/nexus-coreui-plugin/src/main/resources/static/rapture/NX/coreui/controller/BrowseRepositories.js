@@ -471,7 +471,7 @@ Ext.define('NX.coreui.controller.BrowseRepositories', {
     NX.direct.coreui_Repository.clearCache(repository.getId(), path, function(response) {
       if (Ext.isObject(response) && response.success) {
         NX.Messages.add({
-          text: 'Started expiring caches of "' + repository.get('name') + '", path "' + path + '"',
+          text: NX.I18n.format('BROWSE_REPOSITORY_EXPIRE_CACHE_SUCCESS', repository.get('name'), path),
           type: 'success'
         });
       }
@@ -488,7 +488,7 @@ Ext.define('NX.coreui.controller.BrowseRepositories', {
     NX.direct.coreui_Maven.rebuildMetadata(repository.getId(), path, function(response) {
       if (Ext.isObject(response) && response.success) {
         NX.Messages.add({
-          text: 'Started rebuilding metadata of "' + repository.get('name') + '", path "' + path + '"',
+          text: NX.I18n.format('BROWSE_REPOSITORY_REBUILD_SUCCESS', repository.get('name'), path),
           type: 'success'
         });
       }
@@ -550,7 +550,7 @@ Ext.define('NX.coreui.controller.BrowseRepositories', {
             if (Ext.isObject(response) && response.success) {
               node.parentNode.removeChild(node);
               NX.Messages.add({
-                text: 'Deleted "' + repository.get('name') + '", path "' + path + '"',
+                text: NX.I18n.format('BROWSE_REPOSITORY_DELETE_SUCCESS', repository.get('name'), path),
                 type: 'success'
               });
             }
