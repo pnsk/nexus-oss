@@ -10,37 +10,30 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.security.realms.publickey;
+package org.sonatype.nexus.common.text
 
-import java.security.PublicKey;
-
-import org.apache.shiro.authc.AuthenticationToken;
+import org.junit.Test
+import org.sonatype.sisu.litmus.testsupport.TestSupport
 
 /**
- * {@link AuthenticationToken} for a {@link PublicKey}.
- *
- * @author hugo@josefson.org
+ * Tests for {@link Strings2}
  */
-public class PublicKeyAuthenticationToken
-    implements AuthenticationToken
+class Strings2Test
+  extends TestSupport
 {
-
-  private static final long serialVersionUID = -784273150987377079L;
-
-  private final Object principal;
-
-  private final PublicKey key;
-
-  public PublicKeyAuthenticationToken(Object principal, PublicKey key) {
-    this.principal = principal;
-    this.key = key;
+  @Test
+  void 'is empty'() {
+    assert Strings2.isEmpty(null)
+    assert Strings2.isEmpty('')
+    assert Strings2.isEmpty('   ')
+    assert !Strings2.isEmpty('foo')
   }
 
-  public Object getPrincipal() {
-    return principal;
-  }
-
-  public PublicKey getCredentials() {
-    return key;
+  @Test
+  void 'is not empty'() {
+    assert !Strings2.isNotEmpty(null)
+    assert !Strings2.isNotEmpty('')
+    assert !Strings2.isNotEmpty('   ')
+    assert Strings2.isNotEmpty('foo')
   }
 }

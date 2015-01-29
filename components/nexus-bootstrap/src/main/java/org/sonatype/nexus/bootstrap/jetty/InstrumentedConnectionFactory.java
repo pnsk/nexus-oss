@@ -10,19 +10,20 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.security.authorization;
+package org.sonatype.nexus.bootstrap.jetty;
 
-import org.apache.shiro.authz.Permission;
+import com.codahale.metrics.SharedMetricRegistries;
+import org.eclipse.jetty.server.ConnectionFactory;
 
 /**
- * A permission factory that creates Permission instances.
+ * Extension of {@link com.codahale.metrics.jetty9.InstrumentedConnectionFactory}.
  *
- * It may apply other stuff, like caching instances for example,
- * based on permission string representation. This is just a concept to be able to hide caching of it. Which
- * implementation you use, depends on your app very much, but usually you'd want the one producing the most widely used
- * permission in Shiro: the {@link WildcardPermissionFactory}.
+ * @since 3.0
  */
-public interface PermissionFactory
+public final class InstrumentedConnectionFactory
+    extends com.codahale.metrics.jetty9.InstrumentedConnectionFactory
 {
-  Permission create(final String permission);
+  public InstrumentedConnectionFactory(final ConnectionFactory connectionFactory) {
+    super(connectionFactory, SharedMetricRegistries.getOrCreate("nexus").timer("connection-duration"));
+  }
 }
