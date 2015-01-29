@@ -27,7 +27,7 @@ extends TestSupport
         'Packages/ant-1.7.1-13.el6.i686.rpm',
         rpm.lastModified()
     )
-    new YumRepositoryWriter(util.createTempDir('repodata')).withCloseable { YumRepositoryWriter writer ->
+    new CreateYumRepository(util.createTempDir('repodata')).withCloseable { CreateYumRepository writer ->
       writer.push(yumPackage)
     }
 

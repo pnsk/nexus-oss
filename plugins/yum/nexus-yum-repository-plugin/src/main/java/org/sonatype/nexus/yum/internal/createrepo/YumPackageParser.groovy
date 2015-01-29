@@ -74,10 +74,10 @@ class YumPackageParser
             rpm_packager: asString(header, HeaderTag.PACKAGER),
             size_installed: asInt(header, HeaderTag.SIZE),
             size_archive: asInt(signature, Signature.SignatureTag.PAYLOADSIZE),
-            provides: parseDeps(header, HeaderTag.PROVIDENAME, HeaderTag.PROVIDEVERSION, HeaderTag.PROVIDEFLAGS),
-            requires: parseDeps(header, HeaderTag.REQUIRENAME, HeaderTag.REQUIREVERSION, HeaderTag.REQUIREFLAGS),
-            conflicts: parseDeps(header, HeaderTag.CONFLICTNAME, HeaderTag.CONFLICTVERSION, HeaderTag.CONFLICTFLAGS),
-            obsoletes: parseDeps(header, HeaderTag.OBSOLETENAME, HeaderTag.OBSOLETEVERSION, HeaderTag.OBSOLETEFLAGS),
+            provides: parsePCO(header, HeaderTag.PROVIDENAME, HeaderTag.PROVIDEVERSION, HeaderTag.PROVIDEFLAGS),
+            requires: parsePCO(header, HeaderTag.REQUIRENAME, HeaderTag.REQUIREVERSION, HeaderTag.REQUIREFLAGS),
+            conflicts: parsePCO(header, HeaderTag.CONFLICTNAME, HeaderTag.CONFLICTVERSION, HeaderTag.CONFLICTFLAGS),
+            obsoletes: parsePCO(header, HeaderTag.OBSOLETENAME, HeaderTag.OBSOLETEVERSION, HeaderTag.OBSOLETEFLAGS),
             files: parseFiles(header),
             changes: parseChanges(header)
         ))
@@ -125,7 +125,7 @@ class YumPackageParser
     return files
   }
 
-  def parseDeps(final Header header, final HeaderTag namesTag, final HeaderTag versionTag, final HeaderTag flagsTag) {
+  def parsePCO(final Header header, final HeaderTag namesTag, final HeaderTag versionTag, final HeaderTag flagsTag) {
     def provides = []
     def names = header.getEntry(namesTag)?.values
     if (!names) {
@@ -142,13 +142,33 @@ class YumPackageParser
           epoch: epoch,
           version: version,
           release: release,
-          flags: flag,
+          flags: parsePCOFlags(flag),
           pre: flag & (Flags.PREREQ | Flags.SCRIPT_PRE | Flags.SCRIPT_POST)
       )
     }
     // sort by name ASC
     provides.sort { a, b -> a.name.compareTo(b.name) }
     return provides
+  }
+
+  def parsePCOFlags(final Integer flags){
+    def workFlags = flags & 0xf
+    if (workFlags == 2) {
+      return 'LT'
+    }
+    else if (workFlags == 4) {
+      return 'GT'
+    }
+    else if (workFlags == 8) {
+      return 'EQ'
+    }
+    else if (workFlags == 10) {
+      return 'LE'
+    }
+    else if (workFlags == 12) {
+      return 'GE'
+    }
+    return null
   }
 
   def parseChanges(final Header header) {

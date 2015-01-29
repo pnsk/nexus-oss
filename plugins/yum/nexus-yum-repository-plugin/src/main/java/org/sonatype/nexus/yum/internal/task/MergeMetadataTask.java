@@ -45,8 +45,9 @@ import org.sonatype.nexus.yum.YumRepository;
 import org.sonatype.nexus.yum.internal.RepoMD;
 import org.sonatype.nexus.yum.internal.RepositoryUtils;
 import org.sonatype.nexus.yum.internal.YumRepositoryImpl;
+import org.sonatype.nexus.yum.internal.createrepo.CreateYumRepository;
+import org.sonatype.nexus.yum.internal.createrepo.MergeYumRepository;
 import org.sonatype.nexus.yum.internal.createrepo.YumPackage;
-import org.sonatype.nexus.yum.internal.createrepo.YumRepositoryWriter;
 import org.sonatype.nexus.yum.internal.createrepo.YumStore;
 
 import com.google.common.collect.Sets;
@@ -97,19 +98,10 @@ public class MergeMetadataTask
       try {
         groupRepoMdUid.getLock().lock(Action.update);
 
-        Set<String> writtenPackages = Sets.newHashSet();
-        try (YumRepositoryWriter writer = new YumRepositoryWriter(repoTmpRepodataDir)) {
-          for (String memberId : groupRepository.getMemberRepositoryIds()) {
-            Yum yum = yumRegistry.get(memberId);
-            if (yum != null) {
-              YumStore yumStore = yum.getYumStore();
-              for (YumPackage yumPackage : yumStore.get()) {
-                if (!writtenPackages.contains(yumPackage.getUniqueId())) {
-                  writer.push(yumPackage);
-                  writtenPackages.add(yumPackage.getUniqueId());
-                }
-              }
-            }
+        List<File> memberBaseDirs = getBaseDirsOfMemberRepositories();
+        try (MergeYumRepository mergeRepo = new MergeYumRepository(repoTmpRepodataDir)) {
+          for (File memberBaseDir : memberBaseDirs) {
+            mergeRepo.merge(memberBaseDir);
           }
         }
 

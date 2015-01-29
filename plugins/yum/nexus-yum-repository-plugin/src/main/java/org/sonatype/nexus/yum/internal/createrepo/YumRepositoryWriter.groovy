@@ -35,13 +35,13 @@ implements Closeable
 
   private Output oo
 
-  private XMLStreamWriter pw
+  XMLStreamWriter pw
 
-  private XMLStreamWriter fw
+  XMLStreamWriter fw
 
-  private XMLStreamWriter ow
+  XMLStreamWriter ow
 
-  private XMLStreamWriter rw
+  XMLStreamWriter rw
 
   private boolean open
   private boolean closed
@@ -49,43 +49,36 @@ implements Closeable
   YumRepositoryWriter(final File repoDir) {
     XMLOutputFactory factory = XMLOutputFactory.newInstance()
     po = new Output(new FileOutputStream(new File(repoDir, 'primary.xml.gz')))
-    pw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(po.stream, "UTF8"))
+    pw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(po.stream, "UTF-8"))
 
-    fo = new Output(new FileOutputStream(new File(repoDir, 'files.xml.gz')))
-    fw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(fo.stream, "UTF8"))
+    fo = new Output(new FileOutputStream(new File(repoDir, 'filelists.xml.gz')))
+    fw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(fo.stream, "UTF-8"))
 
     oo = new Output(new FileOutputStream(new File(repoDir, 'other.xml.gz')))
-    ow = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(oo.stream, "UTF8"))
+    ow = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(oo.stream, "UTF-8"))
 
-    rw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(repoDir, 'repomd.xml')), "UTF8"))
+    rw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(repoDir, 'repomd.xml')), "UTF-8"))
   }
 
-  void push(final YumPackage yumPackage) {
-    maybeStart()
-    writePrimary(yumPackage)
-    writeFiles(yumPackage)
-  }
-
-  private def writePrimary(final YumPackage yumPackage) {
+  void writePrimary(final YumPackage yumPackage) {
     pw.writeStartElement('package')
     pw.writeAttribute('type', 'rpm')
     writeBase(yumPackage)
     writeFormat(yumPackage)
-    writeOther(yumPackage)
     pw.writeEndElement()
   }
 
-  private def writeFiles(final YumPackage yumPackage) {
+  void writeFiles(final YumPackage yumPackage) {
     fw.writeStartElement('package')
     fw.writeAttribute('pkgid', yumPackage.pkgid)
     fw.writeAttribute('name', yumPackage.name)
     fw.writeAttribute('arch', yumPackage.arch)
     writeEl(fw, 'version', null, ['epoch': yumPackage.epoch, 'ver': yumPackage.version, 'rel': yumPackage.release])
-    writeFiles(fw, yumPackage, false)
+    writeFileEntries(fw, yumPackage, false)
     fw.writeEndElement()
   }
 
-  private def writeOther(final YumPackage yumPackage) {
+  void writeOther(final YumPackage yumPackage) {
     ow.writeStartElement('package')
     ow.writeAttribute('pkgid', yumPackage.pkgid)
     ow.writeAttribute('name', yumPackage.name)
@@ -96,7 +89,7 @@ implements Closeable
     ow.writeEndElement()
   }
 
-  private def writeBase(final YumPackage yumPackage) {
+  private void writeBase(final YumPackage yumPackage) {
     writeEl(pw, 'name', yumPackage.name)
     writeEl(pw, 'arch', yumPackage.arch)
     writeEl(pw, 'version', null, ['epoch': yumPackage.epoch, 'ver': yumPackage.version, 'rel': yumPackage.release])
@@ -110,7 +103,7 @@ implements Closeable
     writeEl(pw, 'location', null, ['href': yumPackage.location])
   }
 
-  private def writeFormat(final YumPackage yumPackage) {
+  private void writeFormat(final YumPackage yumPackage) {
     pw.writeStartElement('format')
     writeEl(pw, 'rpm:license', yumPackage.rpm_license)
     writeEl(pw, 'rpm:vendor', yumPackage.rpm_vendor)
@@ -122,35 +115,17 @@ implements Closeable
     writePCO(yumPackage.requires, 'requires')
     writePCO(yumPackage.conflicts, 'conflicts')
     writePCO(yumPackage.obsoletes, 'obsoletes')
-    writeFiles(pw, yumPackage, true)
+    writeFileEntries(pw, yumPackage, true)
     pw.writeEndElement()
   }
 
-  private def writePCO(final List<YumPackage.Entry> entries, final String type) {
+  private void writePCO(final List<YumPackage.Entry> entries, final String type) {
     if (entries) {
       pw.writeStartElement('rpm:' + type)
       entries.each { entry ->
-        def flags = entry.flags & 0xf
-        def flagsStr = null
-        if (flags == 2) {
-          flagsStr = 'LT'
-        }
-        else if (flags == 4) {
-          flagsStr = 'GT'
-        }
-        else if (flags == 8) {
-          flagsStr = 'EQ'
-        }
-        else if (flags == 10) {
-          flagsStr = 'LE'
-        }
-        else if (flags == 12) {
-          flagsStr = 'GE'
-        }
-
         writeEl(pw, 'rpm:entry', null, [
             'name': entry.name,
-            'flags': flagsStr,
+            'flags': entry.flags,
             'epoch': entry.epoch, 'ver': entry.version, 'rel': entry.release,
             'pre': entry.pre ? '1' : null
         ])
@@ -159,23 +134,25 @@ implements Closeable
     }
   }
 
-  private def writeFiles(XMLStreamWriter writer, final YumPackage yumPackage, final boolean primary) {
+  private void writeFileEntries(XMLStreamWriter writer, final YumPackage yumPackage, final boolean primary) {
     def files = yumPackage.files
-    if (primary) {
-      files = files.findResults { YumPackage.File file -> file.primary ? file : null }
-    }
-    files.findResults { YumPackage.File file -> file.type == YumPackage.FileType.file ? file : null }.each { file ->
-      writeEl(writer, 'file', file.name)
-    }
-    files.findResults { YumPackage.File file -> file.type == YumPackage.FileType.dir ? file : null }.each { file ->
-      writeEl(writer, 'file', file.name, ['type': file.type])
-    }
-    files.findResults { YumPackage.File file -> file.type == YumPackage.FileType.ghost ? file : null }.each { file ->
-      writeEl(writer, 'file', file.name, ['type': file.type])
+    if (files) {
+      if (primary) {
+        files = files.findResults { YumPackage.File file -> file.primary ? file : null }
+      }
+      files.findResults { YumPackage.File file -> file.type == YumPackage.FileType.file ? file : null }.each { file ->
+        writeEl(writer, 'file', file.name)
+      }
+      files.findResults { YumPackage.File file -> file.type == YumPackage.FileType.dir ? file : null }.each { file ->
+        writeEl(writer, 'file', file.name, ['type': file.type])
+      }
+      files.findResults { YumPackage.File file -> file.type == YumPackage.FileType.ghost ? file : null }.each { file ->
+        writeEl(writer, 'file', file.name, ['type': file.type])
+      }
     }
   }
 
-  private def writeEl(XMLStreamWriter writer, final String name, final Object text, final Map<String, Object> attrib) {
+  void writeEl(XMLStreamWriter writer, final String name, final Object text, final Map<String, Object> attrib) {
     writer.writeStartElement(name)
     attrib?.each { key, value ->
       if (value) {
@@ -188,11 +165,11 @@ implements Closeable
     writer.writeEndElement()
   }
 
-  private def writeEl(XMLStreamWriter writer, final String name, final Object text) {
+  void writeEl(XMLStreamWriter writer, final String name, final Object text) {
     writeEl(writer, name, text, null)
   }
 
-  private def writeData(final Output output, final String type, final int timestamp) {
+  private void writeData(final Output output, final String type, final int timestamp) {
     rw.writeStartElement('data')
     rw.writeAttribute('type', type)
     writeEl(rw, 'checksum', output.compressedChecksum, ['type': 'sha256'])
@@ -204,7 +181,7 @@ implements Closeable
     rw.writeEndElement()
   }
 
-  private def maybeStart() {
+  void maybeStart() {
     if (!open) {
       open = true
 
@@ -249,7 +226,7 @@ implements Closeable
     rw.writeAttribute('xmlns', 'http://linux.duke.edu/metadata/repo')
     rw.writeAttribute('xmlns:rpm', 'http://linux.duke.edu/metadata/rpm')
     writeData(po, 'primary', timestamp)
-    writeData(fo, 'files', timestamp)
+    writeData(fo, 'filelists', timestamp)
     writeData(oo, 'other', timestamp)
     rw.writeEndDocument()
     rw.close()

@@ -62,7 +62,7 @@ class YumPackage
   @ToString(includePackage = false, includeNames = true)
   static class Entry {
     String name
-    Integer flags
+    String flags
     String epoch
     String version
     String release

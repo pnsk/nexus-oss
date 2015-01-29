@@ -46,9 +46,9 @@ import org.sonatype.nexus.yum.YumRepository;
 import org.sonatype.nexus.yum.internal.RepositoryUtils;
 import org.sonatype.nexus.yum.internal.RpmScanner;
 import org.sonatype.nexus.yum.internal.YumRepositoryImpl;
+import org.sonatype.nexus.yum.internal.createrepo.CreateYumRepository;
 import org.sonatype.nexus.yum.internal.createrepo.YumPackage;
 import org.sonatype.nexus.yum.internal.createrepo.YumPackageParser;
-import org.sonatype.nexus.yum.internal.createrepo.YumRepositoryWriter;
 import org.sonatype.nexus.yum.internal.createrepo.YumStore;
 
 import com.google.common.base.Predicate;
@@ -80,10 +80,6 @@ public class GenerateMetadataTask
 {
   // TODO: is defined in DefaultFSPeer. Do we want to expose it over there?
   private static final String REPO_TMP_FOLDER = ".nexus/tmp";
-
-  private static final String PACKAGE_FILE_DIR_NAME = ".packageFiles";
-
-  private static final String CACHE_DIR_PREFIX = ".cache-";
 
   private static final Logger LOG = LoggerFactory.getLogger(GenerateMetadataTask.class);
 
@@ -182,11 +178,11 @@ public class GenerateMetadataTask
       try {
         YumStore yumStore = yum.getYumStore();
         syncYumPackages(yumStore);
-        try (YumRepositoryWriter writer = new YumRepositoryWriter(repoTmpRepodataDir)) {
+        try (CreateYumRepository createRepo = new CreateYumRepository(repoTmpRepodataDir)) {
           String version = getVersion();
           for (YumPackage yumPackage : yumStore.get()) {
             if (version == null || hasRequiredVersion(version, yumPackage.getLocation())) {
-              writer.push(yumPackage);
+              createRepo.push(yumPackage);
             }
           }
         }
