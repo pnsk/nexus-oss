@@ -61,6 +61,8 @@ public class RepositoryViewPrivilegeDescriptor
   // Helpers
   //
 
+  // FIXME: Update actions to collection
+
   public static String id(final String format, final String name, final String actions) {
     return String.format("%s-%s-%s-%s", TYPE, format, name, actions);
   }
