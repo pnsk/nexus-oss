@@ -10,6 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
+
 package org.sonatype.nexus.repository.security;
 
 import java.util.List;
@@ -20,16 +21,16 @@ import org.apache.shiro.authz.permission.WildcardPermission;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Repository view permission.
+ * Repository administration permission.
  *
  * @since 3.0
  */
-public class ViewPermission
-  extends WildcardPermission
+public class AdminPermission
+    extends WildcardPermission
 {
   public static final String SYSTEM = "nexus";
 
-  public static final String DOMAIN = "repository-view";
+  public static final String DOMAIN = "repository-admin";
 
   private final String format;
 
@@ -37,7 +38,7 @@ public class ViewPermission
 
   private final List<String> actions;
 
-  public ViewPermission(final String format, final String name, final List<String> actions) {
+  public AdminPermission(final String format, final String name, final List<String> actions) {
     this.format = checkNotNull(format);
     this.name = checkNotNull(name);
     this.actions = checkNotNull(actions);

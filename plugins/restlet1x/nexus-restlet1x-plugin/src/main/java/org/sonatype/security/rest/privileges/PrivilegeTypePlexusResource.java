@@ -26,8 +26,6 @@ import javax.ws.rs.Produces;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
 import org.sonatype.plexus.rest.resource.PlexusResource;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
-import org.sonatype.security.realms.privileges.PrivilegePropertyDescriptor;
-import org.sonatype.security.rest.model.PrivilegeTypePropertyResource;
 import org.sonatype.security.rest.model.PrivilegeTypeResource;
 import org.sonatype.security.rest.model.PrivilegeTypeResourceResponse;
 
@@ -93,16 +91,16 @@ public class PrivilegeTypePlexusResource
     for (PrivilegeDescriptor descriptor : privilegeDescriptors) {
       PrivilegeTypeResource type = new PrivilegeTypeResource();
       type.setId(descriptor.getType());
-      type.setName(descriptor.getName());
+      //type.setName(descriptor.getName());
 
-      for (PrivilegePropertyDescriptor property : descriptor.getPropertyDescriptors()) {
-        PrivilegeTypePropertyResource typeProp = new PrivilegeTypePropertyResource();
-        typeProp.setId(property.getId());
-        typeProp.setName(property.getName());
-        typeProp.setHelpText(property.getHelpText());
-        typeProp.setType(property.getType());
-        type.addProperty(typeProp);
-      }
+      //for (PrivilegePropertyDescriptor property : descriptor.getPropertyDescriptors()) {
+      //  PrivilegeTypePropertyResource typeProp = new PrivilegeTypePropertyResource();
+      //  typeProp.setId(property.getId());
+      //  typeProp.setName(property.getName());
+      //  typeProp.setHelpText(property.getHelpText());
+      //  typeProp.setType(property.getType());
+      //  type.addProperty(typeProp);
+      //}
 
       result.addData(type);
     }

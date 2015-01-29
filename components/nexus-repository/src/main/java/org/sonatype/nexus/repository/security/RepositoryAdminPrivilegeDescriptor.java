@@ -13,6 +13,8 @@
 
 package org.sonatype.nexus.repository.security;
 
+import java.util.List;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -20,6 +22,8 @@ import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.model.CPrivilegeBuilder;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport;
+
+import org.apache.shiro.authz.Permission;
 
 /**
  * Repository admin {@link PrivilegeDescriptor}.
@@ -31,7 +35,9 @@ import org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport;
 public class RepositoryAdminPrivilegeDescriptor
     extends PrivilegeDescriptorSupport
 {
-  public static final String TYPE = "repository-admin";
+  public static final String TYPE = AdminPermission.DOMAIN;
+
+  public static final String P_FORMAT = "format";
 
   public static final String P_REPOSITORY = "repository";
 
@@ -42,31 +48,27 @@ public class RepositoryAdminPrivilegeDescriptor
   }
 
   @Override
-  protected String formatPermission(final CPrivilege privilege) {
-    String repositoryName = readProperty(privilege, P_REPOSITORY, "*");
-    String actions = readProperty(privilege, P_ACTIONS, "*");
-    return permission(repositoryName, actions);
+  public Permission createPermission(final CPrivilege privilege) {
+    String format = readProperty(privilege, P_FORMAT, ALL);
+    String name = readProperty(privilege, P_REPOSITORY, ALL);
+    List<String> actions = readListProperty(privilege, P_ACTIONS, ALL);
+    return new AdminPermission(format, name, actions);
   }
 
   //
   // Helpers
   //
 
-  public static String id(final String repositoryName, final String actions) {
-    return String.format("%s-%s-%s", TYPE, repositoryName, actions);
+  public static String id(final String format, final String name, final String actions) {
+    return String.format("%s-%s-%s-%s", TYPE, format, name, actions);
   }
 
-  public static String permission(final String repositoryName, final String actions) {
-    return String.format("nexus:%s:%s:%s", TYPE, repositoryName, actions);
-  }
-
-  public static CPrivilege privilege(final String repositoryName, final String actions) {
+  public static CPrivilege privilege(final String format, final String name, final String actions) {
     return new CPrivilegeBuilder()
         .type(TYPE)
-        .id(id(repositoryName, actions))
-        .name(permission(repositoryName, actions))
-        .description(String.format("Grants '%s' repository administrative actions: %s", repositoryName, actions))
-        .property(P_REPOSITORY, repositoryName)
+        .id(id(format, name, actions))
+        .property(P_FORMAT, format)
+        .property(P_REPOSITORY, name)
         .property(P_ACTIONS, actions)
         .create();
   }

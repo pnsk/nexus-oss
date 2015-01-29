@@ -19,7 +19,7 @@ import javax.inject.Singleton;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.model.CPrivilegeBuilder;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
-import org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport;
+import org.sonatype.security.realms.privileges.WildcardPrivilegeDescriptorSupport;
 
 /**
  * Repository instance {@link PrivilegeDescriptor}.
@@ -29,7 +29,7 @@ import org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport;
 @Named(RepositoryInstancePrivilegeDescriptor.TYPE)
 @Singleton
 public class RepositoryInstancePrivilegeDescriptor
-    extends PrivilegeDescriptorSupport
+    extends WildcardPrivilegeDescriptorSupport
 {
   public static final String TYPE = "repository-instance";
 

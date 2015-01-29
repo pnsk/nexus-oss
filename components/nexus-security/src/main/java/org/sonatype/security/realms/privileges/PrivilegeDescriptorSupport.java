@@ -12,19 +12,15 @@
  */
 package org.sonatype.security.realms.privileges;
 
-import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import org.sonatype.configuration.validation.ValidationResponse;
-import org.sonatype.security.authorization.WildcardPermission2;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.realms.validator.SecurityValidationContext;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import org.apache.shiro.authz.Permission;
-import org.apache.shiro.authz.permission.WildcardPermission;
+import com.google.common.collect.Lists;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -38,6 +34,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public abstract class PrivilegeDescriptorSupport
   implements PrivilegeDescriptor
 {
+  public static final String ALL = "*";
+
   private final String type;
 
   public PrivilegeDescriptorSupport(final String type) {
@@ -50,22 +48,10 @@ public abstract class PrivilegeDescriptorSupport
   }
 
   @Override
-  public String getName() {
-    // FIXME: PrivilegeDescriptor.getName() is no longer exposed, but not yet removed
-    return "UNUSED";
-  }
-
-  @Override
   public String toString() {
     return getClass().getSimpleName() + "{" +
         "type='" + type + '\'' +
         '}';
-  }
-
-  @Override
-  public List<PrivilegePropertyDescriptor> getPropertyDescriptors() {
-    // FIXME: These are not presently required, but could still be useful to properly support extensibility in the UI
-    return Collections.emptyList();
   }
 
   @Override
@@ -76,22 +62,6 @@ public abstract class PrivilegeDescriptorSupport
     // FIXME: For now ignore validation
     return new ValidationResponse();
   }
-
-  @Override
-  @Nullable
-  public String buildPermission(final CPrivilege privilege) {
-    // FIXME: This is a poor design, this check should be done by caller?
-    if (!type.equals(privilege.getType())) {
-      return null;
-    }
-
-    return formatPermission(privilege);
-  }
-
-  /**
-   * Format permission string for given privilege.
-   */
-  protected abstract String formatPermission(final CPrivilege privilege);
 
   /**
    * Helper to read a privilege property and return default-value if unset or empty.
@@ -104,10 +74,11 @@ public abstract class PrivilegeDescriptorSupport
     return value;
   }
 
-  @Override
-  public Permission createPermission(final CPrivilege privilege) {
-    assert privilege != null;
-    assert getType().equals(privilege.getType());
-    return new WildcardPermission2(formatPermission(privilege));
+  /**
+   * Helper to read a privilege property and parse out list.
+   */
+  protected List<String> readListProperty(final CPrivilege privilege, final String name, final String defaultValue) {
+    String value = readProperty(privilege, name, defaultValue);
+    return Lists.newArrayList(Splitter.on(',').omitEmptyStrings().trimResults().split(value));
   }
 }

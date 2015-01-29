@@ -27,6 +27,7 @@ import static org.sonatype.nexus.repository.security.BreadActions.BROWSE;
 import static org.sonatype.nexus.repository.security.BreadActions.DELETE;
 import static org.sonatype.nexus.repository.security.BreadActions.EDIT;
 import static org.sonatype.nexus.repository.security.BreadActions.READ;
+import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.ALL;
 import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.TYPE;
 import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.id;
 import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.privilege;
@@ -57,19 +58,19 @@ public class RepositoryAdminSecurityResource
    * Initial (static) security configuration.
    */
   private void initial(final SecurityModelConfiguration model) {
-    model.addPrivilege(privilege("*", BROWSE));
-    model.addPrivilege(privilege("*", READ));
-    model.addPrivilege(privilege("*", EDIT));
-    model.addPrivilege(privilege("*", ADD));
-    model.addPrivilege(privilege("*", DELETE));
+    model.addPrivilege(privilege(ALL, ALL, BROWSE));
+    model.addPrivilege(privilege(ALL, ALL, READ));
+    model.addPrivilege(privilege(ALL, ALL, EDIT));
+    model.addPrivilege(privilege(ALL, ALL, ADD));
+    model.addPrivilege(privilege(ALL, ALL, DELETE));
 
     model.addRole(new CRoleBuilder()
         .id(String.format("%s-fullcontrol", TYPE))
-        .privilege(id("*", BROWSE))
-        .privilege(id("*", READ))
-        .privilege(id("*", EDIT))
-        .privilege(id("*", ADD))
-        .privilege(id("*", DELETE))
+        .privilege(id(ALL, ALL, BROWSE))
+        .privilege(id(ALL, ALL, READ))
+        .privilege(id(ALL, ALL, EDIT))
+        .privilege(id(ALL, ALL, ADD))
+        .privilege(id(ALL, ALL, DELETE))
         .create());
   }
 
@@ -78,24 +79,25 @@ public class RepositoryAdminSecurityResource
    */
   public void add(final Repository repository) {
     checkNotNull(repository);
-    final String repositoryName = repository.getName();
+    final String format = repository.getFormat().getValue();
+    final String name = repository.getName();
     apply(new Mutator()
     {
       @Override
       public void apply(final SecurityModelConfiguration model) {
         // no per-repo repository-admin ADD action
 
-        model.addPrivilege(privilege(repositoryName, BROWSE));
-        model.addPrivilege(privilege(repositoryName, READ));
-        model.addPrivilege(privilege(repositoryName, EDIT));
-        model.addPrivilege(privilege(repositoryName, DELETE));
+        model.addPrivilege(privilege(format, name, BROWSE));
+        model.addPrivilege(privilege(format, name, READ));
+        model.addPrivilege(privilege(format, name, EDIT));
+        model.addPrivilege(privilege(format, name, DELETE));
 
         model.addRole(new CRoleBuilder()
-            .id(String.format("%s-%s-fullcontrol", repositoryName, TYPE))
-            .privilege(id(repositoryName, BROWSE))
-            .privilege(id(repositoryName, READ))
-            .privilege(id(repositoryName, EDIT))
-            .privilege(id(repositoryName, DELETE))
+            .id(String.format("%s-%s-fullcontrol", name, TYPE))
+            .privilege(id(format, name, BROWSE))
+            .privilege(id(format, name, READ))
+            .privilege(id(format, name, EDIT))
+            .privilege(id(format, name, DELETE))
             .create());
       }
     });
@@ -106,19 +108,20 @@ public class RepositoryAdminSecurityResource
    */
   public void remove(final Repository repository) {
     checkNotNull(repository);
-    final String repositoryName = repository.getName();
+    final String format = repository.getFormat().getValue();
+    final String name = repository.getName();
     apply(new Mutator()
     {
       @Override
       public void apply(final SecurityModelConfiguration model) {
         // no per-repo repository-admin ADD action
 
-        model.removePrivilege(id(repositoryName, BROWSE));
-        model.removePrivilege(id(repositoryName, READ));
-        model.removePrivilege(id(repositoryName, EDIT));
-        model.removePrivilege(id(repositoryName, DELETE));
+        model.removePrivilege(id(format, name, BROWSE));
+        model.removePrivilege(id(format, name, READ));
+        model.removePrivilege(id(format, name, EDIT));
+        model.removePrivilege(id(format, name, DELETE));
 
-        model.removeRole(String.format("%s-%s-fullcontrol", repositoryName, TYPE));
+        model.removeRole(String.format("%s-%s-fullcontrol", name, TYPE));
       }
     });
   }

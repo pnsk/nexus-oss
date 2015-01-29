@@ -55,39 +55,39 @@ public class RepositoryFormatSecurityResource
    * Initial (static) security configuration.
    */
   private void initial(final SecurityModelConfiguration model) {
-    String formatName = format.getValue();
+    String format = this.format.getValue();
 
     // add repository-format privileges
-    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(formatName, BROWSE));
-    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(formatName, READ));
-    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(formatName, EDIT));
-    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(formatName, ADD));
-    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(formatName, DELETE));
+    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(format, BROWSE));
+    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(format, READ));
+    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(format, EDIT));
+    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(format, ADD));
+    model.addPrivilege(RepositoryFormatPrivilegeDescriptor.privilege(format, DELETE));
 
     // add repository-format 'admin' role
     model.addRole(new CRoleBuilder()
-        .id(String.format("%s-%s-admin", RepositoryFormatPrivilegeDescriptor.TYPE, formatName))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, BROWSE))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, READ))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, EDIT))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, ADD))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, DELETE))
+        .id(String.format("%s-%s-admin", RepositoryFormatPrivilegeDescriptor.TYPE, format))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, BROWSE))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, READ))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, EDIT))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, ADD))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, DELETE))
         .create());
 
     // add repository-format 'readonly' role
     model.addRole(new CRoleBuilder()
-        .id(String.format("%s-%s-readonly", RepositoryFormatPrivilegeDescriptor.TYPE, formatName))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, BROWSE))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, READ))
+        .id(String.format("%s-%s-readonly", RepositoryFormatPrivilegeDescriptor.TYPE, format))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, BROWSE))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, READ))
         .create());
 
     // add repository-format 'deployer' role
     model.addRole(new CRoleBuilder()
-        .id(String.format("%s-%s-deployer", RepositoryFormatPrivilegeDescriptor.TYPE, formatName))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, BROWSE))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, READ))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, EDIT))
-        .privilege(RepositoryFormatPrivilegeDescriptor.id(formatName, ADD))
+        .id(String.format("%s-%s-deployer", RepositoryFormatPrivilegeDescriptor.TYPE, format))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, BROWSE))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, READ))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, EDIT))
+        .privilege(RepositoryFormatPrivilegeDescriptor.id(format, ADD))
         .create());
   }
 
@@ -96,43 +96,43 @@ public class RepositoryFormatSecurityResource
    */
   public void add(final Repository repository) {
     checkNotNull(repository);
-    final String repositoryName = repository.getName();
+    final String name = repository.getName();
 
     apply(new Mutator()
     {
       @Override
       public void apply(final SecurityModelConfiguration model) {
         // add repository-instance privileges
-        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(repositoryName, BROWSE));
-        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(repositoryName, READ));
-        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(repositoryName, EDIT));
-        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(repositoryName, ADD));
-        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(repositoryName, DELETE));
+        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(name, BROWSE));
+        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(name, READ));
+        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(name, EDIT));
+        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(name, ADD));
+        model.addPrivilege(RepositoryInstancePrivilegeDescriptor.privilege(name, DELETE));
 
         // add repository-instance 'admin' role
         model.addRole(new CRoleBuilder()
-            .id(String.format("%s-%s-admin", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, BROWSE))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, READ))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, EDIT))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, ADD))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, DELETE))
+            .id(String.format("%s-%s-admin", RepositoryInstancePrivilegeDescriptor.TYPE, name))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, BROWSE))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, READ))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, EDIT))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, ADD))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, DELETE))
             .create());
 
         // add repository-instance 'readonly' role
         model.addRole(new CRoleBuilder()
-            .id(String.format("%s-%s-readonly", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, BROWSE))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, READ))
+            .id(String.format("%s-%s-readonly", RepositoryInstancePrivilegeDescriptor.TYPE, name))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, BROWSE))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, READ))
             .create());
 
         // add repository-instance 'deployer' role
         model.addRole(new CRoleBuilder()
-            .id(String.format("%s-%s-deployer", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, BROWSE))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, READ))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, EDIT))
-            .privilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, ADD))
+            .id(String.format("%s-%s-deployer", RepositoryInstancePrivilegeDescriptor.TYPE, name))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, BROWSE))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, READ))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, EDIT))
+            .privilege(RepositoryInstancePrivilegeDescriptor.id(name, ADD))
             .create());
       }
     });
@@ -143,23 +143,23 @@ public class RepositoryFormatSecurityResource
    */
   public void remove(final Repository repository) {
     checkNotNull(repository);
-    final String repositoryName = repository.getName();
+    final String name = repository.getName();
 
     apply(new Mutator()
     {
       @Override
       public void apply(final SecurityModelConfiguration model) {
         // remove repository-instance privileges
-        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, BROWSE));
-        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, READ));
-        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, EDIT));
-        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, ADD));
-        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(repositoryName, DELETE));
+        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(name, BROWSE));
+        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(name, READ));
+        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(name, EDIT));
+        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(name, ADD));
+        model.removePrivilege(RepositoryInstancePrivilegeDescriptor.id(name, DELETE));
 
         // remove repository-instance roles
-        model.removeRole(String.format("%s-%s-admin", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
-        model.removeRole(String.format("%s-%s-readonly", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
-        model.removeRole(String.format("%s-%s-deployer", RepositoryInstancePrivilegeDescriptor.TYPE, repositoryName));
+        model.removeRole(String.format("%s-%s-admin", RepositoryInstancePrivilegeDescriptor.TYPE, name));
+        model.removeRole(String.format("%s-%s-readonly", RepositoryInstancePrivilegeDescriptor.TYPE, name));
+        model.removeRole(String.format("%s-%s-deployer", RepositoryInstancePrivilegeDescriptor.TYPE, name));
       }
     });
   }

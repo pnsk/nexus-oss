@@ -48,4 +48,11 @@ class SecurityTrial
     def p = new CustomPermission('foo,bar', 'read,wrote')
     log p
   }
+
+  @Test
+  void 'implied permission'() {
+    def granted = new WildcardPermission('test:*')
+    def permission = new WildcardPermission('test:foo')
+    log granted.implies(permission)
+  }
 }

@@ -12,10 +12,6 @@
  */
 package org.sonatype.security.realms.privileges;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import org.sonatype.configuration.validation.ValidationResponse;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.realms.validator.SecurityValidationContext;
@@ -26,20 +22,8 @@ public interface PrivilegeDescriptor
 {
   String getType();
 
-  // TODO: Remove this, UI will now show the "Type" as getType()
-  @Deprecated
-  String getName();
-
-  // TODO: Remove this is not used by anything
-  @Deprecated
-  List<PrivilegePropertyDescriptor> getPropertyDescriptors();
-
-  // TODO: Use createPermission
-  @Deprecated
-  @Nullable
-  String buildPermission(CPrivilege privilege);
-
-  ValidationResponse validatePrivilege(CPrivilege privilege, SecurityValidationContext ctx, boolean update);
-
   Permission createPermission(CPrivilege privilege);
+
+  // TODO: Sort out validation
+  ValidationResponse validatePrivilege(CPrivilege privilege, SecurityValidationContext ctx, boolean update);
 }

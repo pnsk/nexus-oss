@@ -13,8 +13,6 @@
 
 package org.sonatype.nexus.security.targets;
 
-import java.util.List;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -23,11 +21,9 @@ import org.sonatype.configuration.validation.ValidationResponse;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.realms.privileges.AbstractPrivilegeDescriptor;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
-import org.sonatype.security.realms.privileges.PrivilegePropertyDescriptor;
 import org.sonatype.security.realms.privileges.application.ApplicationPrivilegeMethodPropertyDescriptor;
 import org.sonatype.security.realms.validator.SecurityValidationContext;
 
-import com.google.common.collect.Lists;
 import org.codehaus.plexus.util.StringUtils;
 
 @Singleton
@@ -39,26 +35,12 @@ public class TargetPrivilegeDescriptor
   public static final String TYPE = "target";
 
   @Override
-  public String getName() {
-    return "Repository Target";
-  }
-
-  @Override
-  public List<PrivilegePropertyDescriptor> getPropertyDescriptors() {
-    return Lists.newArrayList(
-        new ApplicationPrivilegeMethodPropertyDescriptor(),
-        new TargetPrivilegeRepositoryTargetPropertyDescriptor(),
-        new TargetPrivilegeRepositoryPropertyDescriptor(),
-        new TargetPrivilegeGroupPropertyDescriptor());
-  }
-
-  @Override
   public String getType() {
     return TYPE;
   }
 
   @Override
-  public String buildPermission(CPrivilege privilege) {
+  protected String buildPermission(CPrivilege privilege) {
     if (!TYPE.equals(privilege.getType())) {
       return null;
     }

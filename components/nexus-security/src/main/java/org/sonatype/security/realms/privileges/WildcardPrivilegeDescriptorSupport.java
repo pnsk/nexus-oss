@@ -10,41 +10,35 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.security;
+package org.sonatype.security.realms.privileges;
 
-import java.io.Serializable;
-import java.util.List;
+import org.sonatype.security.authorization.WildcardPermission2;
+import org.sonatype.security.model.CPrivilege;
 
 import org.apache.shiro.authz.Permission;
-
-// TODO: Rename to AdminPermission?
+import org.apache.shiro.authz.permission.WildcardPermission;
 
 /**
- * Repository administration permission.
+ * Support for {@link PrivilegeDescriptor} implementations using {@link WildcardPermission}.
  *
  * @since 3.0
  */
-public class RepositoryPermission
-  implements Permission, Serializable
+public abstract class WildcardPrivilegeDescriptorSupport
+  extends PrivilegeDescriptorSupport
 {
-  // TODO: node
-
-  private String format;
-
-  private String name;
-
-  private List<String> actions;
-
-  @Override
-  public boolean implies(final Permission p) {
-    if (!(p instanceof RepositoryPermission)) {
-      return false;
-    }
-    RepositoryPermission permission = (RepositoryPermission)p;
-
-    // TODO
-    return false;
+  public WildcardPrivilegeDescriptorSupport(final String type) {
+    super(type);
   }
 
-  // TODO: equals/hashcode
+  /**
+   * Format permission string for given privilege.
+   */
+  protected abstract String formatPermission(final CPrivilege privilege);
+
+  @Override
+  public Permission createPermission(final CPrivilege privilege) {
+    assert privilege != null;
+    assert getType().equals(privilege.getType());
+    return new WildcardPermission2(formatPermission(privilege));
+  }
 }

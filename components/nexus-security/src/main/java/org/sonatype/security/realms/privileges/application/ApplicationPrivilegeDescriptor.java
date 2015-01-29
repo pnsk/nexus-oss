@@ -12,8 +12,6 @@
  */
 package org.sonatype.security.realms.privileges.application;
 
-import java.util.List;
-
 import javax.enterprise.inject.Typed;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -24,10 +22,7 @@ import org.sonatype.nexus.common.text.Strings2;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.realms.privileges.AbstractPrivilegeDescriptor;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
-import org.sonatype.security.realms.privileges.PrivilegePropertyDescriptor;
 import org.sonatype.security.realms.validator.SecurityValidationContext;
-
-import com.google.common.collect.Lists;
 
 @Singleton
 @Typed(PrivilegeDescriptor.class)
@@ -39,25 +34,12 @@ public class ApplicationPrivilegeDescriptor
   public static final String TYPE = "method";
 
   @Override
-  public String getName() {
-    return "Application";
-  }
-
-  @Override
   public String getType() {
     return TYPE;
   }
 
   @Override
-  public List<PrivilegePropertyDescriptor> getPropertyDescriptors() {
-    return Lists.newArrayList(
-        new ApplicationPrivilegeMethodPropertyDescriptor(),
-        new ApplicationPrivilegePermissionPropertyDescriptor()
-    );
-  }
-
-  @Override
-  public String buildPermission(CPrivilege privilege) {
+  protected String buildPermission(CPrivilege privilege) {
     if (!TYPE.equals(privilege.getType())) {
       return null;
     }

@@ -19,7 +19,7 @@ import javax.inject.Singleton;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.model.CPrivilegeBuilder;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
-import org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport;
+import org.sonatype.security.realms.privileges.WildcardPrivilegeDescriptorSupport;
 
 // TODO: Do we need this, or would nexus:repository-instance:*:<actions> cover this as well?
 
@@ -31,7 +31,7 @@ import org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport;
 @Named(RepositoryFormatPrivilegeDescriptor.TYPE)
 @Singleton
 public class RepositoryFormatPrivilegeDescriptor
-    extends PrivilegeDescriptorSupport
+    extends WildcardPrivilegeDescriptorSupport
 {
   public static final String TYPE = "repository-format";
 

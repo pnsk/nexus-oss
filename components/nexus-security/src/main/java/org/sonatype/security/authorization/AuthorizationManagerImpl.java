@@ -148,10 +148,10 @@ public class AuthorizationManagerImpl
     privilege.setType(secPriv.getType());
     privilege.setProperties(Maps.newHashMap(secPriv.getProperties()));
 
-    // HACK: expose the real shiro permission string
+    // expose permission string representation
     PrivilegeDescriptor descriptor = descriptor(secPriv.getType());
     if (descriptor != null) {
-      privilege.setPermission(descriptor.buildPermission(secPriv));
+      privilege.setPermission(descriptor.createPermission(secPriv).toString());
     }
 
     return privilege;

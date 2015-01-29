@@ -39,6 +39,8 @@ public abstract class AbstractPrivilegeDescriptor
     this.idGenerator = idGenerator;
   }
 
+  protected abstract String buildPermission(CPrivilege privilege);
+
   @Override
   public Permission createPermission(final CPrivilege privilege) {
     assert privilege != null;

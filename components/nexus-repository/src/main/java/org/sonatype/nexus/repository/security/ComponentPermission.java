@@ -19,7 +19,7 @@ import java.util.Map;
 import org.apache.shiro.authz.Permission;
 
 /**
- * Component permission.
+ * Repository component permission.
  *
  * @since 3.0
  */
