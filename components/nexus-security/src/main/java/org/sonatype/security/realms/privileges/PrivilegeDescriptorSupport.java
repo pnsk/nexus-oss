@@ -18,10 +18,13 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.sonatype.configuration.validation.ValidationResponse;
+import org.sonatype.security.authorization.WildcardPermission2;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.realms.validator.SecurityValidationContext;
 
 import com.google.common.base.Strings;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.permission.WildcardPermission;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -99,5 +102,12 @@ public abstract class PrivilegeDescriptorSupport
       value = defaultValue;
     }
     return value;
+  }
+
+  @Override
+  public Permission createPermission(final CPrivilege privilege) {
+    assert privilege != null;
+    assert getType().equals(privilege.getType());
+    return new WildcardPermission2(formatPermission(privilege));
   }
 }
