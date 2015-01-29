@@ -34,12 +34,9 @@ public interface PrivilegeDescriptor
   @Deprecated
   List<PrivilegePropertyDescriptor> getPropertyDescriptors();
 
-<<<<<<< HEAD
-  @Nullable
-=======
   // TODO: Use createPermission
   @Deprecated
->>>>>>> master
+  @Nullable
   String buildPermission(CPrivilege privilege);
 
   ValidationResponse validatePrivilege(CPrivilege privilege, SecurityValidationContext ctx, boolean update);
