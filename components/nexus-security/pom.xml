@@ -35,13 +35,8 @@
     </dependency>
 
     <dependency>
-<<<<<<< HEAD
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-=======
       <groupId>org.sonatype.nexus</groupId>
       <artifactId>nexus-ehcache</artifactId>
->>>>>>> master
     </dependency>
 
     <dependency>
@@ -50,8 +45,6 @@
     </dependency>
 
     <dependency>
-<<<<<<< HEAD
-=======
       <groupId>org.sonatype.sisu.goodies</groupId>
       <artifactId>goodies-eventbus</artifactId>
     </dependency>
@@ -61,7 +54,6 @@
     NOTE: ... or move this dependency to common as its part of the configuration of the container (with bloat)?
     -->
     <dependency>
->>>>>>> master
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
     </dependency>
@@ -83,26 +75,7 @@
 
     <dependency>
       <groupId>org.apache.shiro</groupId>
-<<<<<<< HEAD
-      <artifactId>shiro-guice</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.sonatype.sisu.inject</groupId>
-      <artifactId>guice-multibindings</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.sonatype.nexus</groupId>
-      <artifactId>nexus-ehcache</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.sonatype.sisu.goodies</groupId>
-      <artifactId>goodies-eventbus</artifactId>
-=======
       <artifactId>shiro-ehcache</artifactId>
->>>>>>> master
     </dependency>
 
     <dependency>
