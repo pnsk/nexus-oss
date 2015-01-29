@@ -17,7 +17,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.sonatype.nexus.repository.Repository;
-import org.sonatype.security.model.CRoleBuilder;
 import org.sonatype.security.model.SecurityModelConfiguration;
 import org.sonatype.security.realms.tools.MutableDynamicSecurityResource;
 
@@ -27,10 +26,9 @@ import static org.sonatype.nexus.repository.security.BreadActions.BROWSE;
 import static org.sonatype.nexus.repository.security.BreadActions.DELETE;
 import static org.sonatype.nexus.repository.security.BreadActions.EDIT;
 import static org.sonatype.nexus.repository.security.BreadActions.READ;
-import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.ALL;
-import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.TYPE;
 import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.id;
 import static org.sonatype.nexus.repository.security.RepositoryAdminPrivilegeDescriptor.privilege;
+import static org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport.ALL;
 
 /**
  * Repository administration security resource.
@@ -63,15 +61,6 @@ public class RepositoryAdminSecurityResource
     model.addPrivilege(privilege(ALL, ALL, EDIT));
     model.addPrivilege(privilege(ALL, ALL, ADD));
     model.addPrivilege(privilege(ALL, ALL, DELETE));
-
-    model.addRole(new CRoleBuilder()
-        .id(String.format("%s-fullcontrol", TYPE))
-        .privilege(id(ALL, ALL, BROWSE))
-        .privilege(id(ALL, ALL, READ))
-        .privilege(id(ALL, ALL, EDIT))
-        .privilege(id(ALL, ALL, ADD))
-        .privilege(id(ALL, ALL, DELETE))
-        .create());
   }
 
   /**
@@ -86,19 +75,10 @@ public class RepositoryAdminSecurityResource
       @Override
       public void apply(final SecurityModelConfiguration model) {
         // no per-repo repository-admin ADD action
-
         model.addPrivilege(privilege(format, name, BROWSE));
         model.addPrivilege(privilege(format, name, READ));
         model.addPrivilege(privilege(format, name, EDIT));
         model.addPrivilege(privilege(format, name, DELETE));
-
-        model.addRole(new CRoleBuilder()
-            .id(String.format("%s-%s-fullcontrol", name, TYPE))
-            .privilege(id(format, name, BROWSE))
-            .privilege(id(format, name, READ))
-            .privilege(id(format, name, EDIT))
-            .privilege(id(format, name, DELETE))
-            .create());
       }
     });
   }
@@ -115,13 +95,10 @@ public class RepositoryAdminSecurityResource
       @Override
       public void apply(final SecurityModelConfiguration model) {
         // no per-repo repository-admin ADD action
-
         model.removePrivilege(id(format, name, BROWSE));
         model.removePrivilege(id(format, name, READ));
         model.removePrivilege(id(format, name, EDIT));
         model.removePrivilege(id(format, name, DELETE));
-
-        model.removeRole(String.format("%s-%s-fullcontrol", name, TYPE));
       }
     });
   }

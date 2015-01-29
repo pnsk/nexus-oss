@@ -23,7 +23,7 @@ import org.apache.shiro.authz.Permission;
  *
  * @since 3.0
  */
-public class ComponentPermission
+public class RepositoryComponentPermission
   implements Permission, Serializable
 {
   private String format;
@@ -36,10 +36,10 @@ public class ComponentPermission
 
   @Override
   public boolean implies(final Permission p) {
-    if (!(p instanceof ComponentPermission)) {
+    if (!(p instanceof RepositoryComponentPermission)) {
       return false;
     }
-    ComponentPermission permission = (ComponentPermission)p;
+    RepositoryComponentPermission permission = (RepositoryComponentPermission)p;
 
     // TODO
     return false;

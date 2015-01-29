@@ -63,11 +63,7 @@ public class SecurityFacetSupport
     // determine permission action from request
     String action = action(request);
 
-    // subject must have either format or instance permissions
-    String formatPerm = RepositoryFormatPrivilegeDescriptor.permission(repository.getFormat().getValue(), action);
-    String instancePerm = RepositoryInstancePrivilegeDescriptor.permission(repository.getName(), action);
-
-    return securityHelper.anyPermitted(formatPerm, instancePerm);
+    return securityHelper.allPermitted(new RepositoryViewPermission(repository, action));
   }
 
   /**

@@ -29,7 +29,6 @@ import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.config.Configuration;
 import org.sonatype.nexus.repository.config.ConfigurationFacet;
 import org.sonatype.nexus.repository.config.ConfigurationStore;
-import org.sonatype.nexus.repository.security.SecurityHelper;
 import org.sonatype.nexus.repository.view.ViewFacet;
 import org.sonatype.sisu.goodies.eventbus.EventBus;
 
@@ -53,8 +52,6 @@ public class RepositoryManagerImpl
 {
   private final EventBus eventBus;
 
-  private final SecurityHelper securityHelper;
-
   private final ConfigurationStore store;
 
   private final Map<String, Recipe> recipes;
@@ -69,7 +66,6 @@ public class RepositoryManagerImpl
 
   @Inject
   public RepositoryManagerImpl(final EventBus eventBus,
-                               final SecurityHelper securityHelper,
                                final ConfigurationStore store,
                                final RepositoryFactory factory,
                                final Provider<ConfigurationFacet> configFacet,
@@ -77,7 +73,6 @@ public class RepositoryManagerImpl
                                final RepositoryAdminSecurityResource securityResource)
   {
     this.eventBus = checkNotNull(eventBus);
-    this.securityHelper = checkNotNull(securityHelper);
     this.store = checkNotNull(store);
     this.factory = checkNotNull(factory);
     this.configFacet = checkNotNull(configFacet);
@@ -195,21 +190,9 @@ public class RepositoryManagerImpl
     repositories.clear();
   }
 
-  // FIXME: Disabling security checks for now, this may not be the right place for these to live
-
   @Override
   @Guarded(by = STARTED)
   public Iterable<Repository> browse() {
-    //// lookup subject to avoid re-resolving this for each item in the list
-    //final Subject subject = securityHelper.subject();
-    //return Iterables.filter(repositories.values(), new Predicate<Repository>()
-    //{
-    //  @Override
-    //  public boolean apply(final Repository input) {
-    //    return securityHelper.allPermitted(subject, permission(input.getName(), BROWSE));
-    //  }
-    //});
-
     return ImmutableList.copyOf(repositories.values());
   }
 
@@ -218,8 +201,6 @@ public class RepositoryManagerImpl
   @Guarded(by = STARTED)
   public Repository get(final String name) {
     checkNotNull(name);
-
-    //securityHelper.ensurePermitted(permission(name, READ));
 
     return repositories.get(name);
   }
@@ -231,8 +212,6 @@ public class RepositoryManagerImpl
     String repositoryName = checkNotNull(configuration.getRepositoryName());
 
     log.debug("Creating repository: {} -> {}", repositoryName, configuration);
-
-    //securityHelper.ensurePermitted(permission(repositoryName, ADD));
 
     // FIXME: This can leave storage/tracked inconsistent if new repository/init fails
     store.create(configuration);
@@ -254,7 +233,6 @@ public class RepositoryManagerImpl
 
     log.debug("Updating repository: {} -> {}", repositoryName, configuration);
 
-    //securityHelper.ensurePermitted(permission(repositoryName, EDIT));
     Repository repository = repository(repositoryName);
 
     // TODO: Ensure configuration sanity, before we apply to repository
@@ -274,7 +252,6 @@ public class RepositoryManagerImpl
 
     log.debug("Deleting repository: {}", name);
 
-    //securityHelper.ensurePermitted(permission(name, DELETE));
     Repository repository = repository(name);
     Configuration configuration = repository.getConfiguration();
     repository.stop();

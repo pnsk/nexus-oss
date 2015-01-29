@@ -13,60 +13,64 @@
 
 package org.sonatype.nexus.repository.security;
 
+import java.util.List;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.model.CPrivilegeBuilder;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
-import org.sonatype.security.realms.privileges.WildcardPrivilegeDescriptorSupport;
+import org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport;
+
+import org.apache.shiro.authz.Permission;
 
 /**
- * Repository instance {@link PrivilegeDescriptor}.
+ * Repository view {@link PrivilegeDescriptor}.
  *
+ * @see RepositoryViewPermission
  * @since 3.0
  */
-@Named(RepositoryInstancePrivilegeDescriptor.TYPE)
+@Named(RepositoryViewPrivilegeDescriptor.TYPE)
 @Singleton
-public class RepositoryInstancePrivilegeDescriptor
-    extends WildcardPrivilegeDescriptorSupport
+public class RepositoryViewPrivilegeDescriptor
+    extends PrivilegeDescriptorSupport
 {
-  public static final String TYPE = "repository-instance";
+  public static final String TYPE = RepositoryViewPermission.DOMAIN;
+
+  public static final String P_FORMAT = "format";
 
   public static final String P_REPOSITORY = "repository";
 
   public static final String P_ACTIONS = "actions";
 
-  public RepositoryInstancePrivilegeDescriptor() {
+  public RepositoryViewPrivilegeDescriptor() {
     super(TYPE);
   }
 
   @Override
-  protected String formatPermission(final CPrivilege privilege) {
-    String repositoryName = readProperty(privilege, P_REPOSITORY, "*");
-    String actions = readProperty(privilege, P_ACTIONS, "*");
-    return permission(repositoryName, actions);
+  public Permission createPermission(final CPrivilege privilege) {
+    assert privilege != null;
+    String format = readProperty(privilege, P_FORMAT, ALL);
+    String name = readProperty(privilege, P_REPOSITORY, ALL);
+    List<String> actions = readListProperty(privilege, P_ACTIONS, ALL);
+    return new RepositoryAdminPermission(format, name, actions);
   }
 
   //
   // Helpers
   //
 
-  public static String id(final String repositoryName, final String actions) {
-    return String.format("%s-%s-%s", TYPE, repositoryName, actions);
+  public static String id(final String format, final String name, final String actions) {
+    return String.format("%s-%s-%s-%s", TYPE, format, name, actions);
   }
 
-  public static String permission(final String repositoryName, final String actions) {
-    return String.format("nexus:%s:%s:%s", TYPE, repositoryName, actions);
-  }
-
-  public static CPrivilege privilege(final String repositoryName, final String actions) {
+  public static CPrivilege privilege(final String format, final String name, final String actions) {
     return new CPrivilegeBuilder()
         .type(TYPE)
-        .id(id(repositoryName, actions))
-        .name(permission(repositoryName, actions))
-        .description(String.format("Grants '%s' repository instance actions: %s", repositoryName, actions))
-        .property(P_REPOSITORY, repositoryName)
+        .id(id(format, name, actions))
+        .property(P_FORMAT, format)
+        .property(P_REPOSITORY, name)
         .property(P_ACTIONS, actions)
         .create();
   }

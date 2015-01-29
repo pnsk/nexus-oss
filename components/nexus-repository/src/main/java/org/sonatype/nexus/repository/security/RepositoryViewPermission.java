@@ -12,7 +12,10 @@
  */
 package org.sonatype.nexus.repository.security;
 
+import java.util.Arrays;
 import java.util.List;
+
+import org.sonatype.nexus.repository.Repository;
 
 import com.google.common.base.Joiner;
 import org.apache.shiro.authz.permission.WildcardPermission;
@@ -24,7 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 3.0
  */
-public class ViewPermission
+public class RepositoryViewPermission
   extends WildcardPermission
 {
   public static final String SYSTEM = "nexus";
@@ -37,7 +40,7 @@ public class ViewPermission
 
   private final List<String> actions;
 
-  public ViewPermission(final String format, final String name, final List<String> actions) {
+  public RepositoryViewPermission(final String format, final String name, final List<String> actions) {
     this.format = checkNotNull(format);
     this.name = checkNotNull(name);
     this.actions = checkNotNull(actions);
@@ -49,6 +52,10 @@ public class ViewPermission
         name,
         Joiner.on(',').join(actions)
     ));
+  }
+
+  public RepositoryViewPermission(final Repository repository, final String... actions) {
+    this(repository.getFormat().getValue(), repository.getName(), Arrays.asList(actions));
   }
 
   public String getFormat() {

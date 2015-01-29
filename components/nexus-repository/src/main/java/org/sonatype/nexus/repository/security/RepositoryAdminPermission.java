@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 3.0
  */
-public class AdminPermission
+public class RepositoryAdminPermission
     extends WildcardPermission
 {
   public static final String SYSTEM = "nexus";
@@ -38,7 +38,7 @@ public class AdminPermission
 
   private final List<String> actions;
 
-  public AdminPermission(final String format, final String name, final List<String> actions) {
+  public RepositoryAdminPermission(final String format, final String name, final List<String> actions) {
     this.format = checkNotNull(format);
     this.name = checkNotNull(name);
     this.actions = checkNotNull(actions);

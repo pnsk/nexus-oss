@@ -28,6 +28,7 @@ import org.apache.shiro.authz.Permission;
 /**
  * Repository admin {@link PrivilegeDescriptor}.
  *
+ * @see RepositoryAdminPermission
  * @since 3.0
  */
 @Named(RepositoryAdminPrivilegeDescriptor.TYPE)
@@ -35,7 +36,7 @@ import org.apache.shiro.authz.Permission;
 public class RepositoryAdminPrivilegeDescriptor
     extends PrivilegeDescriptorSupport
 {
-  public static final String TYPE = AdminPermission.DOMAIN;
+  public static final String TYPE = RepositoryAdminPermission.DOMAIN;
 
   public static final String P_FORMAT = "format";
 
@@ -49,10 +50,11 @@ public class RepositoryAdminPrivilegeDescriptor
 
   @Override
   public Permission createPermission(final CPrivilege privilege) {
+    assert privilege != null;
     String format = readProperty(privilege, P_FORMAT, ALL);
     String name = readProperty(privilege, P_REPOSITORY, ALL);
     List<String> actions = readListProperty(privilege, P_ACTIONS, ALL);
-    return new AdminPermission(format, name, actions);
+    return new RepositoryAdminPermission(format, name, actions);
   }
 
   //
