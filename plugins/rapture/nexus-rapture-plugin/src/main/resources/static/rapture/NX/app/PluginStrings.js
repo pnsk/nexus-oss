@@ -101,6 +101,12 @@ Ext.define('NX.app.PluginStrings', {
     GLOBAL_LICENSE_INSTALLED_SUCCESS: 'License installed',
     GLOBAL_LICENSE_UNINSTALLED_WARNING: 'License uninstalled',
 
+    // About
+    GLOBAL_ABOUT_TITLE: 'About Sonatype Nexus',
+    GLOBAL_ABOUT_CLOSE_BUTTON: 'Close',
+    GLOBAL_ABOUT_COPYRIGHT_TAB: 'Copyright',
+    GLOBAL_ABOUT_LICENSE_TAB: 'License',
+
     // Buttons
     GLOBAL_BUTTON_SAVE: 'Save',
     GLOBAL_BUTTON_DISCARD: 'Discard',
