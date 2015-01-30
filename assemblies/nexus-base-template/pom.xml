@@ -187,15 +187,6 @@
 
     <dependency>
       <groupId>org.sonatype.nexus.plugins</groupId>
-      <artifactId>nexus-rrb-plugin</artifactId>
-      <version>${nexus.version}</version>
-      <classifier>features</classifier>
-      <type>xml</type>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.sonatype.nexus.plugins</groupId>
       <artifactId>nexus-indexer-lucene-plugin</artifactId>
       <version>${nexus.version}</version>
       <classifier>features</classifier>
@@ -433,7 +424,6 @@
             <feature>nexus-ssl-plugin</feature>
             <feature>nexus-ldap-plugin</feature>
             <feature>nexus-maven-bridge-plugin</feature>
-            <feature>nexus-rrb-plugin</feature>
             <feature>nexus-indexer-lucene-plugin</feature>
             <feature>nexus-timeline-plugin</feature>
             <feature>nexus-archetype-plugin</feature>

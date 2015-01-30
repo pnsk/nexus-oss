@@ -85,12 +85,6 @@
       <artifactId>nexus-plugin-console-plugin</artifactId>
     </dependency>
 
-    <!-- NEXUS-156 (RRB perms) -->
-    <dependency>
-      <groupId>org.sonatype.nexus.plugins</groupId>
-      <artifactId>nexus-rrb-plugin</artifactId>
-    </dependency>
-
     <!-- NEXUS-3947 ArchetypeCatalog -->
     <dependency>
       <groupId>org.sonatype.nexus.plugins</groupId>
