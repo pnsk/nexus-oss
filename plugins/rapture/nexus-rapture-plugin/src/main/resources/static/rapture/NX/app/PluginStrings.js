@@ -134,6 +134,10 @@ Ext.define('NX.app.PluginStrings', {
     GLOBAL_UNSUPPORTED_ALTERNATIVES: 'Below is a list of alternatives that are supported by this web application',
     GLOBAL_UNSUPPORTED_CONTINUE_BUTTON: 'Ignore and continue',
 
+    // 404
+    GLOBAL_404_PATH: 'Path "{0}" not found',
+    GLOBAL_404_NO_PATH: 'Path not found',
+
     // Buttons
     GLOBAL_BUTTON_SAVE: 'Save',
     GLOBAL_BUTTON_DISCARD: 'Discard',
