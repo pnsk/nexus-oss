@@ -39,12 +39,15 @@ Ext.define('NX.app.PluginStrings', {
 
     // Header
     GLOBAL_HEADER_TITLE: 'Sonatype Nexus',
+    GLOBAL_HEADER_BROWSE_TITLE: 'Browse',
     GLOBAL_HEADER_BROWSE_TOOLTIP: 'Browse server contents',
+    GLOBAL_HEADER_ADMIN_TITLE: 'Administration',
     GLOBAL_HEADER_ADMIN_TOOLTIP: 'Server administration and configuration',
     GLOBAL_HEADER_SEARCH_PLACEHOLDER: 'Search components',
     GLOBAL_HEADER_SEARCH_TOOLTIP: 'Quick component keyword search',
     GLOBAL_HEADER_REFRESH_TOOLTIP: 'Refresh current view and data',
     GLOBAL_HEADER_REFRESH_DEFAULT: 'Refreshed',
+    GLOBAL_HEADER_USER: 'User',
     GLOBAL_HEADER_USER_TOOLTIP: 'Hi, {0}. Manage your user account.',
     GLOBAL_HEADER_SIGN_IN: 'Sign in',
     GLOBAL_HEADER_SIGN_IN_TOOLTIP: 'Sign in',
@@ -52,12 +55,19 @@ Ext.define('NX.app.PluginStrings', {
     GLOBAL_HEADER_SIGN_OUT_TOOLTIP: 'Sign out',
     GLOBAL_HEADER_HELP_TOOLTIP: 'Help',
     GLOBAL_HEADER_HELP_FEATURE: 'Help for: ',
+    GLOBAL_HEADER_HELP_FEATURE_TOOLTIP: 'Help and documentation for the currently selected feature',
     GLOBAL_HEADER_HELP_ABOUT: 'About',
+    GLOBAL_HEADER_HELP_ABOUT_TOOLTIP: 'About Sonatype Nexus',
     GLOBAL_HEADER_HELP_DOCUMENTATION: 'Documentation',
+    GLOBAL_HEADER_HELP_DOCUMENTATION_TOOLTIP: 'Sonatype Nexus product documentation',
     GLOBAL_HEADER_HELP_KB: 'Knowledge base',
+    GLOBAL_HEADER_HELP_KB_TOOLTIP: 'Sonatype Nexus knowledge base',
     GLOBAL_HEADER_HELP_COMMUNITY: 'Community',
+    GLOBAL_HEADER_HELP_COMMUNITY_TOOLTIP: 'Sonatype Nexus community information',
     GLOBAL_HEADER_HELP_ISSUES: 'Issue tracker',
+    GLOBAL_HEADER_HELP_ISSUES_TOOLTIP: 'Sonatype Nexus issue and bug tracker',
     GLOBAL_HEADER_HELP_SUPPORT: 'Support',
+    GLOBAL_HEADER_HELP_SUPPORT_TOOLTIP: 'Sonatype Nexus product support',
 
     // Footer
     GLOBAL_FOOTER_COPYRIGHT: 'Copyright © 2008-2015, Sonatype Inc. All rights reserved.',
@@ -83,6 +93,7 @@ Ext.define('NX.app.PluginStrings', {
     GLOBAL_DIALOG_ORDER_CANCEL_BUTTON: 'Cancel',
 
     // Messages
+    GLOBAL_MESSAGES_TOOLTIP: 'Toggle messages display',
     GLOBAL_MESSAGES_EMPTY_STATE: 'No messages',
 
     // Server
