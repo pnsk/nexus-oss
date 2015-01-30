@@ -73,7 +73,7 @@ implements Closeable
     fw.writeAttribute('pkgid', yumPackage.pkgid)
     fw.writeAttribute('name', yumPackage.name)
     fw.writeAttribute('arch', yumPackage.arch)
-    writeEl(fw, 'version', null, ['epoch': yumPackage.epoch, 'ver': yumPackage.version, 'rel': yumPackage.release])
+    writeEl(fw, 'version', ['epoch': yumPackage.epoch, 'ver': yumPackage.version, 'rel': yumPackage.release])
     writeFileEntries(fw, yumPackage, false)
     fw.writeEndElement()
   }
@@ -92,15 +92,15 @@ implements Closeable
   private void writeBase(final YumPackage yumPackage) {
     writeEl(pw, 'name', yumPackage.name)
     writeEl(pw, 'arch', yumPackage.arch)
-    writeEl(pw, 'version', null, ['epoch': yumPackage.epoch, 'ver': yumPackage.version, 'rel': yumPackage.release])
+    writeEl(pw, 'version', ['epoch': yumPackage.epoch, 'ver': yumPackage.version, 'rel': yumPackage.release])
     writeEl(pw, 'checksum', yumPackage.checksum, ['type': yumPackage.checksum_type, 'pkgid': 'YES'])
     writeEl(pw, 'summary', yumPackage.summary)
     writeEl(pw, 'description', yumPackage.description)
     writeEl(pw, 'packager', yumPackage.rpm_packager)
     writeEl(pw, 'url', yumPackage.url)
-    writeEl(pw, 'time', null, ['file': yumPackage.time_file, 'build': yumPackage.time_build])
-    writeEl(pw, 'size', null, ['package': yumPackage.size_package, 'installed': yumPackage.size_installed, 'archive': yumPackage.size_archive])
-    writeEl(pw, 'location', null, ['href': yumPackage.location])
+    writeEl(pw, 'time', ['file': yumPackage.time_file, 'build': yumPackage.time_build])
+    writeEl(pw, 'size', ['package': yumPackage.size_package, 'installed': yumPackage.size_installed, 'archive': yumPackage.size_archive])
+    writeEl(pw, 'location', ['href': yumPackage.location])
   }
 
   private void writeFormat(final YumPackage yumPackage) {
@@ -110,7 +110,7 @@ implements Closeable
     writeEl(pw, 'rpm:group', yumPackage.rpm_group)
     writeEl(pw, 'rpm:buildhost', yumPackage.rpm_buildhost)
     writeEl(pw, 'rpm:sourcerpm', yumPackage.rpm_sourcerpm)
-    writeEl(pw, 'rpm:header-range', null, ['start': yumPackage.rpm_header_start, 'end': yumPackage.rpm_header_end])
+    writeEl(pw, 'rpm:header-range', ['start': yumPackage.rpm_header_start, 'end': yumPackage.rpm_header_end])
     writePCO(yumPackage.provides, 'provides')
     writePCO(yumPackage.requires, 'requires')
     writePCO(yumPackage.conflicts, 'conflicts')
@@ -123,7 +123,7 @@ implements Closeable
     if (entries) {
       pw.writeStartElement('rpm:' + type)
       entries.each { entry ->
-        writeEl(pw, 'rpm:entry', null, [
+        writeEl(pw, 'rpm:entry', [
             'name': entry.name,
             'flags': entry.flags,
             'epoch': entry.epoch, 'ver': entry.version, 'rel': entry.release,
@@ -152,9 +152,9 @@ implements Closeable
     }
   }
 
-  protected void writeEl(XMLStreamWriter writer, final String name, final Object text, final Map<String, Object> attrib) {
+  protected void writeEl(XMLStreamWriter writer, final String name=null, final Object text, final Map<String, Object> attributes = null) {
     writer.writeStartElement(name)
-    attrib?.each { key, value ->
+    attributes?.each { key, value ->
       if (value) {
         writer.writeAttribute(key, value?.toString())
       }
@@ -165,16 +165,12 @@ implements Closeable
     writer.writeEndElement()
   }
 
-  protected void writeEl(final XMLStreamWriter writer, final String name, final Object text) {
-    writeEl(writer, name, text, null)
-  }
-
   private void writeData(final Output output, final String type, final int timestamp) {
     rw.writeStartElement('data')
     rw.writeAttribute('type', type)
     writeEl(rw, 'checksum', output.compressedChecksum, ['type': 'sha256'])
     writeEl(rw, 'open-checksum', output.openChecksum, ['type': 'sha256'])
-    writeEl(rw, 'location', null, ['href': "repodata/${type}.xml.gz"])
+    writeEl(rw, 'location', ['href': "repodata/${type}.xml.gz"])
     writeEl(rw, 'timestamp', timestamp)
     writeEl(rw, 'size', output.compressedSize)
     writeEl(rw, 'open-size', output.openSize)
