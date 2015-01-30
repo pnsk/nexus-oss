@@ -152,7 +152,7 @@ implements Closeable
     }
   }
 
-  protected void writeEl(final XMLStreamWriter writer, final String name=null, final Object text, final Map<String, Object> attributes = null) {
+  protected void writeEl(final XMLStreamWriter writer, final String name, final Object text, final Map<String, Object> attributes = null) {
     writer.writeStartElement(name)
     attributes?.each { key, value ->
       if (value) {
@@ -163,6 +163,10 @@ implements Closeable
       writer.writeCharacters(text.toString())
     }
     writer.writeEndElement()
+  }
+
+  protected void writeEl(final XMLStreamWriter writer, final String name, final Map<String, Object> attributes) {
+    writeEl(writer, name, null, attributes)
   }
 
   private void writeData(final Output output, final String type, final int timestamp) {

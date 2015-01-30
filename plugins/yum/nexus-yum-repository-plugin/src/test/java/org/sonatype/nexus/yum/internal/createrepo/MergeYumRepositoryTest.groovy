@@ -22,7 +22,7 @@ extends TestSupport
   @Test
   void 'read repository'() {
     new MergeYumRepository(util.createTempDir('repodata')).withCloseable { MergeYumRepository writer ->
-      writer.merge(util.resolveFile('src/test/ut-resources/repo7'))
+      writer.merge(util.resolveFile('src/test/ut-resources/repo6'))
     }
   }
 
