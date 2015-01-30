@@ -182,7 +182,7 @@ public class GenerateMetadataTask
           String version = getVersion();
           for (YumPackage yumPackage : yumStore.get()) {
             if (version == null || hasRequiredVersion(version, yumPackage.getLocation())) {
-              createRepo.push(yumPackage);
+              createRepo.write(yumPackage);
             }
           }
         }

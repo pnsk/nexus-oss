@@ -23,7 +23,7 @@ extends YumRepositoryWriter
     super(repoDir, timestamp)
   }
 
-  void push(final YumPackage yumPackage) {
+  void write(final YumPackage yumPackage) {
     maybeStart()
     writePrimary(yumPackage)
     writeFileLists(yumPackage)

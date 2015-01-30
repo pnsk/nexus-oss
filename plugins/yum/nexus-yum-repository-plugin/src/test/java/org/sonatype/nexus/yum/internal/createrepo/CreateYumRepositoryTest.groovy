@@ -12,7 +12,6 @@
  */
 package org.sonatype.nexus.yum.internal.createrepo
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.commons.io.IOUtils
 import org.junit.Test
 import org.sonatype.sisu.litmus.testsupport.TestSupport
@@ -33,12 +32,12 @@ extends TestSupport
     File ant_x86 = util.resolveFile('src/test/ut-resources/rpms/ant/1.7.1-13/ant-1.7.1-13.el6.x86_64.rpm')
     File outputDir = util.createTempDir('repodata')
     new CreateYumRepository(outputDir, 1422620943).withCloseable { CreateYumRepository writer ->
-      writer.push(new YumPackageParser().parse(
+      writer.write(new YumPackageParser().parse(
           new FileInputStream(ant_i386),
           'Packages/ant-1.7.1-13.el6.i686.rpm',
           ant_i386.lastModified()
       ))
-      writer.push(new YumPackageParser().parse(
+      writer.write(new YumPackageParser().parse(
           new FileInputStream(ant_x86),
           'Packages/ant-1.7.1-13.el6.x86_64.rpm',
           ant_x86.lastModified()
