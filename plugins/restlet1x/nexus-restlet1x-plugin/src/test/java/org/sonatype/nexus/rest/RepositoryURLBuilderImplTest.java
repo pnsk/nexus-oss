@@ -24,6 +24,7 @@ import org.sonatype.nexus.proxy.registry.RepositoryTypeDescriptor;
 import org.sonatype.nexus.proxy.registry.RepositoryTypeRegistry;
 import org.sonatype.nexus.proxy.repository.GroupRepository;
 import org.sonatype.nexus.proxy.repository.Repository;
+import org.sonatype.nexus.proxy.repository.RepositoryURLBuilderImpl;
 import org.sonatype.nexus.web.BaseUrlHolder;
 
 import org.junit.After;
@@ -39,9 +40,9 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
 
 /**
- * Tests for {@link RestletRepositoryURLBuilder}.
+ * Tests for {@link RepositoryURLBuilderImpl}.
  */
-public class RestletRepositoryURLBuilderTest
+public class RepositoryURLBuilderImplTest
 {
   private static final String MOCK_REPO_ID = "test-id";
 
@@ -61,7 +62,7 @@ public class RestletRepositoryURLBuilderTest
 
   private RepositoryTypeRegistry repositoryTypeRegistry;
 
-  private RestletRepositoryURLBuilder underTest;
+  private RepositoryURLBuilderImpl underTest;
 
   @Before
   public void setUp() throws Exception {
@@ -96,7 +97,7 @@ public class RestletRepositoryURLBuilderTest
         M1Repository.class.getName(), "invalid");
     doReturn(typeDescriptors).when(repositoryTypeRegistry).getRegisteredRepositoryTypeDescriptors();
 
-    underTest = new RestletRepositoryURLBuilder(repositoryRegistry, repositoryTypeRegistry);
+    underTest = new RepositoryURLBuilderImpl(repositoryRegistry, repositoryTypeRegistry);
 
     BaseUrlHolder.set(GLOBAL_BASE_URL);
   }

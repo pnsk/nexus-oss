@@ -31,7 +31,7 @@ import org.sonatype.nexus.proxy.maven.routing.DiscoveryStatus.DStatus;
 import org.sonatype.nexus.proxy.maven.routing.PublishingStatus;
 import org.sonatype.nexus.proxy.maven.routing.PublishingStatus.PStatus;
 import org.sonatype.nexus.proxy.maven.routing.RoutingStatus;
-import org.sonatype.nexus.rest.RepositoryURLBuilder;
+import org.sonatype.nexus.proxy.repository.RepositoryURLBuilder;
 import org.sonatype.nexus.rest.model.RoutingDiscoveryStatusMessage;
 import org.sonatype.nexus.rest.model.RoutingStatusMessage;
 import org.sonatype.nexus.rest.model.RoutingStatusMessageWrapper;

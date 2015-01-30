@@ -10,30 +10,24 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.rest;
+package org.sonatype.nexus.proxy.repository;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.sonatype.nexus.configuration.application.GlobalRestApiSettings;
 import org.sonatype.nexus.proxy.NoSuchRepositoryException;
 import org.sonatype.nexus.proxy.registry.RepositoryRegistry;
 import org.sonatype.nexus.proxy.registry.RepositoryTypeDescriptor;
 import org.sonatype.nexus.proxy.registry.RepositoryTypeRegistry;
-import org.sonatype.nexus.proxy.repository.Repository;
-import org.sonatype.nexus.proxy.utils.RepositoryStringUtils;
 import org.sonatype.nexus.web.BaseUrlHolder;
 import org.sonatype.sisu.goodies.common.ComponentSupport;
-
-import org.apache.commons.lang.StringUtils;
-import org.restlet.data.Request;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Named
 @Singleton
-public class RestletRepositoryURLBuilder
+public class RepositoryURLBuilderImpl
     extends ComponentSupport
     implements RepositoryURLBuilder
 {
@@ -42,8 +36,8 @@ public class RestletRepositoryURLBuilder
   private final RepositoryTypeRegistry repositoryTypeRegistry;
 
   @Inject
-  public RestletRepositoryURLBuilder(final RepositoryRegistry repositoryRegistry,
-                                     final RepositoryTypeRegistry repositoryTypeRegistry)
+  public RepositoryURLBuilderImpl(final RepositoryRegistry repositoryRegistry,
+                                  final RepositoryTypeRegistry repositoryTypeRegistry)
   {
     this.repositoryRegistry = checkNotNull(repositoryRegistry);
     this.repositoryTypeRegistry = checkNotNull(repositoryTypeRegistry);
