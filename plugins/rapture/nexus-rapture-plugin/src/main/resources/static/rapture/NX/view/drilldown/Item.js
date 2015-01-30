@@ -25,7 +25,7 @@ Ext.define('NX.view.drilldown.Item', {
   itemName: 'item',
   itemClass: null,
   itemBookmark: null,
-  currentMode: 0,
+  cardIndex: 0,
 
   layout: 'card',
 
@@ -55,9 +55,9 @@ Ext.define('NX.view.drilldown.Item', {
 
   /**
    * @public
-   * Set the currently selected mode (corresponds with a card index)
+   * Set the currently selected card (will not change the active index by itself)
    */
-  setCurrentMode: function(index) {
-    this.currentMode = index;
+  setCardIndex: function(index) {
+    this.cardIndex = index;
   }
 });

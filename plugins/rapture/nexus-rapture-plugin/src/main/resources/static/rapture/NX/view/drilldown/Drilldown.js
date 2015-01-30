@@ -294,8 +294,8 @@ Ext.define('NX.view.drilldown.Drilldown', {
         me.hideAllExceptAndFocus(index);
       }
 
-      // Restore the current mode
-      items[index].getLayout().setActiveItem(items[index].currentMode);
+      // Restore the current card
+      items[index].getLayout().setActiveItem(items[index].cardIndex);
 
       // Slide the requested panel into view
       var left = item.el.getLeft() - me.el.getLeft();
@@ -354,7 +354,7 @@ Ext.define('NX.view.drilldown.Drilldown', {
     }
 
     // Show the proper card
-    items[index].setCurrentMode(1);
+    items[index].setCardIndex(1);
 
     me.slidePanels(index, animate);
   },
@@ -371,7 +371,7 @@ Ext.define('NX.view.drilldown.Drilldown', {
       item = me.query('nx-drilldown-item')[index];
 
     // Show the proper card
-    item.setCurrentMode(0);
+    item.setCardIndex(0);
 
     me.slidePanels(index, animate);
   },
