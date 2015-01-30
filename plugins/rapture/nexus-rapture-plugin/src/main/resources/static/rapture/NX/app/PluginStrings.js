@@ -101,22 +101,27 @@ Ext.define('NX.app.PluginStrings', {
     GLOBAL_LICENSE_INSTALLED_SUCCESS: 'License installed',
     GLOBAL_LICENSE_UNINSTALLED_WARNING: 'License uninstalled',
 
-    // About
+    // About modal
     GLOBAL_ABOUT_TITLE: 'About Sonatype Nexus',
     GLOBAL_ABOUT_CLOSE_BUTTON: 'Close',
     GLOBAL_ABOUT_COPYRIGHT_TAB: 'Copyright',
     GLOBAL_ABOUT_LICENSE_TAB: 'License',
 
-    // Authenticate
+    // Authentication modal
     GLOBAL_AUTHENTICATE_TITLE: 'Authenticate',
     GLOBAL_AUTHENTICATE_HELP: 'You have requested an operation which requires validation of your credentials.',
     GLOBAL_AUTHENTICATE_SUBMIT_BUTTON: 'Authenticate',
     GLOBAL_AUTHENTICATE_CANCEL_BUTTON: 'Cancel',
 
-    // Expire
+    // Expiry modal
     GLOBAL_EXPIRE_TITLE: 'Session',
     GLOBAL_EXPIRE_HELP: 'Session is about to expire',
     GLOBAL_EXPIRE_CANCEL_BUTTON: 'Cancel',
+
+    // Unsupported browser
+    GLOBAL_UNSUPPORTED_TITLE: 'The browser you are using is not supported',
+    GLOBAL_UNSUPPORTED_ALTERNATIVES: 'Below is a list of alternatives that are supported by this web application',
+    GLOBAL_UNSUPPORTED_CONTINUE_BUTTON: 'Ignore and continue',
 
     // Buttons
     GLOBAL_BUTTON_SAVE: 'Save',
