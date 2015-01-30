@@ -27,7 +27,6 @@ import org.sonatype.nexus.test.utils.FileTestingUtils;
 import org.sonatype.nexus.test.utils.NexusConfigUtil;
 import org.sonatype.nexus.test.utils.NexusStatusUtil;
 import org.sonatype.nexus.test.utils.RoleMessageUtil;
-import org.sonatype.nexus.test.utils.SearchMessageUtil;
 import org.sonatype.nexus.test.utils.TaskScheduleUtil;
 import org.sonatype.nexus.test.utils.TestProperties;
 import org.sonatype.nexus.test.utils.UserMessageUtil;
@@ -412,12 +411,6 @@ public abstract class AbstractNexusIntegrationTest
 
   protected DeployUtils getDeployUtils() {
     return deployUtils;
-  }
-
-  private final SearchMessageUtil searchMessageUtil = new SearchMessageUtil();
-
-  protected SearchMessageUtil getSearchMessageUtil() {
-    return searchMessageUtil;
   }
 
   private final EventInspectorsUtil eventInspectorsUtil = new EventInspectorsUtil();

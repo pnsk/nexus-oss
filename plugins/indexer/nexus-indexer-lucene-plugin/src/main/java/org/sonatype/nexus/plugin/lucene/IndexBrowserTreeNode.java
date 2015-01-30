@@ -12,14 +12,9 @@
  */
 package org.sonatype.nexus.plugin.lucene;
 
-import java.util.List;
-
 import org.sonatype.nexus.index.treeview.DefaultMergedTreeNode;
-import org.sonatype.nexus.rest.indextreeview.IndexBrowserTreeNodeDTO;
 
-import com.google.common.collect.Lists;
 import org.apache.maven.index.treeview.IndexTreeView;
-import org.apache.maven.index.treeview.TreeNode;
 import org.apache.maven.index.treeview.TreeViewRequest;
 
 /**
@@ -138,28 +133,5 @@ public class IndexBrowserTreeNode
    */
   public void setPackaging(String packaging) {
     this.packaging = packaging;
-  }
-
-  /**
-   * Converts this instance into a DTO, ready for wire transmission.
-   *
-   * @since 2.7.0
-   */
-  public IndexBrowserTreeNodeDTO toDTO() {
-    List<IndexBrowserTreeNodeDTO> dtoChildren = null;
-    final List<TreeNode> children = getChildren();
-    if (children != null && !children.isEmpty()) {
-      dtoChildren = Lists.newArrayList();
-      for (TreeNode childNode : children) {
-        if (childNode instanceof IndexBrowserTreeNode) {
-          dtoChildren.add(((IndexBrowserTreeNode) childNode).toDTO());
-        }
-      }
-    }
-    return new IndexBrowserTreeNodeDTO(getType().name(), isLeaf(), getNodeName(), getPath(), dtoChildren,
-        getGroupId(), getArtifactId(), getVersion(), getRepositoryId(), isLocallyAvailable(),
-        getArtifactTimestamp(), getArtifactSha1Checksum(), getArtifactMd5Checksum(), getInitiatorUserId(),
-        getInitiatorIpAddress(), getArtifactOriginReason(), getArtifactOriginUrl(), classifier, extension,
-        packaging, artifactUri, pomUri);
   }
 }

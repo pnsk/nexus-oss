@@ -49,28 +49,28 @@ public class Nexus1599ViewPrivilegeIT
     TestContainer.getInstance().getTestContext().setSecureTest(true);
   }
 
-  @Test
-  public void testSearch()
-      throws Exception
-  {
-    this.giveUserRole(TEST_USER_NAME, "ui-search");
-    this.giveUserPrivilege(TEST_USER_NAME, "repository-m2-read"); // all m2 repo, read
-
-    // without view privilege
-    TestContainer.getInstance().getTestContext().setUsername(TEST_USER_NAME);
-    TestContainer.getInstance().getTestContext().setPassword(TEST_USER_PASSWORD);
-
-    Assert.assertEquals(1, getSearchMessageUtil().searchFor(getTestId()).size());
-
-    // with view privilege
-    this.giveUserPrivilege(TEST_USER_NAME, "repository-" + REPO_TEST_HARNESS_REPO);
-    TestContainer.getInstance().getTestContext().setUsername(TEST_USER_NAME);
-    TestContainer.getInstance().getTestContext().setPassword(TEST_USER_PASSWORD);
-
-    Assert.assertEquals(1, getSearchMessageUtil().searchFor(getTestId()).size());
-
-    this.removePrivilege(TEST_USER_NAME, "repository-m2-read");
-  }
+  //@Test
+  //public void testSearch()
+  //    throws Exception
+  //{
+  //  this.giveUserRole(TEST_USER_NAME, "ui-search");
+  //  this.giveUserPrivilege(TEST_USER_NAME, "repository-m2-read"); // all m2 repo, read
+  //
+  //  // without view privilege
+  //  TestContainer.getInstance().getTestContext().setUsername(TEST_USER_NAME);
+  //  TestContainer.getInstance().getTestContext().setPassword(TEST_USER_PASSWORD);
+  //
+  //  Assert.assertEquals(1, getSearchMessageUtil().searchFor(getTestId()).size());
+  //
+  //  // with view privilege
+  //  this.giveUserPrivilege(TEST_USER_NAME, "repository-" + REPO_TEST_HARNESS_REPO);
+  //  TestContainer.getInstance().getTestContext().setUsername(TEST_USER_NAME);
+  //  TestContainer.getInstance().getTestContext().setPassword(TEST_USER_PASSWORD);
+  //
+  //  Assert.assertEquals(1, getSearchMessageUtil().searchFor(getTestId()).size());
+  //
+  //  this.removePrivilege(TEST_USER_NAME, "repository-m2-read");
+  //}
 
   @Test
   public void testBrowseFeed()

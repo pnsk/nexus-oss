@@ -13,11 +13,8 @@
 package org.sonatype.nexus.testsuite.artifact.nexus3615;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.sonatype.nexus.integrationtests.AbstractNexusIntegrationTest;
-import org.sonatype.nexus.rest.model.RepositoryUrlResource;
 import org.sonatype.nexus.test.utils.TaskScheduleUtil;
 
 public abstract class AbstractArtifactInfoIT
@@ -46,15 +43,6 @@ public abstract class AbstractArtifactInfoIT
 
     TaskScheduleUtil.waitForAllTasksToStop();
     getEventInspectorsUtil().waitForCalmPeriod();
-  }
-
-  protected Iterable<String> getRepositoryId(List<RepositoryUrlResource> repositories) {
-    List<String> repoIds = new ArrayList<String>();
-    for (RepositoryUrlResource repositoryUrlResource : repositories) {
-      repoIds.add(repositoryUrlResource.getRepositoryId());
-    }
-
-    return repoIds;
   }
 
 }

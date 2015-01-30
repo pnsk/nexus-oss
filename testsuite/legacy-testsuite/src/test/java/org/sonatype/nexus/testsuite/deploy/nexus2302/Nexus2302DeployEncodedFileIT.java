@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.sonatype.nexus.integrationtests.AbstractNexusIntegrationTest;
 import org.sonatype.nexus.rest.model.ContentListResource;
-import org.sonatype.nexus.rest.model.NexusArtifact;
 import org.sonatype.nexus.test.utils.ContentListMessageUtil;
 import org.sonatype.nexus.test.utils.FileTestingUtils;
 import org.sonatype.nexus.test.utils.MavenDeployer;
@@ -94,7 +93,7 @@ public class Nexus2302DeployEncodedFileIT
         downloadSnapshotArtifact(REPO_TEST_HARNESS_REPO, gav, new File("target/nexus2302"))));
 
     checkFileSystem(gav);
-    checkIndex(gav);
+    //checkIndex(gav);
     checkRepoBrowse(gav);
     checkRepoBrowse(gav);
     checkBrowse(gav);
@@ -213,30 +212,30 @@ public class Nexus2302DeployEncodedFileIT
     return g;
   }
 
-  private void checkIndex(Gav gav)
-      throws Exception
-  {
-    List<NexusArtifact> result =
-        getSearchMessageUtil().searchForGav(gav.getGroupId(), gav.getArtifactId(), gav.getVersion(),
-            REPO_TEST_HARNESS_REPO);
-    assertResult(gav, result, false);
-
-    result =
-        getSearchMessageUtil().searchForGav(gav.getGroupId(), gav.getArtifactId(), gav.getVersion(),
-            gav.getExtension(), gav.getClassifier(), REPO_TEST_HARNESS_REPO);
-    assertResult(gav, result, true);
-  }
-
-  private void assertResult(Gav gav, List<NexusArtifact> result, boolean assertClassifier) {
-    assertFalse(result.isEmpty());
-
-    assertThat(result.get(0).getGroupId(), equalTo(gav.getGroupId()));
-    assertThat(result.get(0).getArtifactId(), equalTo(gav.getArtifactId()));
-    assertThat(result.get(0).getVersion(), equalTo(gav.getVersion()));
-    if (assertClassifier) {
-      assertThat(result.get(0).getClassifier(), equalTo(gav.getClassifier()));
-    }
-  }
+  //private void checkIndex(Gav gav)
+  //    throws Exception
+  //{
+  //  List<NexusArtifact> result =
+  //      getSearchMessageUtil().searchForGav(gav.getGroupId(), gav.getArtifactId(), gav.getVersion(),
+  //          REPO_TEST_HARNESS_REPO);
+  //  assertResult(gav, result, false);
+  //
+  //  result =
+  //      getSearchMessageUtil().searchForGav(gav.getGroupId(), gav.getArtifactId(), gav.getVersion(),
+  //          gav.getExtension(), gav.getClassifier(), REPO_TEST_HARNESS_REPO);
+  //  assertResult(gav, result, true);
+  //}
+  //
+  //private void assertResult(Gav gav, List<NexusArtifact> result, boolean assertClassifier) {
+  //  assertFalse(result.isEmpty());
+  //
+  //  assertThat(result.get(0).getGroupId(), equalTo(gav.getGroupId()));
+  //  assertThat(result.get(0).getArtifactId(), equalTo(gav.getArtifactId()));
+  //  assertThat(result.get(0).getVersion(), equalTo(gav.getVersion()));
+  //  if (assertClassifier) {
+  //    assertThat(result.get(0).getClassifier(), equalTo(gav.getClassifier()));
+  //  }
+  //}
 
   private void checkFileSystem(Gav gav)
       throws IOException
