@@ -39,7 +39,6 @@ Ext.define('NX.coreui.controller.Users', {
     'User',
     'UserSource',
     'Role'
-
   ],
   views: [
     'user.UserAccount',
@@ -291,6 +290,7 @@ Ext.define('NX.coreui.controller.Users', {
         callback: cb
       });
     }
+    me.callParent();  // triggers transition between list/detail view
   },
 
   /**

@@ -94,7 +94,7 @@ Ext.define('NX.controller.Menu', {
 
     me.getApplication().getIconController().addIcons({
       'feature-notfound': {
-        file: 'feed.png',
+        file: 'exclamation.png',
         variants: ['x16', 'x32']
       }
     });
@@ -413,7 +413,7 @@ Ext.define('NX.controller.Menu', {
     });
 
     if (me.mode) {
-      modeButton = headerPanel.down('button[mode=' + me.mode + ']');
+      modeButton = headerPanel.down('button[mode=' + me.mode + ']').up('nx-header-mode');
       if (!modeButton || modeButton.isHidden()) {
         delete me.mode;
       }
@@ -539,6 +539,7 @@ Ext.define('NX.controller.Menu', {
   createNotAvailableFeature: function (feature) {
     var me = this;
     return me.getFeatureModel().create({
+      text: feature.get('text'),
       path: feature.get('path'),
       description: feature.get('description'),
       iconName: feature.get('iconName'),
@@ -554,6 +555,7 @@ Ext.define('NX.controller.Menu', {
   createNotFoundFeature: function (bookmark) {
     var me = this;
     return me.getFeatureModel().create({
+      text: 'Not found',
       path: '/Not Found',
       description: bookmark,
       iconName: 'feature-notfound',
