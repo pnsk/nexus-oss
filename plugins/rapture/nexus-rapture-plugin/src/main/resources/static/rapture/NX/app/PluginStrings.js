@@ -113,6 +113,11 @@ Ext.define('NX.app.PluginStrings', {
     GLOBAL_AUTHENTICATE_SUBMIT_BUTTON: 'Authenticate',
     GLOBAL_AUTHENTICATE_CANCEL_BUTTON: 'Cancel',
 
+    // Expire
+    GLOBAL_EXPIRE_TITLE: 'Session',
+    GLOBAL_EXPIRE_HELP: 'Session is about to expire',
+    GLOBAL_EXPIRE_CANCEL_BUTTON: 'Cancel',
+
     // Buttons
     GLOBAL_BUTTON_SAVE: 'Save',
     GLOBAL_BUTTON_DISCARD: 'Discard',
