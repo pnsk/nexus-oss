@@ -288,6 +288,9 @@ Ext.define('NX.view.drilldown.Drilldown', {
 
     if (item.el) {
 
+      // Restore the current card
+      items[index].getLayout().setActiveItem(items[index].cardIndex);
+
       // Hack to suppress resize events until the animation is complete
       if (animate) {
         me.ownerCt.suspendEvents(false);
@@ -298,9 +301,6 @@ Ext.define('NX.view.drilldown.Drilldown', {
       } else {
         me.hideAllExceptAndFocus(index);
       }
-
-      // Restore the current card
-      items[index].getLayout().setActiveItem(items[index].cardIndex);
 
       // Slide the requested panel into view
       var left = item.el.getLeft() - me.el.getLeft();
