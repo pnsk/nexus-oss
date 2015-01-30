@@ -355,7 +355,7 @@ Ext.define('NX.coreui.controller.Tasks', {
       me.loadStore();
       if (Ext.isObject(response) && response.success) {
         NX.Messages.add({
-          text: 'Task deleted: ' + description, type: 'success'
+          text: NX.I18n.format('ADMIN_TASKS_DETAILS_DELETE_SUCCESS', description), type: 'success'
         });
       }
     });
@@ -381,7 +381,7 @@ Ext.define('NX.coreui.controller.Tasks', {
           me.loadStore();
           if (Ext.isObject(response) && response.success) {
             NX.Messages.add({
-              text: 'Task started: ' + description, type: 'success'
+              text: NX.I18n.format('ADMIN_TASKS_DETAILS_RUN_SUCCESS', description), type: 'success'
             });
           }
         });
@@ -409,7 +409,7 @@ Ext.define('NX.coreui.controller.Tasks', {
           me.loadStore();
           if (Ext.isObject(response) && response.success) {
             NX.Messages.add({
-              text: 'Task stopped: ' + description, type: 'success'
+              text: NX.I18n.format('ADMIN_TASKS_DETAILS_STOP_SUCCESS', description), type: 'success'
             });
           }
         });

@@ -44,6 +44,7 @@ Ext.define('NX.app.PluginStrings', {
     GLOBAL_HEADER_SEARCH_PLACEHOLDER: 'Search components',
     GLOBAL_HEADER_SEARCH_TOOLTIP: 'Quick component keyword search',
     GLOBAL_HEADER_REFRESH_TOOLTIP: 'Refresh current view and data',
+    GLOBAL_HEADER_REFRESH_DEFAULT: 'Refreshed',
     GLOBAL_HEADER_USER_TOOLTIP: 'Hi, {0}. Manage your user account.',
     GLOBAL_HEADER_SIGN_IN: 'Sign in',
     GLOBAL_HEADER_SIGN_IN_TOOLTIP: 'Sign in',
@@ -83,6 +84,22 @@ Ext.define('NX.app.PluginStrings', {
 
     // Messages
     GLOBAL_MESSAGES_EMPTY_STATE: 'No messages',
+
+    // Server
+    GLOBAL_SERVER_EXTDIRECT_WARNING: 'Operation failed as server could not be contacted',
+    GLOBAL_SERVER_RECONNECTED_SUCCESS: 'Server reconnected',
+    GLOBAL_SERVER_DISCONNECTED: 'Server disconnected',
+    GLOBAL_SERVER_EXPIRE_WARNING: 'Session is about to expire',
+    GLOBAL_SERVER_EXPIRED_WARNING: 'Session expired after being inactive for {0} minutes',
+    GLOBAL_SERVER_SIGNED_IN: 'User signed in: {0}',
+    GLOBAL_SERVER_SIGNED_OUT: 'User signed out',
+    GLOBAL_SERVER_INCORRECT_CREDENTIALS_WARNING: 'Incorrect username and/or password or no permission to use the Nexus User Interface.',
+    GLOBAL_SERVER_DOWNLOAD_SUCCESS: 'Download initiated',
+    GLOBAL_SERVER_BLOCKED_POPUP_DANGER: 'Window pop-up was blocked!',
+
+    // License
+    GLOBAL_LICENSE_INSTALLED_SUCCESS: 'License installed',
+    GLOBAL_LICENSE_UNINSTALLED_WARNING: 'License uninstalled',
 
     // Buttons
     GLOBAL_BUTTON_SAVE: 'Save',

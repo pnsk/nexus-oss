@@ -112,7 +112,7 @@ Ext.define('NX.coreui.controller.Metrics', {
       },
 
       failure: function (response) {
-        NX.Messages.add({ type: 'warning', text: 'Failed to refresh metrics data' });
+        NX.Messages.add({ type: 'warning', text: NX.I18n.get('ADMIN_METRICS_REFRESH_WARNING') });
       },
 
       success: function (response) {
