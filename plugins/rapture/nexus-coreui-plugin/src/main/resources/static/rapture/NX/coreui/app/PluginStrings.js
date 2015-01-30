@@ -203,6 +203,30 @@ Ext.define('NX.coreui.app.PluginStrings', {
     ADMIN_REPOSITORIES_LIST_STATUS_COLUMN: 'Status',
     ADMIN_REPOSITORIES_LIST_URL_COLUMN: 'URL',
     ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_COLUMN: 'Health check',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_ANALYZING: 'Analyzing…',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_ANALYZING_TOOLTIP: '<span><h2>The Analysis is Under Way</h2>The contents of your repository are being analyzed.  ' +
+    'This process should only take a few minutes.<br><br>When complete, the ANALYZING button will be ' +
+    'replaced by a set of icons that indicate how many security and licensing issues were discovered.' +
+    '<br><br>Hover your mouse over these icons to see additional information about the issues that were found.</span>',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_VIEW_PERMISSION_ERROR: '<span><h2>Insufficient Permissions to View Summary Report</h2>' +
+    'To view healthcheck summary report for a repository your user account must have the necessary permissions.</span>',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_ANALYZE: 'Analyze',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_ANALYZE_TOOLTIP: '<span><h2>Repository Health Check Analysis</h2>Click this button to request a Repository Health Check (RHC) ' +
+    'by the Sonatype CLM service.  The process is non-invasive and non-disruptive.  Sonatype CLM ' +
+    'will return actionable quality, security, and licensing information about the open source components in the repository.' +
+    '<br><br><a href="http://links.sonatype.com/products/clm/rhc/home" ' +
+    'target="_blank">How the Sonatype CLM Repository Health Check can help you make better software faster</a></span>',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_ANALYZE_DIALOG: 'Analyze Repository',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_ANALYZE_DIALOG_HELP: 'Do you want to analyze the repository {0} and others for security vulnerabilities and license issues?',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_ANALYZE_DIALOG_OK: 'Yes, all repositories',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_ANALYZE_DIALOG_YES: 'Yes, only this repository',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_ANALYZE_PERMISSION_ERROR: '<span><h2>Insufficient Permissions to Analyze a Repository</h2>' +
+    'To analyze a repository your user account must have permissions to start analysis.</span>',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_LOADING: 'Loading…',
+    ADMIN_REPOSITORIES_LIST_HEALTH_CHECK_UNAVAILABLE_TOOLTIP: '<span><h2>Repository Health Check Unavailable</h2>A Repository Health Check (RHC) ' +
+    'cannot be performed by the Sonatype CLM service on this repository, because it is an unsupported type or out of service.<br><br>' +
+    '<a href="http://links.sonatype.com/products/clm/rhc/home" ' +
+    'target="_blank">How the Sonatype CLM Repository Health Check can help you make better software faster</a></span>',
     ADMIN_REPOSITORIES_LIST_IN_SERVICE: 'In service',
     ADMIN_REPOSITORIES_LIST_OUT_SERVICE: 'Out of service',
     ADMIN_REPOSITORIES_LIST_AUTO_BLOCK: ' (remote automatically blocked)',
