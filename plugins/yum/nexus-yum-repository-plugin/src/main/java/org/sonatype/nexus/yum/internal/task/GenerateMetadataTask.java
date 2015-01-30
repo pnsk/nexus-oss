@@ -179,7 +179,7 @@ public class GenerateMetadataTask
       try {
         YumStore yumStore = ((YumHosted) yum).getYumStore();
         syncYumPackages(yumStore);
-        try (CreateYumRepository createRepo = new CreateYumRepository(repoTmpRepodataDir)) {
+        try (CreateYumRepository createRepo = new CreateYumRepository(repoTmpRepodataDir, null, resolveYumGroups())) {
           String version = getVersion();
           for (YumPackage yumPackage : yumStore.get()) {
             if (version == null || hasRequiredVersion(version, yumPackage.getLocation())) {
@@ -221,6 +221,26 @@ public class GenerateMetadataTask
     finally {
       mdUid.getLock().unlock();
     }
+  }
+
+  private File resolveYumGroups() {
+    String yumGroupsDefinitionFile = getYumGroupsDefinitionFile();
+    if (yumGroupsDefinitionFile != null) {
+      File file = new File(getRepoDir().getAbsolutePath(), yumGroupsDefinitionFile);
+      String path = file.getAbsolutePath();
+      if (file.exists()) {
+        if (file.getName().toLowerCase().endsWith(".xml")) {
+          return file;
+        }
+        else {
+          LOG.warn("Yum groups definition file '{}' must have an '.xml' extension, ignoring", path);
+        }
+      }
+      else {
+        LOG.warn("Yum groups definition file '{}' doesn't exist, ignoring", path);
+      }
+    }
+    return null;
   }
 
   private boolean hasRequiredVersion(final String version, String path) {
