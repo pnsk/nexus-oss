@@ -26,7 +26,7 @@ extends YumRepositoryWriter
   void push(final YumPackage yumPackage) {
     maybeStart()
     writePrimary(yumPackage)
-    writeFiles(yumPackage)
+    writeFileLists(yumPackage)
     writeOther(yumPackage)
   }
 

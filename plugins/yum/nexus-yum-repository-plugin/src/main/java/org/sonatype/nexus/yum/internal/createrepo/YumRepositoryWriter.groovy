@@ -60,7 +60,7 @@ implements Closeable
     rw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(new FileOutputStream(new File(repoDir, 'repomd.xml')), "UTF-8"))
   }
 
-  void writePrimary(final YumPackage yumPackage) {
+  protected void writePrimary(final YumPackage yumPackage) {
     pw.writeStartElement('package')
     pw.writeAttribute('type', 'rpm')
     writeBase(yumPackage)
@@ -68,17 +68,17 @@ implements Closeable
     pw.writeEndElement()
   }
 
-  void writeFiles(final YumPackage yumPackage) {
+  protected void writeFileLists(final YumPackage yumPackage) {
     fw.writeStartElement('package')
     fw.writeAttribute('pkgid', yumPackage.pkgid)
     fw.writeAttribute('name', yumPackage.name)
     fw.writeAttribute('arch', yumPackage.arch)
     writeEl(fw, 'version', ['epoch': yumPackage.epoch, 'ver': yumPackage.version, 'rel': yumPackage.release])
-    writeFileEntries(fw, yumPackage, false)
+    writeFiles(fw, yumPackage, false)
     fw.writeEndElement()
   }
 
-  void writeOther(final YumPackage yumPackage) {
+  protected void writeOther(final YumPackage yumPackage) {
     ow.writeStartElement('package')
     ow.writeAttribute('pkgid', yumPackage.pkgid)
     ow.writeAttribute('name', yumPackage.name)
@@ -115,7 +115,7 @@ implements Closeable
     writePCO(yumPackage.requires, 'requires')
     writePCO(yumPackage.conflicts, 'conflicts')
     writePCO(yumPackage.obsoletes, 'obsoletes')
-    writeFileEntries(pw, yumPackage, true)
+    writeFiles(pw, yumPackage, true)
     pw.writeEndElement()
   }
 
@@ -134,7 +134,7 @@ implements Closeable
     }
   }
 
-  private void writeFileEntries(XMLStreamWriter writer, final YumPackage yumPackage, final boolean primary) {
+  private void writeFiles(final XMLStreamWriter writer, final YumPackage yumPackage, final boolean primary) {
     def files = yumPackage.files
     if (files) {
       if (primary) {
@@ -152,7 +152,7 @@ implements Closeable
     }
   }
 
-  protected void writeEl(XMLStreamWriter writer, final String name=null, final Object text, final Map<String, Object> attributes = null) {
+  protected void writeEl(final XMLStreamWriter writer, final String name=null, final Object text, final Map<String, Object> attributes = null) {
     writer.writeStartElement(name)
     attributes?.each { key, value ->
       if (value) {

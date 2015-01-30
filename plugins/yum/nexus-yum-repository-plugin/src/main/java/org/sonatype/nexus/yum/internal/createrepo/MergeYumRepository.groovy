@@ -230,7 +230,7 @@ extends YumRepositoryWriter
       else if (event == XMLStreamConstants.END_ELEMENT) {
         if (reader.localName == 'package') {
           if (!writtenFiles.contains(yumPackage.uniqueId)) {
-            writeFiles(yumPackage)
+            writeFileLists(yumPackage)
             writtenFiles.add(yumPackage.uniqueId)
           }
         }
