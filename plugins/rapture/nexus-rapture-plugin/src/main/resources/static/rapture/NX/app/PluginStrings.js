@@ -107,6 +107,12 @@ Ext.define('NX.app.PluginStrings', {
     GLOBAL_ABOUT_COPYRIGHT_TAB: 'Copyright',
     GLOBAL_ABOUT_LICENSE_TAB: 'License',
 
+    // Authenticate
+    GLOBAL_AUTHENTICATE_TITLE: 'Authenticate',
+    GLOBAL_AUTHENTICATE_HELP: 'You have requested an operation which requires validation of your credentials.',
+    GLOBAL_AUTHENTICATE_SUBMIT_BUTTON: 'Authenticate',
+    GLOBAL_AUTHENTICATE_CANCEL_BUTTON: 'Cancel',
+
     // Buttons
     GLOBAL_BUTTON_SAVE: 'Save',
     GLOBAL_BUTTON_DISCARD: 'Discard',
