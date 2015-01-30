@@ -279,6 +279,9 @@ public class GenerateMetadataTask
 
     String removedPath = getRemovedFile();
     if (removedPath != null) {
+      if (removedPath.startsWith("/")) {
+        removedPath = "/".equals(removedPath) ? "" : removedPath.substring(1);
+      }
       yumStore.delete(removedPath);
     }
   }

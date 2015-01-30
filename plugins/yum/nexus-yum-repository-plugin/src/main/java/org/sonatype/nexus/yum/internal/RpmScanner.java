@@ -51,7 +51,7 @@ public class RpmScanner
       @Override
       public void onFile(final File file) {
         if ("rpm".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))
-            && !getRelativePath(baseDir, file).startsWith("/.")) {
+            && !getRelativePath(baseDir, file).startsWith(".")) {
           rpms.add(file);
         }
       }
@@ -65,9 +65,6 @@ public class RpmScanner
     String filePath = file.getAbsolutePath() + (file.isDirectory() ? separator : "");
     if (filePath.startsWith(baseDirPath)) {
       filePath = filePath.substring(baseDirPath.length());
-    }
-    if (!filePath.startsWith("/")) {
-      filePath = "/" + filePath;
     }
     return filePath;
   }
