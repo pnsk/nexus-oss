@@ -41,8 +41,6 @@ public interface Yum
   YumRepository getYumRepository()
       throws Exception;
 
-  YumStore getYumStore();
-
   File getBaseDir();
 
 }

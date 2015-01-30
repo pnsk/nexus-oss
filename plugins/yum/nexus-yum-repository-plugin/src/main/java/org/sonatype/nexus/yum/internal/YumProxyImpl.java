@@ -78,10 +78,4 @@ public class YumProxyImpl
     return yumRepository;
   }
 
-  @Override
-  public YumStore getYumStore() {
-    // TODO
-    return new YumStoreImpl();
-  }
-
 }

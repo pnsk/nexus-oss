@@ -111,12 +111,6 @@ public class YumGroupImpl
   }
 
   @Override
-  public YumStore getYumStore() {
-    // TODO
-    return new YumStoreImpl();
-  }
-
-  @Override
   public void markDirty() {
     try {
       lock.writeLock().lock();

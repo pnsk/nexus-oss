@@ -41,6 +41,7 @@ import org.sonatype.nexus.scheduling.CancelableSupport;
 import org.sonatype.nexus.scheduling.TaskInfo;
 import org.sonatype.nexus.yum.Yum;
 import org.sonatype.nexus.yum.YumGroup;
+import org.sonatype.nexus.yum.YumHosted;
 import org.sonatype.nexus.yum.YumRegistry;
 import org.sonatype.nexus.yum.YumRepository;
 import org.sonatype.nexus.yum.internal.RepositoryUtils;
@@ -176,7 +177,7 @@ public class GenerateMetadataTask
       DirSupport.mkdir(repoTmpRepodataDir);
 
       try {
-        YumStore yumStore = yum.getYumStore();
+        YumStore yumStore = ((YumHosted) yum).getYumStore();
         syncYumPackages(yumStore);
         try (CreateYumRepository createRepo = new CreateYumRepository(repoTmpRepodataDir)) {
           String version = getVersion();
