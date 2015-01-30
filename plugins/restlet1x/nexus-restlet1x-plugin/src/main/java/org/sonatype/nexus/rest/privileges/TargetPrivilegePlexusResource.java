@@ -25,14 +25,11 @@ import org.sonatype.configuration.validation.InvalidConfigurationException;
 import org.sonatype.nexus.rest.model.PrivilegeResource;
 import org.sonatype.nexus.rest.model.PrivilegeResourceRequest;
 import org.sonatype.nexus.security.targets.TargetPrivilegeDescriptor;
-import org.sonatype.nexus.security.targets.TargetPrivilegeGroupPropertyDescriptor;
-import org.sonatype.nexus.security.targets.TargetPrivilegeRepositoryPropertyDescriptor;
-import org.sonatype.nexus.security.targets.TargetPrivilegeRepositoryTargetPropertyDescriptor;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
 import org.sonatype.plexus.rest.resource.PlexusResourceException;
 import org.sonatype.security.authorization.NoSuchAuthorizationManagerException;
 import org.sonatype.security.authorization.Privilege;
-import org.sonatype.security.realms.privileges.application.ApplicationPrivilegeMethodPropertyDescriptor;
+import org.sonatype.security.realms.privileges.application.ApplicationPrivilegeDescriptor;
 import org.sonatype.security.rest.model.PrivilegeListResourceResponse;
 import org.sonatype.security.rest.privileges.AbstractPrivilegePlexusResource;
 
@@ -118,14 +115,14 @@ public class TargetPrivilegePlexusResource
             priv.setDescription(resource.getDescription());
             priv.setType(TargetPrivilegeDescriptor.TYPE);
 
-            priv.addProperty(ApplicationPrivilegeMethodPropertyDescriptor.ID, method);
+            priv.addProperty(ApplicationPrivilegeDescriptor.P_METHOD, method);
 
-            priv.addProperty(TargetPrivilegeRepositoryTargetPropertyDescriptor.ID, resource
+            priv.addProperty(TargetPrivilegeDescriptor.P_TARGET_ID, resource
                 .getRepositoryTargetId());
 
-            priv.addProperty(TargetPrivilegeRepositoryPropertyDescriptor.ID, resource.getRepositoryId());
+            priv.addProperty(TargetPrivilegeDescriptor.P_REPOSITORY_ID, resource.getRepositoryId());
 
-            priv.addProperty(TargetPrivilegeGroupPropertyDescriptor.ID, resource.getRepositoryGroupId());
+            priv.addProperty(TargetPrivilegeDescriptor.P_GROUP_ID, resource.getRepositoryGroupId());
 
             priv = getSecuritySystem().getAuthorizationManager(DEFAULT_SOURCE).addPrivilege(priv);
 

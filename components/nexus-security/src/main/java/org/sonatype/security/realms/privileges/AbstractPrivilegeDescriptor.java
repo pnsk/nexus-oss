@@ -28,7 +28,10 @@ import org.apache.shiro.authz.Permission;
 
 /**
  * Abstract {@link PrivilegeDescriptor}.
+ *
+ * @deprecated Use {@link PrivilegeDescriptorSupport} instead.
  */
+@Deprecated
 public abstract class AbstractPrivilegeDescriptor
     implements PrivilegeDescriptor
 {

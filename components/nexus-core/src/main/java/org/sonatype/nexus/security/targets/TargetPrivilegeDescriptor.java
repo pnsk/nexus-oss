@@ -21,7 +21,7 @@ import org.sonatype.configuration.validation.ValidationResponse;
 import org.sonatype.security.model.CPrivilege;
 import org.sonatype.security.realms.privileges.AbstractPrivilegeDescriptor;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
-import org.sonatype.security.realms.privileges.application.ApplicationPrivilegeMethodPropertyDescriptor;
+import org.sonatype.security.realms.privileges.application.ApplicationPrivilegeDescriptor;
 import org.sonatype.security.realms.validator.SecurityValidationContext;
 
 import org.codehaus.plexus.util.StringUtils;
@@ -34,6 +34,12 @@ public class TargetPrivilegeDescriptor
 {
   public static final String TYPE = "target";
 
+  public static final String P_GROUP_ID = "repositoryGroupId";
+
+  public static final String P_REPOSITORY_ID = "repositoryId";
+
+  public static final String P_TARGET_ID = "repositoryTargetId";
+
   @Override
   public String getType() {
     return TYPE;
@@ -45,10 +51,10 @@ public class TargetPrivilegeDescriptor
       return null;
     }
 
-    String method = privilege.getProperty(ApplicationPrivilegeMethodPropertyDescriptor.ID);
-    String repositoryTargetId = privilege.getProperty(TargetPrivilegeRepositoryTargetPropertyDescriptor.ID);
-    String repositoryId = privilege.getProperty(TargetPrivilegeRepositoryPropertyDescriptor.ID);
-    String groupId = privilege.getProperty(TargetPrivilegeGroupPropertyDescriptor.ID);
+    String method = privilege.getProperty(ApplicationPrivilegeDescriptor.P_METHOD);
+    String repositoryTargetId = privilege.getProperty(P_TARGET_ID);
+    String repositoryId = privilege.getProperty(P_REPOSITORY_ID);
+    String groupId = privilege.getProperty(P_GROUP_ID);
 
     StringBuilder basePermString = new StringBuilder();
 
@@ -96,10 +102,10 @@ public class TargetPrivilegeDescriptor
     // method is of form ('*' | 'read' | 'create' | 'update' | 'delete' [, method]* )
     // so, 'read' method is correct, but so is also 'create,update,delete'
     // '*' means ALL POSSIBLE value for this "field"
-    String method = privilege.getProperty(ApplicationPrivilegeMethodPropertyDescriptor.ID);
-    String repositoryId = privilege.getProperty(TargetPrivilegeRepositoryPropertyDescriptor.ID);
-    String repositoryTargetId = privilege.getProperty(TargetPrivilegeRepositoryTargetPropertyDescriptor.ID);
-    String repositoryGroupId = privilege.getProperty(TargetPrivilegeGroupPropertyDescriptor.ID);
+    String method = privilege.getProperty(ApplicationPrivilegeDescriptor.P_METHOD);
+    String repositoryId = privilege.getProperty(P_REPOSITORY_ID);
+    String repositoryTargetId = privilege.getProperty(P_TARGET_ID);
+    String repositoryGroupId = privilege.getProperty(P_GROUP_ID);
 
     if (StringUtils.isEmpty(repositoryTargetId)) {
       ValidationMessage message = new ValidationMessage("repositoryTargetId", "Privilege ID '"

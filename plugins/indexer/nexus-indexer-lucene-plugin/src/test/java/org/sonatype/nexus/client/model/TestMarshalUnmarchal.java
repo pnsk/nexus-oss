@@ -113,17 +113,12 @@ import org.sonatype.nexus.rest.model.StatusResourceResponse;
 import org.sonatype.nexus.rest.model.WastebasketResource;
 import org.sonatype.nexus.rest.model.WastebasketResourceResponse;
 import org.sonatype.nexus.security.targets.TargetPrivilegeDescriptor;
-import org.sonatype.nexus.security.targets.TargetPrivilegeGroupPropertyDescriptor;
-import org.sonatype.nexus.security.targets.TargetPrivilegeRepositoryPropertyDescriptor;
-import org.sonatype.nexus.security.targets.TargetPrivilegeRepositoryTargetPropertyDescriptor;
 import org.sonatype.nexus.test.DeepEqualsBuilder;
 import org.sonatype.plexus.rest.resource.error.ErrorMessage;
 import org.sonatype.plexus.rest.resource.error.ErrorResponse;
 import org.sonatype.plexus.rest.xstream.json.JsonOrgHierarchicalStreamDriver;
 import org.sonatype.plexus.rest.xstream.xml.LookAheadXppDriver;
 import org.sonatype.security.realms.privileges.application.ApplicationPrivilegeDescriptor;
-import org.sonatype.security.realms.privileges.application.ApplicationPrivilegeMethodPropertyDescriptor;
-import org.sonatype.security.realms.privileges.application.ApplicationPrivilegePermissionPropertyDescriptor;
 import org.sonatype.security.rest.model.AuthenticationClientPermissions;
 import org.sonatype.security.rest.model.AuthenticationLoginResource;
 import org.sonatype.security.rest.model.AuthenticationLoginResourceResponse;
@@ -1400,12 +1395,12 @@ public class TestMarshalUnmarchal
     appResource1.setType(ApplicationPrivilegeDescriptor.TYPE);
 
     PrivilegeProperty prop = new PrivilegeProperty();
-    prop.setKey(ApplicationPrivilegeMethodPropertyDescriptor.ID);
+    prop.setKey(ApplicationPrivilegeDescriptor.P_METHOD);
     prop.setValue("Method1");
     appResource1.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(ApplicationPrivilegePermissionPropertyDescriptor.ID);
+    prop.setKey(ApplicationPrivilegeDescriptor.P_PERMISSION);
     prop.setValue("Permission1");
     appResource1.addProperty(prop);
 
@@ -1417,12 +1412,12 @@ public class TestMarshalUnmarchal
     appResource2.setType(ApplicationPrivilegeDescriptor.TYPE);
 
     prop = new PrivilegeProperty();
-    prop.setKey(ApplicationPrivilegeMethodPropertyDescriptor.ID);
+    prop.setKey(ApplicationPrivilegeDescriptor.P_METHOD);
     prop.setValue("Method2");
     appResource2.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(ApplicationPrivilegePermissionPropertyDescriptor.ID);
+    prop.setKey(ApplicationPrivilegeDescriptor.P_PERMISSION);
     prop.setValue("Permission2");
     appResource2.addProperty(prop);
 
@@ -1434,22 +1429,22 @@ public class TestMarshalUnmarchal
     targetResource1.setType(TargetPrivilegeDescriptor.TYPE);
 
     prop = new PrivilegeProperty();
-    prop.setKey(TargetPrivilegeGroupPropertyDescriptor.ID);
+    prop.setKey(TargetPrivilegeDescriptor.P_GROUP_ID);
     prop.setValue("RepositoryGroupId1");
     targetResource1.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(TargetPrivilegeRepositoryPropertyDescriptor.ID);
+    prop.setKey(TargetPrivilegeDescriptor.P_REPOSITORY_ID);
     prop.setValue("RepositoryId1");
     targetResource1.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(TargetPrivilegeRepositoryTargetPropertyDescriptor.ID);
+    prop.setKey(TargetPrivilegeDescriptor.P_TARGET_ID);
     prop.setValue("RepositoryTargetId1");
     targetResource1.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(ApplicationPrivilegeMethodPropertyDescriptor.ID);
+    prop.setKey(ApplicationPrivilegeDescriptor.P_METHOD);
     prop.setValue("Method1");
     targetResource1.addProperty(prop);
 
@@ -1461,22 +1456,22 @@ public class TestMarshalUnmarchal
     targetResource2.setType(TargetPrivilegeDescriptor.TYPE);
 
     prop = new PrivilegeProperty();
-    prop.setKey(TargetPrivilegeGroupPropertyDescriptor.ID);
+    prop.setKey(TargetPrivilegeDescriptor.P_GROUP_ID);
     prop.setValue("RepositoryGroupId2");
     targetResource2.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(TargetPrivilegeRepositoryPropertyDescriptor.ID);
+    prop.setKey(TargetPrivilegeDescriptor.P_REPOSITORY_ID);
     prop.setValue("RepositoryId2");
     targetResource2.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(TargetPrivilegeRepositoryTargetPropertyDescriptor.ID);
+    prop.setKey(TargetPrivilegeDescriptor.P_TARGET_ID);
     prop.setValue("RepositoryTargetId2");
     targetResource2.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(ApplicationPrivilegeMethodPropertyDescriptor.ID);
+    prop.setKey(ApplicationPrivilegeDescriptor.P_METHOD);
     prop.setValue("Method2");
     targetResource2.addProperty(prop);
 
@@ -1500,12 +1495,12 @@ public class TestMarshalUnmarchal
     appResource1.setType(ApplicationPrivilegeDescriptor.TYPE);
 
     PrivilegeProperty prop = new PrivilegeProperty();
-    prop.setKey(ApplicationPrivilegePermissionPropertyDescriptor.ID);
+    prop.setKey(ApplicationPrivilegeDescriptor.P_PERMISSION);
     prop.setValue("Permission1");
     appResource1.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(ApplicationPrivilegeMethodPropertyDescriptor.ID);
+    prop.setKey(ApplicationPrivilegeDescriptor.P_METHOD);
     prop.setValue("Method1");
     appResource1.addProperty(prop);
 
@@ -1523,22 +1518,22 @@ public class TestMarshalUnmarchal
     targetResource1.setType(TargetPrivilegeDescriptor.TYPE);
 
     prop = new PrivilegeProperty();
-    prop.setKey(TargetPrivilegeGroupPropertyDescriptor.ID);
+    prop.setKey(TargetPrivilegeDescriptor.P_GROUP_ID);
     prop.setValue("RepositoryGroupId1");
     targetResource1.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(TargetPrivilegeRepositoryPropertyDescriptor.ID);
+    prop.setKey(TargetPrivilegeDescriptor.P_REPOSITORY_ID);
     prop.setValue("RepositoryId1");
     targetResource1.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(TargetPrivilegeRepositoryTargetPropertyDescriptor.ID);
+    prop.setKey(TargetPrivilegeDescriptor.P_TARGET_ID);
     prop.setValue("RepositoryTargetId1");
     targetResource1.addProperty(prop);
 
     prop = new PrivilegeProperty();
-    prop.setKey(ApplicationPrivilegeMethodPropertyDescriptor.ID);
+    prop.setKey(ApplicationPrivilegeDescriptor.P_METHOD);
     prop.setValue("Method1");
     targetResource1.addProperty(prop);
 

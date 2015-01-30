@@ -32,6 +32,8 @@ public class RepositoryViewPrivilegeDescriptor
 {
   public static final String TYPE = "repository";
 
+  public static final String P_REPOSITORY_ID = "repositoryId";
+
   @Override
   public String getType() {
     return TYPE;
@@ -43,7 +45,7 @@ public class RepositoryViewPrivilegeDescriptor
       return null;
     }
 
-    String repoId = privilege.getProperty(RepositoryPropertyDescriptor.ID);
+    String repoId = privilege.getProperty(P_REPOSITORY_ID);
 
     if (StringUtils.isEmpty(repoId)) {
       repoId = "*";
