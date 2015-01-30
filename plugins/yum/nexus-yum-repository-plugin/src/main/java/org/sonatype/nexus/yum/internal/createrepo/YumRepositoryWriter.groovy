@@ -35,13 +35,13 @@ implements Closeable
 
   private Output oo
 
-  XMLStreamWriter pw
+  protected XMLStreamWriter pw
 
-  XMLStreamWriter fw
+  protected XMLStreamWriter fw
 
-  XMLStreamWriter ow
+  protected XMLStreamWriter ow
 
-  XMLStreamWriter rw
+  protected XMLStreamWriter rw
 
   private boolean open
   private boolean closed
@@ -152,7 +152,7 @@ implements Closeable
     }
   }
 
-  void writeEl(XMLStreamWriter writer, final String name, final Object text, final Map<String, Object> attrib) {
+  protected void writeEl(XMLStreamWriter writer, final String name, final Object text, final Map<String, Object> attrib) {
     writer.writeStartElement(name)
     attrib?.each { key, value ->
       if (value) {
@@ -165,7 +165,7 @@ implements Closeable
     writer.writeEndElement()
   }
 
-  void writeEl(XMLStreamWriter writer, final String name, final Object text) {
+  protected void writeEl(final XMLStreamWriter writer, final String name, final Object text) {
     writeEl(writer, name, text, null)
   }
 
