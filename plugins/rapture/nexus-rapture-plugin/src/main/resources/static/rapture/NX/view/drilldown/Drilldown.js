@@ -41,9 +41,6 @@ Ext.define('NX.view.drilldown.Drilldown', {
   // List of actions to use in the detail view
   actions: null,
 
-  // Saved modes for each drilldown item
-  activeModes: [],
-
   /**
    * @override
    */
@@ -286,11 +283,6 @@ Ext.define('NX.view.drilldown.Drilldown', {
 
     if (item.el) {
 
-      // Restore the saved modes
-      for (var i = 0; i < items.length; ++i) {
-        items[i].getLayout().setActiveItem(me.activeModes[i]);
-      }
-
       // Hack to suppress resize events until the animation is complete
       if (animate) {
         me.ownerCt.suspendEvents(false);
@@ -302,7 +294,10 @@ Ext.define('NX.view.drilldown.Drilldown', {
         me.hideAllExceptAndFocus(index);
       }
 
-      // Show the requested panel
+      // Restore the current mode
+      items[index].getLayout().setActiveItem(items[index].currentMode);
+
+      // Slide the requested panel into view
       var left = item.el.getLeft() - me.el.getLeft();
       me.el.first().move('l', left, animate);
       me.currentIndex = index;
@@ -359,9 +354,7 @@ Ext.define('NX.view.drilldown.Drilldown', {
     }
 
     // Show the proper card
-    items[index].getLayout().setActiveItem(1);
-
-    me.activeModes[index] = items[index].getLayout().getActiveItem();
+    items[index].setCurrentMode(1);
 
     me.slidePanels(index, animate);
   },
@@ -378,9 +371,7 @@ Ext.define('NX.view.drilldown.Drilldown', {
       item = me.query('nx-drilldown-item')[index];
 
     // Show the proper card
-    item.getLayout().setActiveItem(0);
-
-    me.activeModes[index] = item.getLayout().getActiveItem();
+    item.setCurrentMode(0);
 
     me.slidePanels(index, animate);
   },
