@@ -44,20 +44,44 @@ extends TestSupport
       ))
     }
     assertThat(
-        readFileToString(new File(outputDir,'repomd.xml')),
+        readFileToString(new File(outputDir, 'repomd.xml')),
         equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/createrepo/result/repodata/repomd.xml')))
     )
     assertThat(
-        IOUtils.toString(new GZIPInputStream(new FileInputStream(new File(outputDir,'primary.xml.gz')))),
+        IOUtils.toString(new GZIPInputStream(new FileInputStream(new File(outputDir, 'primary.xml.gz')))),
         equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/createrepo/result/repodata/primary.xml')))
     )
     assertThat(
-        IOUtils.toString(new GZIPInputStream(new FileInputStream(new File(outputDir,'filelists.xml.gz')))),
+        IOUtils.toString(new GZIPInputStream(new FileInputStream(new File(outputDir, 'filelists.xml.gz')))),
         equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/createrepo/result/repodata/filelists.xml')))
     )
     assertThat(
-        IOUtils.toString(new GZIPInputStream(new FileInputStream(new File(outputDir,'other.xml.gz')))),
+        IOUtils.toString(new GZIPInputStream(new FileInputStream(new File(outputDir, 'other.xml.gz')))),
         equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/createrepo/result/repodata/other.xml')))
+    )
+  }
+
+  @Test
+  void 'create repository with grooups'() {
+    File ant_i386 = util.resolveFile('src/test/ut-resources/rpms/ant/1.7.1-13/ant-1.7.1-13.el6.i686.rpm')
+    File ant_x86 = util.resolveFile('src/test/ut-resources/rpms/ant/1.7.1-13/ant-1.7.1-13.el6.x86_64.rpm')
+    File comps = util.resolveFile('src/test/ut-resources/createrepo/comps.xml')
+    File outputDir = util.createTempDir('repodata')
+    new CreateYumRepository(outputDir, 1422620943, comps).withCloseable { CreateYumRepository writer ->
+      writer.write(new YumPackageParser().parse(
+          new FileInputStream(ant_i386),
+          'Packages/ant-1.7.1-13.el6.i686.rpm',
+          ant_i386.lastModified()
+      ))
+      writer.write(new YumPackageParser().parse(
+          new FileInputStream(ant_x86),
+          'Packages/ant-1.7.1-13.el6.x86_64.rpm',
+          ant_x86.lastModified()
+      ))
+    }
+    assertThat(
+        readFileToString(new File(outputDir, 'repomd.xml')),
+        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/createrepo/result/repodata/repomd-group.xml')))
     )
   }
 

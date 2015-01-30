@@ -14,6 +14,7 @@ package org.sonatype.nexus.yum.internal.createrepo
 
 import com.google.common.io.CountingOutputStream
 import javanet.staxutils.IndentingXMLStreamWriter
+import org.apache.commons.io.IOUtils
 import org.sonatype.nexus.util.DigesterUtils
 
 import javax.xml.stream.XMLOutputFactory
@@ -28,27 +29,24 @@ import java.util.zip.GZIPOutputStream
 class YumRepositoryWriter
 implements Closeable
 {
-  private int timestamp
 
+  protected File repoDir
+  protected int timestamp
+  private File groupFile
   private Output po
-
   private Output fo
-
   private Output oo
-
   protected XMLStreamWriter pw
-
   protected XMLStreamWriter fw
-
   protected XMLStreamWriter ow
-
   protected XMLStreamWriter rw
-
   private boolean open
   private boolean closed
 
-  YumRepositoryWriter(final File repoDir, final Integer timestamp = null) {
+  YumRepositoryWriter(final File repoDir, final Integer timestamp = null, final File groupFile = null) {
+    this.repoDir = repoDir
     this.timestamp = timestamp ?: System.currentTimeMillis() / 1000
+    this.groupFile = groupFile
     XMLOutputFactory factory = XMLOutputFactory.newInstance()
     po = new Output(new FileOutputStream(new File(repoDir, 'primary.xml.gz')))
     pw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(po.stream, "UTF-8"))
@@ -183,6 +181,37 @@ implements Closeable
     rw.writeEndElement()
   }
 
+  private void writeGroup() {
+    new FileInputStream(groupFile).withStream { InputStream input ->
+      new FileOutputStream(new File(repoDir, 'comps.xml')).withStream { OutputStream output ->
+        IOUtils.copy(input, output)
+      }
+    }
+    new FileInputStream(groupFile).withStream { InputStream input ->
+      Output go = new Output(new FileOutputStream(new File(repoDir, 'comps.xml.gz')))
+      go.stream.withStream { OutputStream output ->
+        IOUtils.copy(input, output)
+      }
+
+      rw.writeStartElement('data')
+      rw.writeAttribute('type', 'group')
+      writeEl(rw, 'checksum', go.openChecksum, ['type': 'sha256'])
+      writeEl(rw, 'location', ['href': 'repodata/comps.xml'])
+      writeEl(rw, 'timestamp', timestamp)
+      writeEl(rw, 'size', go.openSize)
+      rw.writeEndElement()
+
+      rw.writeStartElement('data')
+      rw.writeAttribute('type', 'group_gz')
+      writeEl(rw, 'checksum', go.compressedChecksum, ['type': 'sha256'])
+      writeEl(rw, 'open-checksum', go.openChecksum, ['type': 'sha256'])
+      writeEl(rw, 'location', ['href': 'repodata/comps.xml.gz'])
+      writeEl(rw, 'timestamp', timestamp)
+      writeEl(rw, 'size', go.compressedSize)
+      rw.writeEndElement()
+    }
+  }
+
   void maybeStart() {
     if (!open) {
       open = true
@@ -228,6 +257,9 @@ implements Closeable
     writeData(po, 'primary')
     writeData(fo, 'filelists')
     writeData(oo, 'other')
+    if (groupFile) {
+      writeGroup()
+    }
     rw.writeEndDocument()
     rw.close()
   }
@@ -238,6 +270,8 @@ implements Closeable
     private CountingOutputStream compressedSizeStream
     private DigestOutputStream openDigestStream
     private DigestOutputStream compressedDigestStream
+    private String openChecksum
+    private String compressedChecksum
 
     Output(final OutputStream stream) {
       compressedDigestStream = new DigestOutputStream(stream, MessageDigest.getInstance("SHA-256"))
@@ -259,11 +293,17 @@ implements Closeable
     }
 
     String getOpenChecksum() {
-      return DigesterUtils.getDigestAsString(openDigestStream.messageDigest.digest())
+      if (!openChecksum) {
+        openChecksum = DigesterUtils.getDigestAsString(openDigestStream.messageDigest.digest())
+      }
+      return openChecksum
     }
 
     String getCompressedChecksum() {
-      return DigesterUtils.getDigestAsString(compressedDigestStream.messageDigest.digest())
+      if (!compressedChecksum) {
+        compressedChecksum = DigesterUtils.getDigestAsString(compressedDigestStream.messageDigest.digest())
+      }
+      return compressedChecksum
     }
   }
 
