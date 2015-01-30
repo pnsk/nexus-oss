@@ -45,19 +45,19 @@ extends TestSupport
     }
     assertThat(
         readFileToString(new File(outputDir,'repomd.xml')),
-        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/repo8/repodata/repomd.xml')))
+        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/createrepo/result/repodata/repomd.xml')))
     )
     assertThat(
         IOUtils.toString(new GZIPInputStream(new FileInputStream(new File(outputDir,'primary.xml.gz')))),
-        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/repo8/repodata/primary.xml')))
+        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/createrepo/result/repodata/primary.xml')))
     )
     assertThat(
         IOUtils.toString(new GZIPInputStream(new FileInputStream(new File(outputDir,'filelists.xml.gz')))),
-        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/repo8/repodata/filelists.xml')))
+        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/createrepo/result/repodata/filelists.xml')))
     )
     assertThat(
         IOUtils.toString(new GZIPInputStream(new FileInputStream(new File(outputDir,'other.xml.gz')))),
-        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/repo8/repodata/other.xml')))
+        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/createrepo/result/repodata/other.xml')))
     )
   }
 
