@@ -250,6 +250,11 @@ public class YumHostedImpl
   }
 
   @Override
+  public TaskInfo<YumRepository> regenerate() {
+    return addRpmAndRegenerate(null);
+  }
+
+  @Override
   public void markDirty(final String version) {
     cache.markDirty(repository.getId(), version);
   }

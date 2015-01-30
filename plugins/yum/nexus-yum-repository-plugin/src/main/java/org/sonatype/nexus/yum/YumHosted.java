@@ -97,6 +97,8 @@ public interface YumHosted
    */
   String getVersion(String alias);
 
+  TaskInfo<YumRepository> regenerate();
+
   /**
    * Adds RPM and regenerate.
    *
