@@ -41,7 +41,7 @@ class YumPackage
   String rpm_sourcerpm
   Integer rpm_header_start
   Integer rpm_header_end
-  String rpm_packager
+  String packager
   Integer size_package
   Integer size_installed
   Integer size_archive

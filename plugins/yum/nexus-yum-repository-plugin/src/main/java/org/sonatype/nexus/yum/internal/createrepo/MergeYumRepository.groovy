@@ -151,7 +151,7 @@ extends YumRepositoryWriter
           yumPackage.description = text
         }
         else if (reader.localName == 'packager') {
-          yumPackage.rpm_packager = text
+          yumPackage.packager = text
         }
         else if (reader.localName == 'url') {
           yumPackage.url = text

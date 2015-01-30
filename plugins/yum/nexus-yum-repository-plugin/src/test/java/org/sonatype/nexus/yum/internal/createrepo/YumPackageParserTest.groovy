@@ -12,8 +12,13 @@
  */
 package org.sonatype.nexus.yum.internal.createrepo
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 import org.sonatype.sisu.litmus.testsupport.TestSupport
+
+import static org.apache.commons.io.FileUtils.readFileToString
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.sonatype.sisu.litmus.testsupport.hamcrest.DiffMatchers.equalToOnlyDiffs
 
 class YumPackageParserTest
 extends TestSupport
@@ -27,10 +32,10 @@ extends TestSupport
         'Packages/ant-1.7.1-13.el6.i686.rpm',
         rpm.lastModified()
     )
-    new CreateYumRepository(util.createTempDir('repodata')).withCloseable { CreateYumRepository writer ->
-      writer.push(yumPackage)
-    }
-
+    assertThat(
+        new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(yumPackage),
+        equalToOnlyDiffs(readFileToString(util.resolveFile('src/test/ut-resources/rpms/ant/1.7.1-13/ant-1.7.1-13.el6.i686.json')))
+    )
   }
 
 }

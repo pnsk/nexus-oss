@@ -96,7 +96,7 @@ implements Closeable
     writeEl(pw, 'checksum', yumPackage.checksum, ['type': yumPackage.checksum_type, 'pkgid': 'YES'])
     writeEl(pw, 'summary', yumPackage.summary)
     writeEl(pw, 'description', yumPackage.description)
-    writeEl(pw, 'packager', yumPackage.rpm_packager)
+    writeEl(pw, 'packager', yumPackage.packager)
     writeEl(pw, 'url', yumPackage.url)
     writeEl(pw, 'time', ['file': yumPackage.time_file, 'build': yumPackage.time_build])
     writeEl(pw, 'size', ['package': yumPackage.size_package, 'installed': yumPackage.size_installed, 'archive': yumPackage.size_archive])

@@ -71,7 +71,7 @@ class YumPackageParser
             rpm_sourcerpm: asString(header, HeaderTag.SOURCERPM),
             rpm_header_start: signature.getEndPos() + header.getStartPos(),
             rpm_header_end: header.getEndPos(),
-            rpm_packager: asString(header, HeaderTag.PACKAGER),
+            packager: asString(header, HeaderTag.PACKAGER),
             size_installed: asInt(header, HeaderTag.SIZE),
             size_archive: asInt(signature, Signature.SignatureTag.PAYLOADSIZE),
             provides: parsePCO(header, HeaderTag.PROVIDENAME, HeaderTag.PROVIDEVERSION, HeaderTag.PROVIDEFLAGS),
