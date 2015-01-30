@@ -19,13 +19,11 @@ import org.sonatype.sisu.siesta.common.validation.ValidationErrorsException;
 import org.junit.Test;
 
 import static com.sonatype.nexus.ssl.model.RepositoryTrustStoreKey.repositoryTrustStoreKey;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 /**
  * ITs related to repositories keys / access.
- *
- * @since 1.0
  */
 public class SSLRepositoriesIT
     extends SSLITSupport

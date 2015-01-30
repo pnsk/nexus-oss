@@ -31,8 +31,6 @@ import static org.sonatype.nexus.testsuite.support.NexusStartAndStopStrategy.Str
 
 /**
  * Support for LDAP integration tests.
- *
- * @since 2.4
  */
 @NexusStartAndStopStrategy(EACH_TEST)
 public class LdapITSupport

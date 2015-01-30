@@ -20,13 +20,11 @@ import org.sonatype.sisu.bl.support.port.PortReservationService;
 import org.junit.Test;
 
 import static com.sonatype.nexus.ssl.model.SMTPTrustStoreKey.smtpTrustStoreKey;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 /**
  * ITs related to SMTP keys / access.
- *
- * @since 1.0
  */
 public class SSLSmtpIT
     extends SSLITSupport

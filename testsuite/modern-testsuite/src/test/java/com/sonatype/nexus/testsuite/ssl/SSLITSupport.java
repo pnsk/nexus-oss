@@ -33,8 +33,6 @@ import static org.sonatype.nexus.testsuite.support.NexusStartAndStopStrategy.Str
 
 /**
  * Support for ssl integration tests.
- *
- * @since 1.0
  */
 @NexusStartAndStopStrategy(EACH_TEST)
 public class SSLITSupport

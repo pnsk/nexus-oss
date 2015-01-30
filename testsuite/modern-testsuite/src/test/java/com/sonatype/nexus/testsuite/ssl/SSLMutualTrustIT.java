@@ -30,8 +30,6 @@ import static org.sonatype.nexus.client.core.subsystem.content.Location.reposito
 
 /**
  * ITs related accessing a remote server that requires mutual trust client trusts server / server trusts client).
- *
- * @since 2.6
  */
 public class SSLMutualTrustIT
     extends SSLITSupport

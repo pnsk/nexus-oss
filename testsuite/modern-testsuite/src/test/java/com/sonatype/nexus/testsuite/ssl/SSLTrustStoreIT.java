@@ -23,14 +23,14 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.sonatype.nexus.testsuite.support.hamcrest.UniformInterfaceExceptionMatchers.exceptionWithStatus;
 
 /**
  * ITs related to trust store management.
- *
- * @since 1.0
  */
 public class SSLTrustStoreIT
     extends SSLITSupport

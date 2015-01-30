@@ -20,8 +20,6 @@ import static org.sonatype.security.realms.ldap.api.dto.LdapTrustStoreKey.ldapTr
 
 /**
  * ITs related to trust store keys.
- *
- * @since 2.4
  */
 public class LdapIT
     extends LdapITSupport

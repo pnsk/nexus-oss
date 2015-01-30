@@ -35,8 +35,6 @@ import static org.sonatype.nexus.testsuite.support.hamcrest.UniformInterfaceExce
 
 /**
  * ITs related to retrieving certificates.
- *
- * @since 1.0
  */
 public class SSLCertificatesIT
     extends SSLITSupport

@@ -30,12 +30,10 @@ import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * ITs related to trusted keys management.
- *
- * @since 1.0
  */
 public class SSLSecurityIT
     extends SSLITSupport
