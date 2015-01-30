@@ -80,8 +80,6 @@ public class YumHostedImpl
 
   private String yumGroupsDefinitionFile;
 
-  private final File baseDir;
-
   private final Map<String, String> aliases;
 
   private final Map<ScheduledFuture<?>, DelayedDirectoryDeletionTask> taskMap =
@@ -110,8 +108,6 @@ public class YumHostedImpl
     this.deleteProcessingDelay = DEFAULT_DELETE_PROCESSING_DELAY;
 
     this.aliases = Maps.newHashMap();
-
-    this.baseDir = RepositoryUtils.getBaseDir(repository);
 
     this.yumGroupsDefinitionFile = null;
 
@@ -155,11 +151,6 @@ public class YumHostedImpl
   @Override
   public String getYumGroupsDefinitionFile() {
     return yumGroupsDefinitionFile;
-  }
-
-  @Override
-  public File getBaseDir() {
-    return baseDir;
   }
 
   @Override

@@ -12,7 +12,6 @@
  */
 package org.sonatype.nexus.yum.internal;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.concurrent.Future;
@@ -27,8 +26,6 @@ import org.sonatype.nexus.proxy.repository.Repository;
 import org.sonatype.nexus.scheduling.TaskScheduler;
 import org.sonatype.nexus.yum.YumGroup;
 import org.sonatype.nexus.yum.YumRepository;
-import org.sonatype.nexus.yum.internal.createrepo.YumStore;
-import org.sonatype.nexus.yum.internal.createrepo.YumStoreImpl;
 import org.sonatype.nexus.yum.internal.task.MergeMetadataTask;
 
 import com.google.inject.assistedinject.Assisted;
@@ -51,8 +48,6 @@ public class YumGroupImpl
 
   private final GroupRepository repository;
 
-  private final File baseDir;
-
   private final ReadWriteLock lock;
 
   private YumRepository yumRepository;
@@ -66,15 +61,9 @@ public class YumGroupImpl
   {
     this.nexusScheduler = checkNotNull(nexusScheduler);
     this.repository = checkNotNull(repository);
-    this.baseDir = RepositoryUtils.getBaseDir(repository);
     this.lock = new ReentrantReadWriteLock();
 
     repository.registerRequestStrategy(MergeMetadataRequestStrategy.class.getName(), mergeMetadataRequestStrategy);
-  }
-
-  @Override
-  public File getBaseDir() {
-    return baseDir;
   }
 
   @Override

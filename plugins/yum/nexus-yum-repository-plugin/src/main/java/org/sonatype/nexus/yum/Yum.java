@@ -12,10 +12,7 @@
  */
 package org.sonatype.nexus.yum;
 
-import java.io.File;
-
 import org.sonatype.nexus.proxy.repository.Repository;
-import org.sonatype.nexus.yum.internal.createrepo.YumStore;
 
 /**
  * Provides access to Yum functionality around a Nexus repository.
@@ -40,7 +37,5 @@ public interface Yum
 
   YumRepository getYumRepository()
       throws Exception;
-
-  File getBaseDir();
 
 }
