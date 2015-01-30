@@ -168,9 +168,8 @@ Ext.define('NX.coreui.controller.Loggers', {
         model = store.getById(values.name);
 
     if (model) {
-      NX.Dialogs.askConfirmation('Confirm update?',
-          'Logger "' + values.name + '" is already configured. Would you like to update its level to "' + values.level +
-              '"?',
+      NX.Dialogs.askConfirmation(NX.I18n.get('ADMIN_LOGGING_UPDATE_TITLE'),
+          NX.I18n.format('ADMIN_LOGGING_UPDATE_HELP', values.name, values.level),
           function () {
             model.set('level', values.level);
             me.loadView(null, null, true);
@@ -212,7 +211,7 @@ Ext.define('NX.coreui.controller.Loggers', {
   resetLoggers: function () {
     var me = this;
 
-    NX.Dialogs.askConfirmation('Confirm reset?', 'Reset loggers to their default levels', function () {
+    NX.Dialogs.askConfirmation(NX.I18n.get('ADMIN_LOGGING_RESET_TITLE'), NX.I18n.get('ADMIN_LOGGING_RESET_HELP'), function () {
       NX.direct.logging_Loggers.reset(function (response) {
         me.loadStore();
         if (Ext.isObject(response) && response.success) {

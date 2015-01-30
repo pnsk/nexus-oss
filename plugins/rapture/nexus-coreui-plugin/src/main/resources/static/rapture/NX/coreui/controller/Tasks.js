@@ -376,7 +376,8 @@ Ext.define('NX.coreui.controller.Tasks', {
 
     if (model) {
       description = me.getDescription(model);
-      NX.Dialogs.askConfirmation('Confirm?', 'Run ' + description + ' task?', function() {
+      NX.Dialogs.askConfirmation(NX.I18n.get('ADMIN_TASKS_DETAILS_RUN_CONFIRM'),
+        NX.I18n.format('ADMIN_TASKS_DETAILS_RUN_CONFIRM_HELP', description), function() {
         NX.direct.coreui_Task.run(model.getId(), function(response) {
           me.loadStore();
           if (Ext.isObject(response) && response.success) {
@@ -404,7 +405,8 @@ Ext.define('NX.coreui.controller.Tasks', {
 
     if (model) {
       description = me.getDescription(model);
-      NX.Dialogs.askConfirmation('Confirm?', 'Stop ' + description + ' task?', function() {
+      NX.Dialogs.askConfirmation(NX.I18n.get('ADMIN_TASKS_DETAILS_STOP_CONFIRM'),
+        NX.I18n.format('ADMIN_TASKS_DETAILS_STOP_CONFIRM_HELP', description), function() {
         NX.direct.coreui_Task.stop(model.getId(), function(response) {
           me.loadStore();
           if (Ext.isObject(response) && response.success) {
