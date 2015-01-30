@@ -19,8 +19,8 @@ class CreateYumRepository
 extends YumRepositoryWriter
 {
 
-  CreateYumRepository(final File repoDir) {
-    super(repoDir)
+  CreateYumRepository(final File repoDir, final Integer timestamp = null) {
+    super(repoDir, timestamp)
   }
 
   void push(final YumPackage yumPackage) {

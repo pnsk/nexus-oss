@@ -31,8 +31,8 @@ extends YumRepositoryWriter
   private Set<String> writtenFiles
   private Set<String> writtenOther
 
-  MergeYumRepository(final File repoDir) {
-    super(repoDir)
+  MergeYumRepository(final File repoDir, final Integer timestamp = null) {
+    super(repoDir, timestamp)
     writtenPrimary = Sets.newHashSet()
     writtenFiles = Sets.newHashSet()
     writtenOther = Sets.newHashSet()

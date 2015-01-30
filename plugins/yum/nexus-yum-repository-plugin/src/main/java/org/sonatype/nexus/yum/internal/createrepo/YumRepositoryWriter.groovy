@@ -28,6 +28,7 @@ import java.util.zip.GZIPOutputStream
 class YumRepositoryWriter
 implements Closeable
 {
+  private int timestamp
 
   private Output po
 
@@ -46,7 +47,8 @@ implements Closeable
   private boolean open
   private boolean closed
 
-  YumRepositoryWriter(final File repoDir) {
+  YumRepositoryWriter(final File repoDir, final Integer timestamp = null) {
+    this.timestamp = timestamp ?: System.currentTimeMillis() / 1000
     XMLOutputFactory factory = XMLOutputFactory.newInstance()
     po = new Output(new FileOutputStream(new File(repoDir, 'primary.xml.gz')))
     pw = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(po.stream, "UTF-8"))
@@ -169,7 +171,7 @@ implements Closeable
     writeEl(writer, name, null, attributes)
   }
 
-  private void writeData(final Output output, final String type, final int timestamp) {
+  private void writeData(final Output output, final String type) {
     rw.writeStartElement('data')
     rw.writeAttribute('type', type)
     writeEl(rw, 'checksum', output.compressedChecksum, ['type': 'sha256'])
@@ -207,8 +209,6 @@ implements Closeable
     assert !closed
     closed = true
 
-    int timestamp = System.currentTimeMillis() / 1000
-
     pw.writeEndDocument()
     pw.close()
     po.stream.close()
@@ -225,9 +225,9 @@ implements Closeable
     rw.writeStartElement('repomd')
     rw.writeAttribute('xmlns', 'http://linux.duke.edu/metadata/repo')
     rw.writeAttribute('xmlns:rpm', 'http://linux.duke.edu/metadata/rpm')
-    writeData(po, 'primary', timestamp)
-    writeData(fo, 'filelists', timestamp)
-    writeData(oo, 'other', timestamp)
+    writeData(po, 'primary')
+    writeData(fo, 'filelists')
+    writeData(oo, 'other')
     rw.writeEndDocument()
     rw.close()
   }
