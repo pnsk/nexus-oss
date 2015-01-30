@@ -41,6 +41,11 @@ Ext.define('NX.view.drilldown.Drilldown', {
   // List of actions to use in the detail view
   actions: null,
 
+  // Constants which represent card indexes
+  BROWSE_INDEX: 0,
+  CREATE_INDEX: 1,
+  BLANK_INDEX: 2,
+
   /**
    * @override
    */
@@ -258,7 +263,7 @@ Ext.define('NX.view.drilldown.Drilldown', {
     // Hide everything that’s not the specified panel
     for (var i = 0; i < items.length; ++i) {
       if (i != index) {
-        items[i].getLayout().setActiveItem(2);
+        items[i].getLayout().setActiveItem(me.BLANK_INDEX);
       }
     }
 
@@ -354,7 +359,7 @@ Ext.define('NX.view.drilldown.Drilldown', {
     }
 
     // Show the proper card
-    items[index].setCardIndex(1);
+    items[index].setCardIndex(me.CREATE_INDEX);
 
     me.slidePanels(index, animate);
   },
@@ -371,7 +376,7 @@ Ext.define('NX.view.drilldown.Drilldown', {
       item = me.query('nx-drilldown-item')[index];
 
     // Show the proper card
-    item.setCardIndex(0);
+    item.setCardIndex(me.BROWSE_INDEX);
 
     me.slidePanels(index, animate);
   },
