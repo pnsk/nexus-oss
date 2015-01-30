@@ -111,6 +111,16 @@ Ext.define('NX.coreui.app.PluginStrings', {
     BROWSE_REPOSITORY_EXPIRE_CACHE_SUCCESS: 'Started expiring caches of "{0}", path "{1}"',
     BROWSE_REPOSITORY_REBUILD_SUCCESS: 'Started rebuilding metadata of "{0}", path "{1}"',
     BROWSE_REPOSITORY_DELETE_SUCCESS: 'Deleted "{0}", path "{1}"',
+    BROWSE_REPOSITORY_OUT_OF_SERVICE_TOOLTIP: 'Out of Service',
+    BROWSE_REPOSITORY_LOAD_CHILDREN_MASK: 'Loading…',
+    BROWSE_REPOSITORY_EXPIRE_CACHE_ITEM: 'Expire Cache',
+    BROWSE_REPOSITORY_REBUILD_METADATA_ITEM: 'Rebuild Metadata',
+    BROWSE_REPOSITORY_DOWNLOAD_REMOTE_ITEM: 'Download From Remote',
+    BROWSE_REPOSITORY_VIEW_REMOTE_ITEM: 'View Remote',
+    BROWSE_REPOSITORY_DOWNLOAD_ITEM: 'Download',
+    BROWSE_REPOSITORY_DELETE_ITEM: 'Delete',
+    BROWSE_REPOSITORY_DELETE_DIALOG: 'Delete Repository Item',
+    BROWSE_REPOSITORY_DELETE_DIALOG_HELP: 'Delete the selected "{0}" {1}',
 
     // Browse -> Repository -> Standard
     BROWSE_STANDARD_TITLE: 'Standard',
