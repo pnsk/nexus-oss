@@ -12,6 +12,8 @@
  */
 package org.sonatype.security.model;
 
+import java.util.Arrays;
+
 import com.google.common.base.Joiner;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -56,8 +58,11 @@ public class CPrivilegeBuilder
   }
 
   public CPrivilegeBuilder property(final String name, final Iterable<String> values) {
-    model.setProperty(name, Joiner.on(',').join(values));
-    return this;
+    return property(name, Joiner.on(',').join(values));
+  }
+
+  public CPrivilegeBuilder property(final String name, final String... values) {
+    return property(name, Arrays.asList(values));
   }
 
   public CPrivilege create() {

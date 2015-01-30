@@ -23,6 +23,7 @@ import org.sonatype.security.model.CPrivilegeBuilder;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptor;
 import org.sonatype.security.realms.privileges.PrivilegeDescriptorSupport;
 
+import com.google.common.base.Joiner;
 import org.apache.shiro.authz.Permission;
 
 /**
@@ -61,13 +62,11 @@ public class RepositoryViewPrivilegeDescriptor
   // Helpers
   //
 
-  // FIXME: Update actions to collection
-
-  public static String id(final String format, final String name, final String actions) {
-    return String.format("%s-%s-%s-%s", TYPE, format, name, actions);
+  public static String id(final String format, final String name, final String... actions) {
+    return String.format("%s-%s-%s-%s", TYPE, format, name, Joiner.on(',').join(actions));
   }
 
-  public static CPrivilege privilege(final String format, final String name, final String actions) {
+  public static CPrivilege privilege(final String format, final String name, final String... actions) {
     return new CPrivilegeBuilder()
         .type(TYPE)
         .id(id(format, name, actions))
