@@ -38,7 +38,6 @@
     <module>nexus-repository-raw</module>
     <module>nexus-repository-simple</module>
     <module>nexus-siesta-plugin</module>
-    <module>nexus-site-repository-client</module>
     <module>nexus-site-repository-plugin</module>
     <module>nexus-timeline-plugin</module>
     <module>nexus-webresources-plugin</module>

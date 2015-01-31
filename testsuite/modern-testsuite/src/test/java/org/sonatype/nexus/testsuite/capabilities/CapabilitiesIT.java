@@ -15,7 +15,6 @@ package org.sonatype.nexus.testsuite.capabilities;
 import java.util.Collection;
 
 import org.sonatype.nexus.capabilities.client.Capability;
-import org.sonatype.nexus.client.core.subsystem.repository.maven.MavenHostedRepository;
 import org.sonatype.nexus.testsuite.capabilities.client.CapabilityA;
 import org.sonatype.nexus.testsuite.capabilities.client.CapabilityB;
 import org.sonatype.sisu.siesta.common.validation.ValidationErrorsException;
@@ -374,83 +373,83 @@ public class CapabilitiesIT
         containsString("This capability always fails on activate"));
   }
 
-  /**
-   * Verify that capability is initially active when created for a repository that is in service
-   * Verify that capability becomes inactive when repository is put out of service
-   * Verify that capability becomes active when repository is put back in service
-   */
-  @Test
-  public void repositoryInService() {
-    final String rId = repositoryIdForTest();
-
-    final MavenHostedRepository repository = repositories().create(MavenHostedRepository.class, rId)
-        .excludeFromSearchResults()
-        .save();
-
-    Capability capability = capabilities().create("[repositoryIsInService]")
-        .withProperty("repository", rId)
-        .save();
-    MatcherAssert.assertThat(capability.isActive(), is(true));
-
-    logRemote("Put repository '{}' out of service", rId);
-    repository.putOutOfService();
-    capability.refresh();
-    MatcherAssert.assertThat(capability.isActive(), is(false));
-
-    logRemote("Put repository '{}' back in service", rId);
-    repository.putInService();
-    capability.refresh();
-    MatcherAssert.assertThat(capability.isActive(), is(true));
-  }
-
-  /**
-   * Verify that capability is initially inactive when created for a repository that is out of service
-   * Verify that capability becomes active when repository is put back in service
-   */
-  @Test
-  public void repositoryOutOfService() {
-    final String rId = repositoryIdForTest();
-
-    final MavenHostedRepository repository = repositories().create(MavenHostedRepository.class, rId)
-        .excludeFromSearchResults()
-        .save()
-        .putOutOfService();
-
-    Capability capability = capabilities().create("[repositoryIsInService]")
-        .withProperty("repository", rId)
-        .save();
-    MatcherAssert.assertThat(capability.isActive(), is(false));
-
-    logRemote("Put repository '{}' back in service", rId);
-    repository.putInService();
-    capability.refresh();
-    MatcherAssert.assertThat(capability.isActive(), is(true));
-  }
-
-  /**
-   * Verify that capability becomes inactive when repository is changed and the new repository is out of service
-   */
-  @Test
-  public void changeRepositoryToAnOutOfServiceOne() {
-    final String rIdActive = repositoryIdForTest("active");
-    final String rIdInactive = repositoryIdForTest("inactive");
-
-    repositories().create(MavenHostedRepository.class, rIdActive)
-        .excludeFromSearchResults()
-        .save();
-    repositories().create(MavenHostedRepository.class, rIdInactive)
-        .excludeFromSearchResults()
-        .save().putOutOfService();
-
-    Capability capability = capabilities().create("[repositoryIsInService]")
-        .withProperty("repository", rIdActive)
-        .save();
-    MatcherAssert.assertThat(capability.isActive(), is(true));
-
-    logRemote("Change capability to use repository '{}'", rIdInactive);
-    capability.withProperty("repository", rIdInactive).save();
-    MatcherAssert.assertThat(capability.isActive(), is(false));
-  }
+  ///**
+  // * Verify that capability is initially active when created for a repository that is in service
+  // * Verify that capability becomes inactive when repository is put out of service
+  // * Verify that capability becomes active when repository is put back in service
+  // */
+  //@Test
+  //public void repositoryInService() {
+  //  final String rId = repositoryIdForTest();
+  //
+  //  final MavenHostedRepository repository = repositories().create(MavenHostedRepository.class, rId)
+  //      .excludeFromSearchResults()
+  //      .save();
+  //
+  //  Capability capability = capabilities().create("[repositoryIsInService]")
+  //      .withProperty("repository", rId)
+  //      .save();
+  //  MatcherAssert.assertThat(capability.isActive(), is(true));
+  //
+  //  logRemote("Put repository '{}' out of service", rId);
+  //  repository.putOutOfService();
+  //  capability.refresh();
+  //  MatcherAssert.assertThat(capability.isActive(), is(false));
+  //
+  //  logRemote("Put repository '{}' back in service", rId);
+  //  repository.putInService();
+  //  capability.refresh();
+  //  MatcherAssert.assertThat(capability.isActive(), is(true));
+  //}
+  //
+  ///**
+  // * Verify that capability is initially inactive when created for a repository that is out of service
+  // * Verify that capability becomes active when repository is put back in service
+  // */
+  //@Test
+  //public void repositoryOutOfService() {
+  //  final String rId = repositoryIdForTest();
+  //
+  //  final MavenHostedRepository repository = repositories().create(MavenHostedRepository.class, rId)
+  //      .excludeFromSearchResults()
+  //      .save()
+  //      .putOutOfService();
+  //
+  //  Capability capability = capabilities().create("[repositoryIsInService]")
+  //      .withProperty("repository", rId)
+  //      .save();
+  //  MatcherAssert.assertThat(capability.isActive(), is(false));
+  //
+  //  logRemote("Put repository '{}' back in service", rId);
+  //  repository.putInService();
+  //  capability.refresh();
+  //  MatcherAssert.assertThat(capability.isActive(), is(true));
+  //}
+  //
+  ///**
+  // * Verify that capability becomes inactive when repository is changed and the new repository is out of service
+  // */
+  //@Test
+  //public void changeRepositoryToAnOutOfServiceOne() {
+  //  final String rIdActive = repositoryIdForTest("active");
+  //  final String rIdInactive = repositoryIdForTest("inactive");
+  //
+  //  repositories().create(MavenHostedRepository.class, rIdActive)
+  //      .excludeFromSearchResults()
+  //      .save();
+  //  repositories().create(MavenHostedRepository.class, rIdInactive)
+  //      .excludeFromSearchResults()
+  //      .save().putOutOfService();
+  //
+  //  Capability capability = capabilities().create("[repositoryIsInService]")
+  //      .withProperty("repository", rIdActive)
+  //      .save();
+  //  MatcherAssert.assertThat(capability.isActive(), is(true));
+  //
+  //  logRemote("Change capability to use repository '{}'", rIdInactive);
+  //  capability.withProperty("repository", rIdInactive).save();
+  //  MatcherAssert.assertThat(capability.isActive(), is(false));
+  //}
 
   ///**
   // * Verify that capability is initially active when created for a repository that is not blocked
@@ -531,30 +530,30 @@ public class CapabilitiesIT
   //  MatcherAssert.assertThat(capability.isActive(), is(false));
   //}
 
-  /**
-   * Verify that a capability is automatically removed when configured repository is removed.
-   */
-  @Test
-  public void capabilityRemovedWhenRepositoryRemoved() {
-    final String rId = repositoryIdForTest();
-
-    final MavenHostedRepository repository = repositories().create(MavenHostedRepository.class, rId)
-        .excludeFromSearchResults()
-        .save()
-        .putOutOfService();
-
-    Capability capability = capabilities().create("[repositoryIsInService]")
-        .withProperty("repository", rId)
-        .save();
-    MatcherAssert.assertThat(capability.isActive(), is(false));
-
-    logRemote("Remove repository '{}'", rId);
-    repository.remove();
-
-    thrown.expect(UniformInterfaceException.class);
-    thrown.expectMessage(String.format("Capability with id '%s' was not found", capability.id()));
-    capability.refresh();
-  }
+  ///**
+  // * Verify that a capability is automatically removed when configured repository is removed.
+  // */
+  //@Test
+  //public void capabilityRemovedWhenRepositoryRemoved() {
+  //  final String rId = repositoryIdForTest();
+  //
+  //  final MavenHostedRepository repository = repositories().create(MavenHostedRepository.class, rId)
+  //      .excludeFromSearchResults()
+  //      .save()
+  //      .putOutOfService();
+  //
+  //  Capability capability = capabilities().create("[repositoryIsInService]")
+  //      .withProperty("repository", rId)
+  //      .save();
+  //  MatcherAssert.assertThat(capability.isActive(), is(false));
+  //
+  //  logRemote("Remove repository '{}'", rId);
+  //  repository.remove();
+  //
+  //  thrown.expect(UniformInterfaceException.class);
+  //  thrown.expectMessage(String.format("Capability with id '%s' was not found", capability.id()));
+  //  capability.refresh();
+  //}
 
   /**
    * Verify that a capability, that has an activation condition that another capability of a specific type exists,

@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.sonatype.nexus.client.core.subsystem.content.Content;
-import org.sonatype.nexus.client.core.subsystem.repository.Repositories;
 import org.sonatype.nexus.testsuite.support.NexusRunningParametrizedITSupport;
 import org.sonatype.nexus.testsuite.support.NexusStartAndStopStrategy;
 
@@ -43,15 +42,6 @@ public abstract class NexusCoreITSupport
    */
   public static String uniqueName(final String prefix) {
     return prefix + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss-SSS").format(new Date());
-  }
-
-  /**
-   * Returns {@link Repositories} client subsystem.
-   *
-   * @return client for repositories.
-   */
-  public Repositories repositories() {
-    return client().getSubsystem(Repositories.class);
   }
 
   /**

@@ -17,7 +17,6 @@ import java.util.Collection;
 import org.sonatype.nexus.bundle.launcher.NexusBundleConfiguration;
 import org.sonatype.nexus.capabilities.client.Capabilities;
 import org.sonatype.nexus.capabilities.client.Capability;
-import org.sonatype.nexus.client.core.subsystem.repository.Repositories;
 import org.sonatype.nexus.testsuite.support.NexusRunningParametrizedITSupport;
 import org.sonatype.nexus.testsuite.support.NexusStartAndStopStrategy;
 
@@ -56,10 +55,6 @@ public abstract class CapabilitiesITSupport
 
   protected Capabilities capabilities() {
     return client().getSubsystem(Capabilities.class);
-  }
-
-  protected Repositories repositories() {
-    return client().getSubsystem(Repositories.class);
   }
 
   protected void logRemote(final String message, Object... params) {
