@@ -56,9 +56,4 @@ public abstract class CapabilitiesITSupport
   protected Capabilities capabilities() {
     return client().getSubsystem(Capabilities.class);
   }
-
-  protected void logRemote(final String message, Object... params) {
-    remoteLogger().info("\n***************** " + message + " *****************", params);
-  }
-
 }

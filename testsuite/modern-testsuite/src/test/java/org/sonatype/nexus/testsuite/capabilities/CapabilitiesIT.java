@@ -567,14 +567,14 @@ public class CapabilitiesIT
         .save();
     MatcherAssert.assertThat(capability.isActive(), is(false));
 
-    logRemote("Create a capability of type [message]");
+    //logRemote("Create a capability of type [message]");
     final Capability messageCapability = capabilities().create("[message]")
         .withProperty("repository", "releases")
         .save();
     capability.refresh();
     MatcherAssert.assertThat(capability.isActive(), is(true));
 
-    logRemote("Remove capability of type [message]");
+    //logRemote("Remove capability of type [message]");
     messageCapability.remove();
     capability.refresh();
     MatcherAssert.assertThat(capability.isActive(), is(false));
@@ -588,7 +588,7 @@ public class CapabilitiesIT
         .save();
     MatcherAssert.assertThat(capability.isActive(), is(false));
 
-    logRemote("Create a capability of type [message]");
+    //logRemote("Create a capability of type [message]");
     final Capability messageCapability = capabilities().create("[message]")
         .withProperty("repository", "releases")
         .save();
@@ -596,17 +596,17 @@ public class CapabilitiesIT
     capability.refresh();
     MatcherAssert.assertThat(capability.isActive(), is(true));
 
-    logRemote("Disable capability of type [message]");
+    //logRemote("Disable capability of type [message]");
     messageCapability.disable();
     capability.refresh();
     MatcherAssert.assertThat(capability.isActive(), is(false));
 
-    logRemote("Enable capability of type [message]");
+    //logRemote("Enable capability of type [message]");
     messageCapability.enable();
     capability.refresh();
     MatcherAssert.assertThat(capability.isActive(), is(true));
 
-    logRemote("Remove capability of type [message]");
+    //logRemote("Remove capability of type [message]");
     messageCapability.remove();
     capability.refresh();
     MatcherAssert.assertThat(capability.isActive(), is(false));
