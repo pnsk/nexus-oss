@@ -33,7 +33,8 @@ Ext.define('NX.controller.User', {
     'header.SignOut',
     'header.UserMode',
     'Authenticate',
-    'SignIn'
+    'SignIn',
+    'ExpireSession'
   ],
 
   refs: [
@@ -80,6 +81,9 @@ Ext.define('NX.controller.User', {
           afterrender: me.manageButtons
         },
         'nx-header-signin': {
+          click: me.showSignInWindow
+        },
+        'nx-expire-session button[action=signin]': {
           click: me.showSignInWindow
         },
         'nx-header-signout': {

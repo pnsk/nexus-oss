@@ -155,7 +155,10 @@ Ext.define('NX.controller.UiSessionTimeout', {
       run: function (count) {
         win.down('label').setText('Session will expire in ' + (me.SECONDS_TO_EXPIRE - count) + ' seconds');
         if (count === me.SECONDS_TO_EXPIRE) {
-          win.close();
+          win.down('label').setText('Your session has expired. Please log in.');
+          win.down('button[action=close]').show();
+          win.down('button[action=signin]').show();
+          win.down('button[action=cancel]').hide();
           NX.Messages.add({
             text: 'Session expired after being inactive for '
                 + NX.State.getValue('uiSettings')['sessionTimeout']

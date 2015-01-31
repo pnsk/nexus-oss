@@ -49,8 +49,26 @@ Ext.define('NX.view.ExpireSession', {
           }
         }
       ],
+      buttonAlign: 'left',
       buttons: [
-        { text: 'Cancel', action: 'cancel' }
+        { text: 'Cancel', action: 'cancel' },
+        {
+          text: 'Sign in',
+          action: 'signin',
+          hidden: true,
+          ui: 'nx-primary',
+          handler: function() {
+            this.up('nx-expire-session').close();
+          }
+        },
+        {
+          text: 'Close',
+          action: 'close',
+          hidden: true,
+          handler: function() {
+            this.up('nx-expire-session').close();
+          }
+        }
       ]
     });
 
