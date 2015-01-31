@@ -14,8 +14,8 @@ package org.sonatype.nexus.client.internal.rest;
 
 import org.sonatype.nexus.client.internal.msg.ErrorMessage;
 import org.sonatype.nexus.client.internal.msg.ErrorResponse;
+import org.sonatype.nexus.client.internal.xstream.LookAheadXppDriver;
 import org.sonatype.nexus.rest.model.XStreamConfiguratorLightweight;
-import org.sonatype.plexus.rest.xstream.xml.LookAheadXppDriver;
 
 import com.thoughtworks.xstream.XStream;
 

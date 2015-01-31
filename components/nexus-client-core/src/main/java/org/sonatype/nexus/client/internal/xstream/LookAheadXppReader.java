@@ -10,7 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.plexus.rest.xstream.xml;
+package org.sonatype.nexus.client.internal.xstream;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,8 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.sonatype.plexus.rest.xstream.LookAheadStreamReader;
 
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.ErrorWriter;
