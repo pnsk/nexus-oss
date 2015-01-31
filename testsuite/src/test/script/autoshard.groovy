@@ -165,7 +165,7 @@ def dummyMode = {
   def testName = property('autoshard.dummytest', 'DummyIT.java') as String
 
   println "Creating $count dummy shards with test: $testName"
-
+  outputDir.mkdirs()
   for (i in 0..<count) {
     def file = new File(outputDir, "shard-${i}.txt")
     file.text = sourceToClass(testName)
