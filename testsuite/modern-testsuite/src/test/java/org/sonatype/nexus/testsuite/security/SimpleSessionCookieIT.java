@@ -135,15 +135,15 @@ public class SimpleSessionCookieIT
     }
   }
 
-  @Test
-  public void sessionCookieSpecUsingHttpWithLegacyResources() throws Exception {
-    exerciseCookieSpec(nexus().getUrl(), true);
-  }
-
-  @Test
-  public void sessionCookieSpecUsingHttpsWithLegacyResources() throws Exception {
-    exerciseCookieSpec(nexus().getSecureUrl(), true);
-  }
+  //@Test
+  //public void sessionCookieSpecUsingHttpWithLegacyResources() throws Exception {
+  //  exerciseCookieSpec(nexus().getUrl(), true);
+  //}
+  //
+  //@Test
+  //public void sessionCookieSpecUsingHttpsWithLegacyResources() throws Exception {
+  //  exerciseCookieSpec(nexus().getSecureUrl(), true);
+  //}
 
   @Test
   public void sessionCookieSpecUsingHttpWithModernResources() throws Exception {
