@@ -175,26 +175,4 @@ public class AnAbstractRepositoryCheckConditionsMethodTest
       attributesField.set(null, originalValue);
     }
   }
-
-  @Test
-  public void trashExternalRequestWithFeatureDisabled() throws Exception {
-    // HACK: changing final static boolean might not work on all JVMs! It works for me on OSX+Oracle Java7
-    // but it might fail as those might be inlined at compile time!
-    Field trashField = IsRemotelyAccessibleAttribute.class.getDeclaredField("trash");
-    trashField.setAccessible(true);
-    Field modifiers = trashField.getClass().getDeclaredField("modifiers");
-    modifiers.setAccessible(true);
-    modifiers.setInt(trashField, trashField.getModifiers() & ~Modifier.FINAL);
-    final boolean originalValue = trashField.getBoolean(null);
-    try {
-      trashField.set(null, true);
-      final ResourceStoreRequest resourceStoreRequest = new ResourceStoreRequest("/.nexus/trash/some/path");
-      resourceStoreRequest.setExternal(true);
-      abstractRepository.checkConditions(resourceStoreRequest, Action.read);
-    }
-    finally {
-      // HACK: must reset it to not screw other tests in this or other classes running in same JVM
-      trashField.set(null, originalValue);
-    }
-  }
 }
