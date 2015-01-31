@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2.3
  */
 public interface GroupRepository<T extends GroupRepository>
-    extends Repository<T, RepositoryStatus>
+    extends Repository<T>
 {
 
   List<String> memberRepositories();

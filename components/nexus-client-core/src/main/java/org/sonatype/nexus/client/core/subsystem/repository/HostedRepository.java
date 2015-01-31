@@ -18,7 +18,7 @@ package org.sonatype.nexus.client.core.subsystem.repository;
  * @since 2.3
  */
 public interface HostedRepository<T extends HostedRepository>
-    extends BaseRepository<T, RepositoryStatus>
+    extends BaseRepository<T>
 {
 
   T withRepoPolicy(final String policy);

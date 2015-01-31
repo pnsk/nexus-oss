@@ -14,7 +14,6 @@ package org.sonatype.nexus.client.internal.rest.jersey.subsystem.repository;
 
 import org.sonatype.nexus.client.core.spi.SubsystemSupport;
 import org.sonatype.nexus.client.core.subsystem.repository.Repository;
-import org.sonatype.nexus.client.core.subsystem.repository.RepositoryStatus;
 import org.sonatype.nexus.client.rest.jersey.JerseyNexusClient;
 import org.sonatype.nexus.rest.model.RepositoryBaseResource;
 import org.sonatype.nexus.rest.model.RepositoryResourceResponse;
@@ -33,9 +32,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 2.3
  */
-public abstract class JerseyRepository<T extends Repository, S extends RepositoryBaseResource, U extends RepositoryStatus>
+public abstract class JerseyRepository<T extends Repository, S extends RepositoryBaseResource>
     extends SubsystemSupport<JerseyNexusClient>
-    implements Repository<T, U>
+    implements Repository<T>
 {
 
   private final String id;
@@ -127,14 +126,6 @@ public abstract class JerseyRepository<T extends Repository, S extends Repositor
     shouldCreate = true;
     status = null;
     return me();
-  }
-
-  @Override
-  public U status() {
-    if (status == null && !shouldCreate) {
-      status = doGetStatus();
-    }
-    return convertStatus(status);
   }
 
   @Override
@@ -236,13 +227,6 @@ public abstract class JerseyRepository<T extends Repository, S extends Repositor
     catch (ClientHandlerException e) {
       throw getNexusClient().convert(e);
     }
-  }
-
-  U convertStatus(final RepositoryStatusResource status) {
-    if (status == null) {
-      return (U) new RepositoryStatusImpl(false);
-    }
-    return (U) new RepositoryStatusImpl("IN_SERVICE".equals(status.getLocalStatus()));
   }
 
   RepositoryStatusResource doGetStatus() {

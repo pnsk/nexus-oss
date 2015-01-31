@@ -17,8 +17,8 @@ package org.sonatype.nexus.client.core.subsystem.repository;
  *
  * @since 2.5
  */
-interface BaseRepository<T extends Repository, S extends RepositoryStatus>
-    extends Repository<T, S>
+interface BaseRepository<T extends Repository>
+    extends Repository<T>
 {
 
   /**

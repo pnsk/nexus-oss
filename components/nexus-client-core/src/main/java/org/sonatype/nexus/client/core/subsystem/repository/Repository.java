@@ -17,7 +17,7 @@ package org.sonatype.nexus.client.core.subsystem.repository;
  *
  * @since 2.3
  */
-public interface Repository<T extends Repository, U extends RepositoryStatus>
+public interface Repository<T extends Repository>
 {
 
   /**
@@ -34,11 +34,6 @@ public interface Repository<T extends Repository, U extends RepositoryStatus>
    * @return content URI (null when repository does not publish its URI)
    */
   String contentUri();
-
-  /**
-   * @return repository status.
-   */
-  U status();
 
   /**
    * Sets repository name.

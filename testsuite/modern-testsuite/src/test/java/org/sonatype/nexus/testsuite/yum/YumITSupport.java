@@ -23,7 +23,6 @@ import org.sonatype.nexus.client.core.subsystem.content.Content;
 import org.sonatype.nexus.client.core.subsystem.repository.Repositories;
 import org.sonatype.nexus.client.core.subsystem.repository.maven.MavenGroupRepository;
 import org.sonatype.nexus.client.core.subsystem.repository.maven.MavenHostedRepository;
-import org.sonatype.nexus.client.core.subsystem.repository.maven.MavenProxyRepository;
 import org.sonatype.nexus.testsuite.client.Events;
 import org.sonatype.nexus.testsuite.client.RoutingTest;
 import org.sonatype.nexus.testsuite.client.Scheduler;
@@ -101,18 +100,18 @@ public class YumITSupport
     return repository;
   }
 
-  protected MavenProxyRepository createYumEnabledProxyRepository(final String repositoryId, final String remoteUrl) {
-    final MavenProxyRepository repository = repositories()
-        .create(MavenProxyRepository.class, repositoryId)
-        .doNotDownloadRemoteIndexes()
-        .asProxyOf(remoteUrl)
-        .withItemMaxAge(0)
-        .save();
-
-    enableMetadataProxyFor(repositoryId);
-
-    return repository;
-  }
+  //protected MavenProxyRepository createYumEnabledProxyRepository(final String repositoryId, final String remoteUrl) {
+  //  final MavenProxyRepository repository = repositories()
+  //      .create(MavenProxyRepository.class, repositoryId)
+  //      .doNotDownloadRemoteIndexes()
+  //      .asProxyOf(remoteUrl)
+  //      .withItemMaxAge(0)
+  //      .save();
+  //
+  //  enableMetadataProxyFor(repositoryId);
+  //
+  //  return repository;
+  //}
 
   protected MavenGroupRepository createYumEnabledGroupRepository(final String repositoryId, final String... memberIds) {
     final MavenGroupRepository repository = repositories().create(MavenGroupRepository.class, repositoryId)

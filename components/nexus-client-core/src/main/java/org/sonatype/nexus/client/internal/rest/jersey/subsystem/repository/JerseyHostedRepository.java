@@ -13,7 +13,6 @@
 package org.sonatype.nexus.client.internal.rest.jersey.subsystem.repository;
 
 import org.sonatype.nexus.client.core.subsystem.repository.HostedRepository;
-import org.sonatype.nexus.client.core.subsystem.repository.RepositoryStatus;
 import org.sonatype.nexus.client.rest.jersey.JerseyNexusClient;
 import org.sonatype.nexus.rest.model.RepositoryResource;
 
@@ -23,7 +22,7 @@ import org.sonatype.nexus.rest.model.RepositoryResource;
  * @since 2.3
  */
 public class JerseyHostedRepository<T extends HostedRepository>
-    extends JerseyRepository<T, RepositoryResource, RepositoryStatus>
+    extends JerseyRepository<T, RepositoryResource>
     implements HostedRepository<T>
 {
 

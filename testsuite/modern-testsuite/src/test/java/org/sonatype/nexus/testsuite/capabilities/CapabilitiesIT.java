@@ -16,7 +16,6 @@ import java.util.Collection;
 
 import org.sonatype.nexus.capabilities.client.Capability;
 import org.sonatype.nexus.client.core.subsystem.repository.maven.MavenHostedRepository;
-import org.sonatype.nexus.client.core.subsystem.repository.maven.MavenProxyRepository;
 import org.sonatype.nexus.testsuite.capabilities.client.CapabilityA;
 import org.sonatype.nexus.testsuite.capabilities.client.CapabilityB;
 import org.sonatype.sisu.siesta.common.validation.ValidationErrorsException;
@@ -453,84 +452,84 @@ public class CapabilitiesIT
     MatcherAssert.assertThat(capability.isActive(), is(false));
   }
 
-  /**
-   * Verify that capability is initially active when created for a repository that is not blocked
-   * Verify that capability becomes inactive when repository is manually blocked
-   * Verify that capability becomes active when repository is unblocked
-   */
-  @Test
-  public void repositoryNotBlocked() {
-    final String rId = repositoryIdForTest();
+  ///**
+  // * Verify that capability is initially active when created for a repository that is not blocked
+  // * Verify that capability becomes inactive when repository is manually blocked
+  // * Verify that capability becomes active when repository is unblocked
+  // */
+  //@Test
+  //public void repositoryNotBlocked() {
+  //  final String rId = repositoryIdForTest();
+  //
+  //  final MavenProxyRepository repository = repositories().create(MavenProxyRepository.class, rId)
+  //      .asProxyOf(repositories().get("releases").contentUri())
+  //      .save();
+  //
+  //  Capability capability = capabilities().create("[repositoryIsNotBlocked]")
+  //      .withProperty("repository", rId)
+  //      .save();
+  //  MatcherAssert.assertThat(capability.isActive(), is(true));
+  //
+  //  logRemote("Block repository '{}'", rId);
+  //  repository.block();
+  //  capability.refresh();
+  //  MatcherAssert.assertThat(capability.isActive(), is(false));
+  //
+  //  logRemote("Unblock repository '{}'", rId);
+  //  repository.unblock();
+  //  capability.refresh();
+  //  MatcherAssert.assertThat(capability.isActive(), is(true));
+  //}
+  //
+  ///**
+  // * Verify that capability is initially inactive when created for a repository that is blocked
+  // * Verify that capability becomes active when repository is unblocked
+  // */
+  //@Test
+  //public void repositoryBlocked() {
+  //  final String rId = repositoryIdForTest();
+  //
+  //  final MavenProxyRepository repository = repositories().create(MavenProxyRepository.class, rId)
+  //      .asProxyOf(repositories().get("releases").contentUri())
+  //      .save()
+  //      .block();
+  //
+  //  Capability capability = capabilities().create("[repositoryIsNotBlocked]")
+  //      .withProperty("repository", rId)
+  //      .save();
+  //  MatcherAssert.assertThat(capability.isActive(), is(false));
+  //
+  //  logRemote("Unblock repository '{}'", rId);
+  //  repository.unblock();
+  //  capability.refresh();
+  //  MatcherAssert.assertThat(capability.isActive(), is(true));
+  //}
 
-    final MavenProxyRepository repository = repositories().create(MavenProxyRepository.class, rId)
-        .asProxyOf(repositories().get("releases").contentUri())
-        .save();
-
-    Capability capability = capabilities().create("[repositoryIsNotBlocked]")
-        .withProperty("repository", rId)
-        .save();
-    MatcherAssert.assertThat(capability.isActive(), is(true));
-
-    logRemote("Block repository '{}'", rId);
-    repository.block();
-    capability.refresh();
-    MatcherAssert.assertThat(capability.isActive(), is(false));
-
-    logRemote("Unblock repository '{}'", rId);
-    repository.unblock();
-    capability.refresh();
-    MatcherAssert.assertThat(capability.isActive(), is(true));
-  }
-
-  /**
-   * Verify that capability is initially inactive when created for a repository that is blocked
-   * Verify that capability becomes active when repository is unblocked
-   */
-  @Test
-  public void repositoryBlocked() {
-    final String rId = repositoryIdForTest();
-
-    final MavenProxyRepository repository = repositories().create(MavenProxyRepository.class, rId)
-        .asProxyOf(repositories().get("releases").contentUri())
-        .save()
-        .block();
-
-    Capability capability = capabilities().create("[repositoryIsNotBlocked]")
-        .withProperty("repository", rId)
-        .save();
-    MatcherAssert.assertThat(capability.isActive(), is(false));
-
-    logRemote("Unblock repository '{}'", rId);
-    repository.unblock();
-    capability.refresh();
-    MatcherAssert.assertThat(capability.isActive(), is(true));
-  }
-
-  /**
-   * Verify that capability becomes inactive when repository is changed and the new repository is blocked
-   */
-  @Test
-  public void changeRepositoryToABlockedOne() {
-    final String rIdNotBlocked = repositoryIdForTest("notBlocked");
-    final String rIdBlocked = repositoryIdForTest("blocked");
-
-    repositories().create(MavenProxyRepository.class, rIdNotBlocked)
-        .asProxyOf(repositories().get("releases").contentUri())
-        .save();
-    repositories().create(MavenProxyRepository.class, rIdBlocked)
-        .asProxyOf(repositories().get("releases").contentUri())
-        .save()
-        .block();
-
-    Capability capability = capabilities().create("[repositoryIsNotBlocked]")
-        .withProperty("repository", rIdNotBlocked)
-        .save();
-    MatcherAssert.assertThat(capability.isActive(), is(true));
-
-    logRemote("Change capability to use repository '{}'", rIdBlocked);
-    capability.withProperty("repository", rIdBlocked).save();
-    MatcherAssert.assertThat(capability.isActive(), is(false));
-  }
+  ///**
+  // * Verify that capability becomes inactive when repository is changed and the new repository is blocked
+  // */
+  //@Test
+  //public void changeRepositoryToABlockedOne() {
+  //  final String rIdNotBlocked = repositoryIdForTest("notBlocked");
+  //  final String rIdBlocked = repositoryIdForTest("blocked");
+  //
+  //  repositories().create(MavenProxyRepository.class, rIdNotBlocked)
+  //      .asProxyOf(repositories().get("releases").contentUri())
+  //      .save();
+  //  repositories().create(MavenProxyRepository.class, rIdBlocked)
+  //      .asProxyOf(repositories().get("releases").contentUri())
+  //      .save()
+  //      .block();
+  //
+  //  Capability capability = capabilities().create("[repositoryIsNotBlocked]")
+  //      .withProperty("repository", rIdNotBlocked)
+  //      .save();
+  //  MatcherAssert.assertThat(capability.isActive(), is(true));
+  //
+  //  logRemote("Change capability to use repository '{}'", rIdBlocked);
+  //  capability.withProperty("repository", rIdBlocked).save();
+  //  MatcherAssert.assertThat(capability.isActive(), is(false));
+  //}
 
   /**
    * Verify that a capability is automatically removed when configured repository is removed.

@@ -16,7 +16,6 @@ import javax.inject.Inject;
 
 import com.sonatype.nexus.ssl.client.Certificate;
 
-import org.sonatype.nexus.client.core.subsystem.repository.maven.MavenProxyRepository;
 import org.sonatype.sisu.bl.support.port.PortReservationService;
 import org.sonatype.tests.http.server.fluent.Behaviours;
 import org.sonatype.tests.http.server.fluent.Server;
@@ -118,50 +117,50 @@ public class SSLCertificatesIT
     certificates().get("foo", 443);
   }
 
-  /**
-   * Verify that we can retrieve certificate from a repository with a self signed certificate.
-   */
-  @Test
-  public void selfSignedCertificate()
-      throws Exception
-  {
-    httpServer = Server.withPort(0).withKeystore("keystore", "password").
-        serve("/*").withBehaviours(
-        Behaviours.get(testData().resolveFile("proxy-repo"))
-    ).start();
-
-    final MavenProxyRepository proxyRepository =
-        repositories().create(MavenProxyRepository.class, repositoryIdForTest())
-            .asProxyOf(httpServer.getUrl().toExternalForm())
-            .doNotDownloadRemoteIndexes()
-            .save();
-
-    final Certificate certificate = certificates().get(proxyRepository.id());
-
-    assertThat(certificate, is(notNullValue()));
-    assertThat(certificate.pem(), is(notNullValue()));
-    assertThat(certificate.fingerprint(), is("CB:11:54:75:02:87:33:42:54:33:7D:2E:10:48:D7:4E:AE:BB:5C:90"));
-  }
-
-  /**
-   * Verify that we can retrieve certificate from a repository with a CA signed certificate.
-   */
-  @Test
-  public void caSignedCertificate()
-      throws Exception
-  {
-    final MavenProxyRepository proxyRepository =
-        repositories().create(MavenProxyRepository.class, repositoryIdForTest())
-            .asProxyOf("https://repository.sonatype.org/content/groups/sonatype-public-grid/")
-            .doNotDownloadRemoteIndexes()
-            .save();
-
-    final Certificate certificate = certificates().get(proxyRepository.id());
-
-    assertThat(certificate, is(notNullValue()));
-    assertThat(certificate.pem(), is(notNullValue()));
-    assertThat(certificate.fingerprint(), is("61:96:33:FA:AF:52:1C:EC:D5:97:CF:CC:C3:CE:15:20:F9:CC:22:6B"));
-  }
+  ///**
+  // * Verify that we can retrieve certificate from a repository with a self signed certificate.
+  // */
+  //@Test
+  //public void selfSignedCertificate()
+  //    throws Exception
+  //{
+  //  httpServer = Server.withPort(0).withKeystore("keystore", "password").
+  //      serve("/*").withBehaviours(
+  //      Behaviours.get(testData().resolveFile("proxy-repo"))
+  //  ).start();
+  //
+  //  final MavenProxyRepository proxyRepository =
+  //      repositories().create(MavenProxyRepository.class, repositoryIdForTest())
+  //          .asProxyOf(httpServer.getUrl().toExternalForm())
+  //          .doNotDownloadRemoteIndexes()
+  //          .save();
+  //
+  //  final Certificate certificate = certificates().get(proxyRepository.id());
+  //
+  //  assertThat(certificate, is(notNullValue()));
+  //  assertThat(certificate.pem(), is(notNullValue()));
+  //  assertThat(certificate.fingerprint(), is("CB:11:54:75:02:87:33:42:54:33:7D:2E:10:48:D7:4E:AE:BB:5C:90"));
+  //}
+  //
+  ///**
+  // * Verify that we can retrieve certificate from a repository with a CA signed certificate.
+  // */
+  //@Test
+  //public void caSignedCertificate()
+  //    throws Exception
+  //{
+  //  final MavenProxyRepository proxyRepository =
+  //      repositories().create(MavenProxyRepository.class, repositoryIdForTest())
+  //          .asProxyOf("https://repository.sonatype.org/content/groups/sonatype-public-grid/")
+  //          .doNotDownloadRemoteIndexes()
+  //          .save();
+  //
+  //  final Certificate certificate = certificates().get(proxyRepository.id());
+  //
+  //  assertThat(certificate, is(notNullValue()));
+  //  assertThat(certificate.pem(), is(notNullValue()));
+  //  assertThat(certificate.fingerprint(), is("61:96:33:FA:AF:52:1C:EC:D5:97:CF:CC:C3:CE:15:20:F9:CC:22:6B"));
+  //}
 
   /**
    * Verify certificate details got from a certificate in PEM format.

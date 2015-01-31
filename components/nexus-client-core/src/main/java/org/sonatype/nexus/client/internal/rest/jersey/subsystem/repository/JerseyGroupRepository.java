@@ -20,7 +20,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.sonatype.nexus.client.core.subsystem.repository.GroupRepository;
-import org.sonatype.nexus.client.core.subsystem.repository.RepositoryStatus;
 import org.sonatype.nexus.client.rest.jersey.JerseyNexusClient;
 import org.sonatype.nexus.rest.model.RepositoryGroupMemberRepository;
 import org.sonatype.nexus.rest.model.RepositoryGroupResource;
@@ -39,7 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @since 2.3
  */
 public class JerseyGroupRepository<T extends GroupRepository>
-    extends JerseyRepository<T, RepositoryGroupResource, RepositoryStatus>
+    extends JerseyRepository<T, RepositoryGroupResource>
     implements GroupRepository<T>
 {
 
