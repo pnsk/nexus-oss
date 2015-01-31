@@ -29,14 +29,14 @@ public class HashesTest
 
   @Test
   public void hashOne() throws Exception {
-    HashCode hashCode = Hashes.hash(inputStream(), MD5);
+    HashCode hashCode = Hashes.hash(MD5, inputStream());
 
     assertThat(hashCode.toString(), is(MD5_HASH));
   }
 
   @Test
   public void hashThree() throws Exception {
-    Map<HashAlgorithm, HashCode> hashes = Hashes.hash(inputStream(), ImmutableList.of(MD5, SHA1, SHA512));
+    Map<HashAlgorithm, HashCode> hashes = Hashes.hash(ImmutableList.of(MD5, SHA1, SHA512), inputStream());
 
     assertThat(hashes.size(), is(3));
     assertThat(hashes.get(MD5).toString(), is(MD5_HASH));
@@ -47,7 +47,7 @@ public class HashesTest
   @Test
   public void hashZero() throws Exception {
     List<HashAlgorithm> zeroAlgorithms = ImmutableList.of();
-    Map<HashAlgorithm, HashCode> hashes = Hashes.hash(inputStream(), zeroAlgorithms);
+    Map<HashAlgorithm, HashCode> hashes = Hashes.hash(zeroAlgorithms, inputStream());
 
     assertThat(hashes.size(), is(0));
   }

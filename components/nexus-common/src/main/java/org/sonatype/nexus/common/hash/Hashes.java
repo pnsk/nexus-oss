@@ -14,11 +14,8 @@ package org.sonatype.nexus.common.hash;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashingInputStream;
 import com.google.common.io.ByteStreams;
@@ -39,44 +36,27 @@ public final class Hashes
   /**
    * Computes the hash of the given stream using the given algorithm.
    */
-  public static HashCode hash(InputStream inputStream, HashAlgorithm algorithm) throws IOException {
-    checkNotNull(inputStream);
+  public static HashCode hash(HashAlgorithm algorithm, InputStream inputStream) throws IOException {
     checkNotNull(algorithm);
+    checkNotNull(inputStream);
 
-    return computeHashes(inputStream, Lists.newArrayList(algorithm)).get(algorithm);
+    try (HashingInputStream hashingStream = new HashingInputStream(algorithm.function(), inputStream)) {
+      ByteStreams.copy(hashingStream, ByteStreams.nullOutputStream());
+      return hashingStream.hash();
+    }
   }
 
   /**
    * Computes the hash of the given stream using multiple algorithms in one pass.
    */
-  public static Map<HashAlgorithm, HashCode> hash(InputStream inputStream, Iterable<HashAlgorithm> algorithms) throws IOException {
-    checkNotNull(inputStream);
-    checkNotNull(algorithms);
-
-    return computeHashes(inputStream, algorithms);
-  }
-
-  private static Map<HashAlgorithm, HashCode> computeHashes(InputStream inputStream, Iterable<HashAlgorithm> algorithms)
+  public static Map<HashAlgorithm, HashCode> hash(Iterable<HashAlgorithm> algorithms, InputStream inputStream)
       throws IOException {
-    // set up chain
-    List<HashingInputStream> chain = Lists.newArrayList();
-    InputStream lastStream = inputStream;
-    for (HashAlgorithm algorithm : algorithms) {
-      HashingInputStream currentStream = new HashingInputStream(algorithm.function(), lastStream);
-      chain.add(currentStream);
-      lastStream = currentStream;
+    checkNotNull(algorithms);
+    checkNotNull(inputStream);
+
+    try (MultiHashingInputStream hashingStream = new MultiHashingInputStream(algorithms, inputStream)) {
+      ByteStreams.copy(hashingStream, ByteStreams.nullOutputStream());
+      return hashingStream.hashes();
     }
-
-    // send bytes through
-    ByteStreams.copy(lastStream, ByteStreams.nullOutputStream());
-
-    // extract hashes in order
-    Map<HashAlgorithm, HashCode> hashes = Maps.newHashMap();
-    int i = 0;
-    for (HashAlgorithm algorithm : algorithms) {
-      hashes.put(algorithm, chain.get(i++).hash());
-    }
-
-    return hashes;
   }
 }
