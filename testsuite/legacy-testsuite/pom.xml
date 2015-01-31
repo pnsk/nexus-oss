@@ -180,8 +180,9 @@
                 </goals>
                 <configuration>
                   <properties>
-                    <autoshard.mode>normal</autoshard.mode>
+                    <autoshard.mode>dummy</autoshard.mode>
                     <autoshard.count>10</autoshard.count>
+                    <autoshard.dummytest>org/sonatype/nexus/testsuite/DummyIT.java</autoshard.dummytest>
                   </properties>
                 </configuration>
               </execution>
