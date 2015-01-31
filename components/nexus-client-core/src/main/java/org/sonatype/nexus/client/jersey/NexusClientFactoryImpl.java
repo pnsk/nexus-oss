@@ -23,14 +23,17 @@ import org.sonatype.nexus.client.core.Condition;
 import org.sonatype.nexus.client.core.NexusClient;
 import org.sonatype.nexus.client.core.SubsystemProvider;
 import org.sonatype.nexus.client.core.condition.NexusStatusConditions;
+import org.sonatype.nexus.client.internal.ErrorMessage;
+import org.sonatype.nexus.client.internal.ErrorResponse;
 import org.sonatype.nexus.client.internal.VersionLoader;
-import org.sonatype.nexus.client.internal.xstream.NexusXStreamFactory;
+import org.sonatype.nexus.client.internal.xstream.LookAheadXppDriver;
 import org.sonatype.nexus.client.rest.AuthenticationInfo;
 import org.sonatype.nexus.client.rest.BaseUrl;
 import org.sonatype.nexus.client.rest.ConnectionInfo;
 import org.sonatype.nexus.client.rest.NexusClientFactory;
 import org.sonatype.nexus.client.rest.ProxyInfo;
 import org.sonatype.nexus.client.rest.UsernamePasswordAuthenticationInfo;
+import org.sonatype.nexus.rest.model.XStreamConfiguratorLightweight;
 import org.sonatype.sisu.siesta.client.filters.RequestFilters;
 
 import com.google.common.base.Preconditions;
@@ -109,11 +112,22 @@ public class NexusClientFactoryImpl
     return createFor(new ConnectionInfo(baseUrl, authenticationInfo, null));
   }
 
-  @Override
-  public final NexusClient createFor(final ConnectionInfo connectionInfo) {
+  private XStream createXstream() {
     // we are java2java client, so we use XML instead of JSON, as
     // some current Nexus are one way only! So, we fix for XML
-    final XStream xstream = new NexusXStreamFactory().createAndConfigureForXml();
+
+    final XStream xstream = new XStream(new LookAheadXppDriver());
+    xstream.setMode(XStream.NO_REFERENCES);
+    xstream.autodetectAnnotations(false);
+    xstream.ignoreUnknownElements();
+
+    XStreamConfiguratorLightweight.configureXStream(xstream, ErrorResponse.class, ErrorMessage.class);
+    return xstream;
+  }
+
+  @Override
+  public final NexusClient createFor(final ConnectionInfo connectionInfo) {
+    final XStream xstream = createXstream();
 
     // we use XML for communication (unlike web browsers do, for which JSON makes more sense)
     return new JerseyNexusClient(

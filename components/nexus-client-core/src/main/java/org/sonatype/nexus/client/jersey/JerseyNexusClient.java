@@ -31,7 +31,7 @@ import org.sonatype.nexus.client.core.exception.NexusClientErrorResponseExceptio
 import org.sonatype.nexus.client.core.exception.NexusClientException;
 import org.sonatype.nexus.client.core.exception.NexusClientNotFoundException;
 import org.sonatype.nexus.client.core.exception.NexusClientResponseException;
-import org.sonatype.nexus.client.internal.AbstractXStreamNexusClient;
+import org.sonatype.nexus.client.internal.AbstractNexusClient;
 import org.sonatype.nexus.client.internal.ErrorMessage;
 import org.sonatype.nexus.client.internal.ErrorResponse;
 import org.sonatype.nexus.client.rest.ConnectionInfo;
@@ -62,8 +62,9 @@ import static com.google.common.base.Preconditions.checkState;
  * @since 2.1
  */
 public class JerseyNexusClient
-    extends AbstractXStreamNexusClient
+    extends AbstractNexusClient
 {
+  private final XStream xstream;
 
   private Client client;
 
@@ -80,10 +81,11 @@ public class JerseyNexusClient
                            final Client client,
                            final MediaType mediaType)
   {
-    super(connectionInfo, xstream);
+    super(connectionInfo);
     this.client = checkNotNull(client);
     this.mediaType = checkNotNull(mediaType);
     this.subsystemProviders = subsystemProviders;
+    this.xstream = checkNotNull(xstream);
     getLogger().debug("Client created for media-type {} and connection {}", mediaType, connectionInfo);
 
     initializeConnection(connectionCondition);
@@ -91,6 +93,10 @@ public class JerseyNexusClient
     context = Maps.newHashMap();
     context.put(NexusClient.class, this);
     context.put(Factory.class, ClientBuilder.using(client).toAccess(connectionInfo.getBaseUrl().toUrl()));
+  }
+
+  public XStream getXStream() {
+    return xstream;
   }
 
   public Client getClient() {
