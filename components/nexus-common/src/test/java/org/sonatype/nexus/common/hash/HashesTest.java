@@ -3,10 +3,11 @@ package org.sonatype.nexus.common.hash;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.hash.HashCode;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
@@ -28,29 +29,25 @@ public class HashesTest
 
   @Test
   public void hashOne() throws Exception {
-    Hash hash = Hashes.hash(inputStream(), MD5);
+    HashCode hashCode = Hashes.hash(inputStream(), MD5);
 
-    assertThat(hash.algorithm(), is(MD5));
-    assertThat(hash.code().toString(), is(MD5_HASH));
+    assertThat(hashCode.toString(), is(MD5_HASH));
   }
 
   @Test
   public void hashThree() throws Exception {
-    List<Hash> hashes = Lists.newArrayList(Hashes.hash(inputStream(), ImmutableList.of(SHA512, SHA1, MD5)));
+    Map<HashAlgorithm, HashCode> hashes = Hashes.hash(inputStream(), ImmutableList.of(MD5, SHA1, SHA512));
 
     assertThat(hashes.size(), is(3));
-    assertThat(hashes.get(0).algorithm(), is(SHA512));
-    assertThat(hashes.get(0).code().toString(), is(SHA512_HASH));
-    assertThat(hashes.get(1).algorithm(), is(SHA1));
-    assertThat(hashes.get(1).code().toString(), is(SHA1_HASH));
-    assertThat(hashes.get(2).algorithm(), is(MD5));
-    assertThat(hashes.get(2).code().toString(), is(MD5_HASH));
+    assertThat(hashes.get(MD5).toString(), is(MD5_HASH));
+    assertThat(hashes.get(SHA1).toString(), is(SHA1_HASH));
+    assertThat(hashes.get(SHA512).toString(), is(SHA512_HASH));
   }
 
   @Test
   public void hashZero() throws Exception {
     List<HashAlgorithm> zeroAlgorithms = ImmutableList.of();
-    List<Hash> hashes = Lists.newArrayList(Hashes.hash(inputStream(), zeroAlgorithms));
+    Map<HashAlgorithm, HashCode> hashes = Hashes.hash(inputStream(), zeroAlgorithms);
 
     assertThat(hashes.size(), is(0));
   }
