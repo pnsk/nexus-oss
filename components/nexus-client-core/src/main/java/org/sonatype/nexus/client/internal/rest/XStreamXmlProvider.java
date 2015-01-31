@@ -27,11 +27,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
-import org.sonatype.nexus.client.internal.util.Check;
-
 import com.sun.jersey.core.provider.AbstractMessageReaderWriterProvider;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.CompactWriter;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Jersey provider that uses XStream, as we want to use the same tech (as we have all the config bits already) on
@@ -52,8 +52,8 @@ public class XStreamXmlProvider
   private final XStream xstream;
 
   public XStreamXmlProvider(final XStream xstream, final MediaType xstreamMediaType) {
-    this.xstream = Check.notNull(xstream, XStream.class);
-    this.xstreamMediaType = Check.notNull(xstreamMediaType, MediaType.class);
+    this.xstream = checkNotNull(xstream);
+    this.xstreamMediaType = checkNotNull(xstreamMediaType);
   }
 
   @Override

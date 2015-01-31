@@ -12,7 +12,9 @@
  */
 package org.sonatype.nexus.client.rest;
 
-import org.sonatype.nexus.client.internal.util.Check;
+import com.google.common.base.Strings;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * @since 2.1
@@ -26,8 +28,11 @@ public class UsernamePasswordAuthenticationInfo
   private final String password;
 
   public UsernamePasswordAuthenticationInfo(final String username, final String password) {
-    this.username = Check.notBlank(username, "username");
-    this.password = Check.notBlank(password, "password");
+    checkArgument(!Strings.nullToEmpty(username).trim().isEmpty(), "username is blank");
+    this.username = username;
+
+    checkArgument(!Strings.nullToEmpty(password).trim().isEmpty(), "password is blank");
+    this.password = password;
   }
 
   public String getUsername() {

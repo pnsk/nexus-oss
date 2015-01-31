@@ -15,7 +15,10 @@ package org.sonatype.nexus.client.rest;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.sonatype.nexus.client.internal.util.Check;
+import com.google.common.base.Strings;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @since 2.1
@@ -32,9 +35,14 @@ public class BaseUrl
   private final String path;
 
   public BaseUrl(final Protocol protocol, final String host, final int port, final String path) {
-    this.protocol = Check.notNull(protocol, Protocol.class);
-    this.host = Check.notBlank(host, "host");
-    this.port = Check.argument(port > 0 && port < 65536, port, "Port out of boundaries (0 < port < 65536)!");
+    this.protocol = checkNotNull(protocol);
+
+    checkArgument(!Strings.nullToEmpty(host).trim().isEmpty(), "Host is blank");
+    this.host = host;
+
+    checkArgument(port > 0 && port < 65536, "Port out of boundaries (0 < port < 65536)!");
+    this.port = port;
+
     String fixedPath = path;
     if (!fixedPath.endsWith("/")) {
       fixedPath = fixedPath + "/";
@@ -76,11 +84,12 @@ public class BaseUrl
   public static BaseUrl baseUrlFrom(final String url)
       throws MalformedURLException
   {
-    return baseUrlFrom(new URL(Check.notBlank(url, "URL")));
+    checkArgument(!Strings.nullToEmpty(url).trim().isEmpty(), "URL is blank");
+    return baseUrlFrom(new URL(url));
   }
 
   public static BaseUrl baseUrlFrom(final URL url) {
-    Check.notNull(url, URL.class);
+    checkNotNull(url);
     final Protocol protocol = Protocol.valueOf(url.getProtocol().toUpperCase());
     final String host = url.getHost();
     final int port = url.getPort() == -1 ? url.getDefaultPort() : url.getPort();

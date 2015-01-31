@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sonatype.nexus.client.internal.util.Check;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @since 2.1
@@ -91,16 +91,16 @@ public class ConnectionInfo
                         final Map<Protocol, ProxyInfo> proxyInfos, final ValidationLevel sslCertificateValidation,
                         final ValidationLevel sslCertificateHostnameValidation)
   {
-    this.baseUrl = Check.notNull(baseUrl, "Base URL is null!");
+    this.baseUrl = checkNotNull(baseUrl, "Base URL is null!");
     this.authenticationInfo = authenticationInfo;
     HashMap<Protocol, ProxyInfo> proxies = new HashMap<Protocol, ProxyInfo>();
     if (proxyInfos != null) {
       proxies.putAll(proxyInfos);
     }
     this.proxyInfos = Collections.unmodifiableMap(proxies);
-    this.sslCertificateValidation = Check.notNull(sslCertificateValidation, "sslCertificateValidation is null!");
-    this.sslCertificateHostnameValidation = Check
-        .notNull(sslCertificateHostnameValidation, "sslCertificateHostnameValidation is null");
+    this.sslCertificateValidation = checkNotNull(sslCertificateValidation, "sslCertificateValidation is null!");
+    this.sslCertificateHostnameValidation = checkNotNull(sslCertificateHostnameValidation,
+        "sslCertificateHostnameValidation is null");
   }
 
   public BaseUrl getBaseUrl() {

@@ -14,7 +14,9 @@ package org.sonatype.nexus.client.core.condition;
 
 import org.sonatype.nexus.client.core.Condition;
 import org.sonatype.nexus.client.core.NexusStatus;
-import org.sonatype.nexus.client.internal.util.Check;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Set of basic logical operators that combines multiple {@link org.sonatype.nexus.client.core.Condition}s into one.
@@ -32,7 +34,7 @@ public abstract class LogicalConditions
    * @return {@code true} if all passed in conditions match.
    */
   public static Condition and(final Condition... conditions) {
-    Check.argument(conditions.length > 1, "At least two operators expected!");
+    checkArgument(conditions.length > 1, "At least two operators expected!");
     return new Condition()
     {
       @Override
@@ -70,7 +72,7 @@ public abstract class LogicalConditions
    * @return {@code true} if any passed in matchers match.
    */
   public static Condition or(final Condition... conditions) {
-    Check.argument(conditions.length > 1, "At least two operators expected!");
+    checkArgument(conditions.length > 1, "At least two operators expected!");
     return new Condition()
     {
       @Override
@@ -108,7 +110,7 @@ public abstract class LogicalConditions
    * @return {@code true} if all passed in matchers match.
    */
   public static Condition not(final Condition condition) {
-    Check.notNull(condition, Condition.class);
+    checkNotNull(condition);
     return new Condition()
     {
       @Override

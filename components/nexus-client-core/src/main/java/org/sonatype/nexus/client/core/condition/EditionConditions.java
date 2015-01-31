@@ -16,7 +16,8 @@ import java.util.regex.Pattern;
 
 import org.sonatype.nexus.client.core.Condition;
 import org.sonatype.nexus.client.core.NexusStatus;
-import org.sonatype.nexus.client.internal.util.Check;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Edition conditions that contains {@link Condition}s to match remote Nexus edition.
@@ -69,7 +70,7 @@ public abstract class EditionConditions
     private final Pattern editionPattern;
 
     private EditionCondition(final Pattern editionPattern) {
-      this.editionPattern = Check.notNull(editionPattern, Pattern.class);
+      this.editionPattern = checkNotNull(editionPattern);
     }
 
     @Override

@@ -17,11 +17,12 @@ import java.util.LinkedHashMap;
 import org.sonatype.nexus.client.core.Condition;
 import org.sonatype.nexus.client.core.NexusClient;
 import org.sonatype.nexus.client.core.NexusStatus;
-import org.sonatype.nexus.client.internal.util.Check;
 import org.sonatype.nexus.client.rest.ConnectionInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @since 2.1
@@ -39,7 +40,7 @@ public abstract class AbstractNexusClient
   private NexusStatus nexusStatus;
 
   protected AbstractNexusClient(final ConnectionInfo connectionInfo) {
-    this.connectionInfo = Check.notNull(connectionInfo, ConnectionInfo.class);
+    this.connectionInfo = checkNotNull(connectionInfo);
     this.subsystemInstanceCache = new LinkedHashMap<Class<?>, Object>();
   }
 
@@ -83,7 +84,7 @@ public abstract class AbstractNexusClient
    * @throws IllegalStateException if remote Nexus does not fulfil requirements posed by passed in {@link Condition}.
    */
   protected void initializeConnection(final Condition connectionCondition) {
-    this.nexusStatus = Check.notNull(getStatus(), "Nexus status is null!");
+    this.nexusStatus = checkNotNull(getStatus(), "Nexus status is null!");
     getLogger().debug("Connected, received {} ", this.nexusStatus);
     if (!connectionCondition.isSatisfiedBy(nexusStatus)) {
       throw new IllegalStateException("Not connecting to remote Nexus, condition(s) are not satisfied: "

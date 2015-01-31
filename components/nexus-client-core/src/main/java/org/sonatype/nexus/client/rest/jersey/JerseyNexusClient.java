@@ -34,7 +34,6 @@ import org.sonatype.nexus.client.core.spi.SubsystemProvider;
 import org.sonatype.nexus.client.internal.msg.ErrorMessage;
 import org.sonatype.nexus.client.internal.msg.ErrorResponse;
 import org.sonatype.nexus.client.internal.rest.AbstractXStreamNexusClient;
-import org.sonatype.nexus.client.internal.util.Check;
 import org.sonatype.nexus.client.rest.ConnectionInfo;
 import org.sonatype.nexus.rest.model.StatusResource;
 import org.sonatype.nexus.rest.model.StatusResourceResponse;
@@ -82,8 +81,8 @@ public class JerseyNexusClient
                            final MediaType mediaType)
   {
     super(connectionInfo, xstream);
-    this.client = Check.notNull(client, Client.class);
-    this.mediaType = Check.notNull(mediaType, MediaType.class);
+    this.client = checkNotNull(client);
+    this.mediaType = checkNotNull(mediaType);
     this.subsystemProviders = subsystemProviders;
     getLogger().debug("Client created for media-type {} and connection {}", mediaType, connectionInfo);
 

@@ -12,7 +12,10 @@
  */
 package org.sonatype.nexus.client.rest;
 
-import org.sonatype.nexus.client.internal.util.Check;
+import com.google.common.base.Strings;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @since 2.1
@@ -31,11 +34,14 @@ public class ProxyInfo
   public ProxyInfo(final Protocol proxyProtocol, final String proxyHost, final int proxyPort,
                    final AuthenticationInfo proxyAuthentication)
   {
-    this.proxyProtocol = Check.notNull(proxyProtocol, Protocol.class);
-    this.proxyHost = Check.notBlank(proxyHost, "proxyHost");
-    this.proxyPort =
-        Check.argument(proxyPort > 0 && proxyPort < 65536, proxyPort,
-            "proxyPort out of boundaries (0 < proxyPort < 65536)!");
+    this.proxyProtocol = checkNotNull(proxyProtocol);
+
+    checkArgument(!Strings.nullToEmpty(proxyHost).trim().isEmpty(), "proxyHost is blank");
+    this.proxyHost = proxyHost;
+
+    checkArgument(proxyPort > 0 && proxyPort < 65536,
+        "proxyPort out of boundaries (0 < proxyPort < 65536)!");
+    this.proxyPort = proxyPort;
     this.proxyAuthentication = proxyAuthentication;
   }
 

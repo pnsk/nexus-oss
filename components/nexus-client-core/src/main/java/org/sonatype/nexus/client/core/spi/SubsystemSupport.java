@@ -13,7 +13,8 @@
 package org.sonatype.nexus.client.core.spi;
 
 import org.sonatype.nexus.client.core.NexusClient;
-import org.sonatype.nexus.client.internal.util.Check;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @since 2.1
@@ -24,7 +25,7 @@ public abstract class SubsystemSupport<NC extends NexusClient>
   private final NC nexusClient;
 
   protected SubsystemSupport(final NC nexusClient) {
-    this.nexusClient = Check.notNull(nexusClient, NexusClient.class);
+    this.nexusClient = checkNotNull(nexusClient);
   }
 
   public NC getNexusClient() {

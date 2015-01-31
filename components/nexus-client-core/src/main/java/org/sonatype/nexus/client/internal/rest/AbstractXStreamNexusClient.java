@@ -12,10 +12,11 @@
  */
 package org.sonatype.nexus.client.internal.rest;
 
-import org.sonatype.nexus.client.internal.util.Check;
 import org.sonatype.nexus.client.rest.ConnectionInfo;
 
 import com.thoughtworks.xstream.XStream;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Basically AbstractNexusClient with some extra fluff: it maintains reference to XStream used by serialization
@@ -35,7 +36,7 @@ public abstract class AbstractXStreamNexusClient
 
   protected AbstractXStreamNexusClient(final ConnectionInfo connectionInfo, final XStream xstream) {
     super(connectionInfo);
-    this.xstream = Check.notNull(xstream, XStream.class);
+    this.xstream = checkNotNull(xstream);
   }
 
   public XStream getXStream() {

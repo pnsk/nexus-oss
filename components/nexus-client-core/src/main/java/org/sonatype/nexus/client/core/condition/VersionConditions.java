@@ -18,7 +18,8 @@ import org.sonatype.nexus.client.core.condition.internal.GenericVersionScheme;
 import org.sonatype.nexus.client.core.condition.internal.InvalidVersionSpecificationException;
 import org.sonatype.nexus.client.core.condition.internal.Version;
 import org.sonatype.nexus.client.core.condition.internal.VersionConstraint;
-import org.sonatype.nexus.client.internal.util.Check;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * {@link Condition}s that matches remote Nexus version.
@@ -159,7 +160,7 @@ public abstract class VersionConditions
     private final VersionConstraint suitableVersions;
 
     private VersionCondition(final VersionConstraint suitableVersions) {
-      this.suitableVersions = Check.notNull(suitableVersions, VersionConstraint.class);
+      this.suitableVersions = checkNotNull(suitableVersions);
     }
 
     /**
