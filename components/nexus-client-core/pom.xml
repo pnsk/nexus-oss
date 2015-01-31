@@ -35,8 +35,8 @@
 
   <dependencies>
     <!--
-    FIXME: Should not be dependent on a plugin here.
-    HACK: Using nexus.version as a work-around to lack of DM in this context.
+    FIXME: Remove this dependency, ATM exists only for access to the XStreamConfiguratorLightweight and StatusResource*
+    FIXME: Both are artifacts of legacy REST to be removed.
     -->
     <dependency>
       <groupId>org.sonatype.nexus.plugins</groupId>
