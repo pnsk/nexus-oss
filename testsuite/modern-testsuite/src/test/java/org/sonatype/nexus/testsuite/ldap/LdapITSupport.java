@@ -20,7 +20,6 @@ import com.sonatype.nexus.ssl.client.TrustStore;
 
 import org.sonatype.nexus.bundle.launcher.NexusBundleConfiguration;
 import org.sonatype.nexus.capabilities.client.Capabilities;
-import org.sonatype.nexus.client.core.subsystem.content.Content;
 import org.sonatype.nexus.testsuite.support.NexusRunningParametrizedITSupport;
 import org.sonatype.nexus.testsuite.support.NexusStartAndStopStrategy;
 
@@ -56,10 +55,6 @@ public class LdapITSupport
 
   public static String uniqueName(final String prefix) {
     return prefix + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss-SSS").format(new Date());
-  }
-
-  public Content content() {
-    return client().getSubsystem(Content.class);
   }
 
   public TrustStore truststore() {
