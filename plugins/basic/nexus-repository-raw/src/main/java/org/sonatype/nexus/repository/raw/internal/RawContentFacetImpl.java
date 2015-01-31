@@ -25,6 +25,8 @@ import javax.inject.Inject;
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
 import org.sonatype.nexus.blobstore.api.BlobStore;
+import org.sonatype.nexus.common.hash.HashAlgorithm;
+import org.sonatype.nexus.common.hash.MultiHashingInputStream;
 import org.sonatype.nexus.mime.MimeSupport;
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.content.InvalidContentException;
@@ -38,6 +40,8 @@ import org.sonatype.nexus.repository.view.Context;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.hash.HashCode;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
@@ -46,9 +50,12 @@ import org.joda.time.DateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.sonatype.nexus.common.hash.HashAlgorithm.MD5;
+import static org.sonatype.nexus.common.hash.HashAlgorithm.SHA1;
 import static org.sonatype.nexus.repository.storage.StorageFacet.E_PART_OF_COMPONENT;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_ATTRIBUTES;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_BLOB_REF;
+import static org.sonatype.nexus.repository.storage.StorageFacet.P_CHECKSUM;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_CONTENT_TYPE;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_FORMAT;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_GROUP;
@@ -69,6 +76,8 @@ public class RawContentFacetImpl
   private final static String RAW = "raw";
 
   public static final String CONFIG_KEY = "rawContent";
+
+  private final static List<HashAlgorithm> hashAlgorithms = Lists.newArrayList(MD5, SHA1);
 
   private final MimeSupport mimeSupport;
 
@@ -138,10 +147,22 @@ public class RawContentFacetImpl
       final ImmutableMap<String, String> headers = ImmutableMap
           .of(BlobStore.BLOB_NAME_HEADER, path, BlobStore.CREATED_BY_HEADER, "unknown");
 
+      // Store new blob while calculating hashes in one pass
+      final MultiHashingInputStream hashingStream = new MultiHashingInputStream(hashAlgorithms, content.openInputStream());
       final BlobRef newBlobRef = tx.createBlob(content.openInputStream(), headers);
 
       asset.setProperty(P_BLOB_REF, newBlobRef.toString());
       asset.setProperty(P_CONTENT_TYPE, determineContentType(path, content));
+
+      // Set attributes map to contain computed checksum metadata
+      Map<HashAlgorithm, HashCode> hashes = hashingStream.hashes();
+      Map<String, String> checksumAttributes = Maps.newHashMap();
+      for (HashAlgorithm algorithm : hashAlgorithms) {
+        HashCode code = hashes.get(algorithm);
+        checksumAttributes.put(algorithm.name(), code.toString());
+      }
+      Map<String, Map<String, String>> attributes = ImmutableMap.of(P_CHECKSUM, checksumAttributes);
+      asset.setProperty(P_ATTRIBUTES, attributes, OType.EMBEDDEDMAP);
 
       final DateTime lastUpdated = content.getLastUpdated();
       if (lastUpdated != null) {

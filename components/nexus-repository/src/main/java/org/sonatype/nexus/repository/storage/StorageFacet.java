@@ -37,6 +37,8 @@ public interface StorageFacet
 
   static String P_BLOB_REF = "blob_ref";
 
+  static String P_CHECKSUM = "checksum";
+
   static String P_CONTENT_TYPE = "content_type";
 
   static String P_FORMAT = "format";
