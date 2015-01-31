@@ -164,7 +164,7 @@ def dummyMode = {
   def count = property('autoshard.count') as int
   def testName = property('autoshard.dummytest', 'DummyIT.java') as String
 
-  println "Creating $count dummy shards with test: $testName"
+  println "Creating $count dummy shards with test: $testName in: $outputDir"
   outputDir.mkdirs()
   for (i in 0..<count) {
     def file = new File(outputDir, "shard-${i}.txt")
