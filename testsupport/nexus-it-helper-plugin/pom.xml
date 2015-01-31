@@ -28,7 +28,8 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <pluginDescription>This plugin injects some extra functionality into Nexus that are used when running ITs.
+    <pluginDescription>
+      This plugin injects some extra functionality into Nexus that are used when running ITs.
     </pluginDescription>
   </properties>
 
