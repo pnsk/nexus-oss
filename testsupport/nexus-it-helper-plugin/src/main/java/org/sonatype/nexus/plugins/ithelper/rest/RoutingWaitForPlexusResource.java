@@ -10,13 +10,16 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.plugins.ithelper;
+package org.sonatype.nexus.plugins.ithelper.rest;
+
+import java.lang.reflect.Method;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.sonatype.nexus.events.EventSubscriberHost;
+import org.sonatype.nexus.proxy.maven.routing.Manager;
+import org.sonatype.nexus.proxy.maven.routing.internal.ManagerImpl;
 import org.sonatype.plexus.rest.resource.AbstractPlexusResource;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
 
@@ -28,18 +31,30 @@ import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
 
-@Singleton
+import static com.google.common.base.Preconditions.checkNotNull;
+
+/**
+ * Exposing {@link ManagerImpl#isUpdatePrefixFileJobRunning()} for ITs.
+ *
+ * @author cstamas
+ * @since 2.4
+ */
 @Named
-public class EventInspectorsPlexusResource
+@Singleton
+public class RoutingWaitForPlexusResource
     extends AbstractPlexusResource
 {
-  private static final String RESOURCE_URI = "/eventInspectors/isCalmPeriod";
 
-  private final EventSubscriberHost eventSubscriberHost;
+  private static final String RESOURCE_URI = "/routing/waitFor";
+
+  private final Manager manager;
+
+  private final Method isUpdatePrefixFileJobRunning;
 
   @Inject
-  public EventInspectorsPlexusResource(final EventSubscriberHost eventSubscriberHost) {
-    this.eventSubscriberHost = eventSubscriberHost;
+  public RoutingWaitForPlexusResource(final Manager manager) throws NoSuchMethodException {
+    this.manager = checkNotNull(manager);
+    isUpdatePrefixFileJobRunning = manager.getClass().getMethod("isUpdatePrefixFileJobRunning");
   }
 
   @Override
@@ -61,35 +76,24 @@ public class EventInspectorsPlexusResource
       throws ResourceException
   {
     Form form = request.getResourceRef().getQueryAsForm();
-    boolean waitForCalm = Boolean.parseBoolean(form.getFirstValue("waitForCalm"));
-
-    if (waitForCalm) {
-      for (int i = 0; i < 100; i++) {
-        try {
-          Thread.sleep(500);
-        }
-        catch (InterruptedException e) {
-        }
-
-        if (eventSubscriberHost.isCalmPeriod()) {
+    final long timeout = Long.parseLong(form.getFirstValue("timeout", "60000"));
+    try {
+      final long startTime = System.currentTimeMillis();
+      while (System.currentTimeMillis() - startTime <= timeout) {
+        if (!(boolean)isUpdatePrefixFileJobRunning.invoke(manager)) {
           response.setStatus(Status.SUCCESS_OK);
           return "Ok";
         }
-      }
-
-      response.setStatus(Status.SUCCESS_ACCEPTED);
-      return "Still munching on them...";
-    }
-    else {
-      if (eventSubscriberHost.isCalmPeriod()) {
-        response.setStatus(Status.SUCCESS_OK);
-        return "Ok";
-      }
-      else {
-        response.setStatus(Status.SUCCESS_ACCEPTED);
-        return "Still munching on them...";
+        Thread.sleep(500);
       }
     }
+    catch (final InterruptedException ignore) {
+      // ignore
+    }
+    catch (final Exception e) {
+      throw new ResourceException(e);
+    }
+    response.setStatus(Status.SUCCESS_ACCEPTED);
+    return "Still munching on them...";
   }
-
 }

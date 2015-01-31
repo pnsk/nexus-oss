@@ -10,8 +10,9 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.plugins.ithelper;
+package org.sonatype.nexus.plugins.ithelper.rest;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -27,9 +28,14 @@ import org.restlet.resource.Variant;
 
 @Singleton
 @Named
-public class TimeoutPlexusResource
+public class ExceptionPlexusResource
     extends AbstractPlexusResource
 {
+  @Inject
+  public ExceptionPlexusResource() {
+    this.setModifiable(true);
+  }
+
   @Override
   public Object getPayloadInstance() {
     // TODO Auto-generated method stub
@@ -38,12 +44,12 @@ public class TimeoutPlexusResource
 
   @Override
   public PathProtectionDescriptor getResourceProtection() {
-    return new PathProtectionDescriptor(getResourceUri(), "authcBasic,perms[nexus:status]");
+    return null;
   }
 
   @Override
   public String getResourceUri() {
-    return "/timeout";
+    return "/exception";
   }
 
   @Override
@@ -52,14 +58,8 @@ public class TimeoutPlexusResource
   {
     Form form = request.getResourceRef().getQueryAsForm();
 
-    int requestedTimeout = Integer.parseInt(form.getFirstValue("timeout"));
+    int requestedStatus = Integer.parseInt(form.getFirstValue("status"));
 
-    try {
-      Thread.sleep(1000 * requestedTimeout);
-    }
-    catch (Exception e) {
-    }
-
-    return null;
+    throw new ResourceException(requestedStatus);
   }
 }

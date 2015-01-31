@@ -12,7 +12,7 @@
  */
 package org.sonatype.timeline;
 
-import org.sonatype.nexus.plugins.ithelper.LogHelperPlexusResource;
+import org.sonatype.nexus.plugins.ithelper.rest.LogHelperPlexusResource;
 
 /**
  * This class is present here only to "mimic" the actual class to be found in "Spice Timeline"

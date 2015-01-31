@@ -10,14 +10,11 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.plugins.ithelper;
+package org.sonatype.nexus.plugins.ithelper.rest;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.sonatype.nexus.scheduling.TaskInfo;
-import org.sonatype.nexus.scheduling.TaskScheduler;
 import org.sonatype.plexus.rest.resource.AbstractPlexusResource;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
 
@@ -25,37 +22,28 @@ import org.restlet.Context;
 import org.restlet.data.Form;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
-import org.restlet.data.Status;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
 
 @Singleton
 @Named
-public class TaskHelperPlexusResource
+public class TimeoutPlexusResource
     extends AbstractPlexusResource
 {
-
-  private final TaskScheduler nexusScheduler;
-
-  @Inject
-  public TaskHelperPlexusResource(final TaskScheduler nexusScheduler)
-  {
-    this.nexusScheduler = nexusScheduler;
-  }
-
   @Override
   public Object getPayloadInstance() {
+    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public PathProtectionDescriptor getResourceProtection() {
-    return new PathProtectionDescriptor(getResourceUri(), "anon");
+    return new PathProtectionDescriptor(getResourceUri(), "authcBasic,perms[nexus:status]");
   }
 
   @Override
   public String getResourceUri() {
-    return "/taskhelper";
+    return "/timeout";
   }
 
   @Override
@@ -63,39 +51,15 @@ public class TaskHelperPlexusResource
       throws ResourceException
   {
     Form form = request.getResourceRef().getQueryAsForm();
-    String name = form.getFirstValue("name");
-    String taskType = form.getFirstValue("taskType");
-    String attemptsParam = form.getFirstValue("attempts");
-    int attempts = 300;
 
-    if (attemptsParam != null) {
-      try {
-        attempts = Integer.parseInt(attemptsParam);
-      }
-      catch (NumberFormatException e) {
-        // ignore, will use default of 300
-      }
+    int requestedTimeout = Integer.parseInt(form.getFirstValue("timeout"));
+
+    try {
+      Thread.sleep(1000 * requestedTimeout);
+    }
+    catch (Exception e) {
     }
 
-    final TaskInfo<?> namedTask = TasksWaitForPlexusResource.getTaskByName(nexusScheduler, name);
-
-    if (name != null && namedTask == null) {
-      // task wasn't found, so bounce on outta here
-      response.setStatus(Status.SUCCESS_OK);
-      return "OK";
-    }
-
-    for (int i = 0; i < attempts; i++) {
-      TasksWaitForPlexusResource.sleep();
-
-      if (TasksWaitForPlexusResource.isTaskCompleted(nexusScheduler, taskType, namedTask)) {
-        response.setStatus(Status.SUCCESS_OK);
-        return "OK";
-      }
-    }
-
-    response.setStatus(Status.SUCCESS_NO_CONTENT);
-    return "Tasks Not Finished";
+    return null;
   }
-
 }
