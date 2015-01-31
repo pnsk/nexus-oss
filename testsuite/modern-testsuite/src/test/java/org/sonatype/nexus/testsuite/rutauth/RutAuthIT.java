@@ -13,10 +13,8 @@
 package org.sonatype.nexus.testsuite.rutauth;
 
 import org.sonatype.nexus.client.core.NexusClient;
-import org.sonatype.nexus.client.core.exception.NexusClientAccessForbiddenException;
 import org.sonatype.nexus.client.core.exception.NexusClientResponseException;
 import org.sonatype.nexus.client.core.subsystem.repository.Repositories;
-import org.sonatype.nexus.client.core.subsystem.security.Users;
 
 import org.junit.Test;
 
@@ -33,42 +31,42 @@ public class RutAuthIT
     super(nexusBundleCoordinates);
   }
 
-  /**
-   * Verify that using admin as a REMOTE_USER, we can access a protected resource that only admin has right to access.
-   */
-  @Test
-  public void accessProtectedResourceViaUserWithPermissions()
-      throws Exception
-  {
-    configureRemoteHeader("REMOTE_USER");
-    configureSecurityRealms();
-
-    final NexusClient rutAuthClient = createNexusClientForRemoteHeader("REMOTE_USER", "admin");
-
-    // if we can get the users it means that authentication was successful and we have enough rights
-    rutAuthClient.getSubsystem(Users.class).get();
-  }
-
-  /**
-   * Verify that using deployment as a REMOTE_USER, we can access a protected resource that deployment has rights to
-   * access and we cannot access a protected resource that only admin has right to access.
-   */
-  @Test
-  public void accessProtectedResourceViaUserWithoutPermissions()
-      throws Exception
-  {
-    configureRemoteHeader("REMOTE_USER");
-    configureSecurityRealms();
-
-    final NexusClient rutAuthClient = createNexusClientForRemoteHeader("REMOTE_USER", "deployment");
-
-    // if we can get the repositories it means that authentication was successful and we have enough rights
-    rutAuthClient.getSubsystem(Repositories.class).get();
-
-    thrown.expect(NexusClientAccessForbiddenException.class); // 403
-    // we should not be able to access users as we do not have enough rights
-    rutAuthClient.getSubsystem(Users.class).get();
-  }
+  ///**
+  // * Verify that using admin as a REMOTE_USER, we can access a protected resource that only admin has right to access.
+  // */
+  //@Test
+  //public void accessProtectedResourceViaUserWithPermissions()
+  //    throws Exception
+  //{
+  //  configureRemoteHeader("REMOTE_USER");
+  //  configureSecurityRealms();
+  //
+  //  final NexusClient rutAuthClient = createNexusClientForRemoteHeader("REMOTE_USER", "admin");
+  //
+  //  // if we can get the users it means that authentication was successful and we have enough rights
+  //  rutAuthClient.getSubsystem(Users.class).get();
+  //}
+  //
+  ///**
+  // * Verify that using deployment as a REMOTE_USER, we can access a protected resource that deployment has rights to
+  // * access and we cannot access a protected resource that only admin has right to access.
+  // */
+  //@Test
+  //public void accessProtectedResourceViaUserWithoutPermissions()
+  //    throws Exception
+  //{
+  //  configureRemoteHeader("REMOTE_USER");
+  //  configureSecurityRealms();
+  //
+  //  final NexusClient rutAuthClient = createNexusClientForRemoteHeader("REMOTE_USER", "deployment");
+  //
+  //  // if we can get the repositories it means that authentication was successful and we have enough rights
+  //  rutAuthClient.getSubsystem(Repositories.class).get();
+  //
+  //  thrown.expect(NexusClientAccessForbiddenException.class); // 403
+  //  // we should not be able to access users as we do not have enough rights
+  //  rutAuthClient.getSubsystem(Users.class).get();
+  //}
 
   /**
    * Verify that using a user that is not known in the system, we cannot access protected resources.

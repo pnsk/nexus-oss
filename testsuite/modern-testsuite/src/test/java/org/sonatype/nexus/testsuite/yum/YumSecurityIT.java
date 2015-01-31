@@ -17,16 +17,11 @@ import java.util.Date;
 
 import org.sonatype.nexus.client.core.exception.NexusClientResponseException;
 import org.sonatype.nexus.client.core.subsystem.repository.Repository;
-import org.sonatype.nexus.client.core.subsystem.security.User;
-import org.sonatype.nexus.client.core.subsystem.security.Users;
 import org.sonatype.nexus.yum.client.Yum;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 /**
  * ITs related to security.
@@ -90,33 +85,33 @@ public class YumSecurityIT
         .createOrUpdateAlias(repository.id(), alias, "3.2.1");
   }
 
-  @Test
-  public void shouldAllowAccessForYumAdmin()
-      throws Exception
-  {
-    final Repository repository = createYumEnabledRepository(repositoryIdForTest());
-
-    final User user = givenYumAdminUser();
-    final Yum yum = createNexusClient(nexus(), user.id(), PASSWORD).getSubsystem(Yum.class);
-    final String alias = uniqueName();
-    yum.createOrUpdateAlias(repository.id(), alias, VERSION);
-    assertThat(yum.getAlias(repository.id(), alias), is(VERSION));
-    yum.createOrUpdateAlias(repository.id(), alias, ANOTHER_VERSION);
-    assertThat(yum.getAlias(repository.id(), alias), is(ANOTHER_VERSION));
-  }
-
-  private User givenYumAdminUser() {
-    final String username = testMethodName();
-
-    return client().getSubsystem(Users.class).create(username)
-        .withEmail(username + "@sonatype.org")
-        .withFirstName("bar")
-        .withLastName("foo")
-        .withPassword(PASSWORD)
-        .withRole("anonymous")
-        .withRole("nexus-yum-admin")
-        .save();
-  }
+  //@Test
+  //public void shouldAllowAccessForYumAdmin()
+  //    throws Exception
+  //{
+  //  final Repository repository = createYumEnabledRepository(repositoryIdForTest());
+  //
+  //  final User user = givenYumAdminUser();
+  //  final Yum yum = createNexusClient(nexus(), user.id(), PASSWORD).getSubsystem(Yum.class);
+  //  final String alias = uniqueName();
+  //  yum.createOrUpdateAlias(repository.id(), alias, VERSION);
+  //  assertThat(yum.getAlias(repository.id(), alias), is(VERSION));
+  //  yum.createOrUpdateAlias(repository.id(), alias, ANOTHER_VERSION);
+  //  assertThat(yum.getAlias(repository.id(), alias), is(ANOTHER_VERSION));
+  //}
+  //
+  //private User givenYumAdminUser() {
+  //  final String username = testMethodName();
+  //
+  //  return client().getSubsystem(Users.class).create(username)
+  //      .withEmail(username + "@sonatype.org")
+  //      .withFirstName("bar")
+  //      .withLastName("foo")
+  //      .withPassword(PASSWORD)
+  //      .withRole("anonymous")
+  //      .withRole("nexus-yum-admin")
+  //      .save();
+  //}
 
   public static String uniqueName() {
     return "repo_" + new SimpleDateFormat("yyyyMMdd_HHmmss_SSS").format(new Date());
