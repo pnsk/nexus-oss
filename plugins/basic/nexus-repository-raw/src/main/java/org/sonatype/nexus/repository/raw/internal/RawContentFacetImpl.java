@@ -149,7 +149,7 @@ public class RawContentFacetImpl
 
       // Store new blob while calculating hashes in one pass
       final MultiHashingInputStream hashingStream = new MultiHashingInputStream(hashAlgorithms, content.openInputStream());
-      final BlobRef newBlobRef = tx.createBlob(content.openInputStream(), headers);
+      final BlobRef newBlobRef = tx.createBlob(hashingStream, headers);
 
       asset.setProperty(P_BLOB_REF, newBlobRef.toString());
       asset.setProperty(P_CONTENT_TYPE, determineContentType(path, content));
