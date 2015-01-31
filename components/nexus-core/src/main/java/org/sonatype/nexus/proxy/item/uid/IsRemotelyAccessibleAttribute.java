@@ -27,12 +27,8 @@ public class IsRemotelyAccessibleAttribute
   private static final boolean attributes = SystemPropertiesHelper.getBoolean(
       IsRemotelyAccessibleAttribute.class.getName() + ".attributes", false);
 
-  // HACK: Allow this attribute function to be disabled for NEXUS-8060
-  private static final boolean trash = SystemPropertiesHelper.getBoolean(
-      IsRemotelyAccessibleAttribute.class.getName() + ".trash", false);
-
   public Boolean getValueFor(RepositoryItemUid subject) {
     return (attributes || !subject.getBooleanAttributeValue(IsItemAttributeMetacontentAttribute.class))
-        && (trash || !subject.getBooleanAttributeValue(IsTrashMetacontentAttribute.class));
+        && !subject.getBooleanAttributeValue(IsTrashMetacontentAttribute.class);
   }
 }
