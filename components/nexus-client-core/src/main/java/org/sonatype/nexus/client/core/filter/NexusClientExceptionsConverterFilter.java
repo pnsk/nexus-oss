@@ -22,7 +22,7 @@ import org.sonatype.nexus.client.core.exception.NexusClientErrorResponseExceptio
 import org.sonatype.nexus.client.core.exception.NexusClientErrorResponseException.ErrorMessage;
 import org.sonatype.nexus.client.core.exception.NexusClientException;
 import org.sonatype.nexus.client.core.exception.NexusClientNotFoundException;
-import org.sonatype.nexus.client.internal.msg.ErrorResponse;
+import org.sonatype.nexus.client.internal.ErrorResponse;
 
 import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.ClientHandlerException;
@@ -70,7 +70,7 @@ public class NexusClientExceptionsConverterFilter
       if (errorResponse != null) {
         // convert them to hide stupid "old" REST model, and not have it leak out
         final List<ErrorMessage> errors = Lists.newArrayList();
-        for (org.sonatype.nexus.client.internal.msg.ErrorMessage message : errorResponse.getErrors()) {
+        for (org.sonatype.nexus.client.internal.ErrorMessage message : errorResponse.getErrors()) {
           errors.add(new NexusClientErrorResponseException.ErrorMessage(message.getId(), message.getMsg()));
         }
         throw new NexusClientErrorResponseException(

@@ -10,23 +10,18 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package com.sonatype.nexus.ssl.client;
-
-import org.sonatype.nexus.client.core.Entity;
+package org.sonatype.nexus.client.core;
 
 /**
- * An SSL certificate.
- *
- * @since ssl 1.0
+ * @since 2.1
  */
-public interface Certificate
-    extends Entity<Certificate>
+public interface SubsystemFactory<T, NC extends NexusClient>
 {
 
-  String fingerprint();
+  Condition availableWhen();
 
-  String pem();
+  Class<T> getType();
 
-  Certificate withPem(final String pem);
+  T create(NC nexusClient);
 
 }

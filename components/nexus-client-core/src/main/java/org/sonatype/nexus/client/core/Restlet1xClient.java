@@ -10,23 +10,18 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package com.sonatype.nexus.ssl.client;
+package org.sonatype.nexus.client.core;
 
-import org.sonatype.nexus.client.core.Entity;
+import org.sonatype.nexus.client.core.filter.NexusClientExceptionsConverterFilter;
+import org.sonatype.sisu.siesta.client.Filters;
 
 /**
- * An SSL certificate.
+ * Base interface for clients accessing a restlet1x endpoint.
  *
- * @since ssl 1.0
+ * @since 2.7
  */
-public interface Certificate
-    extends Entity<Certificate>
+@Filters(NexusClientExceptionsConverterFilter.class)
+public interface Restlet1xClient
 {
-
-  String fingerprint();
-
-  String pem();
-
-  Certificate withPem(final String pem);
 
 }

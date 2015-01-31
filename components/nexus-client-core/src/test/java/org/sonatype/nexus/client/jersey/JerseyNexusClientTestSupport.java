@@ -10,23 +10,12 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package com.sonatype.nexus.ssl.client;
+package org.sonatype.nexus.client.jersey;
 
-import org.sonatype.nexus.client.core.Entity;
+import org.sonatype.sisu.litmus.testsupport.TestSupport;
 
-/**
- * An SSL certificate.
- *
- * @since ssl 1.0
- */
-public interface Certificate
-    extends Entity<Certificate>
+public class JerseyNexusClientTestSupport
+    extends TestSupport
 {
-
-  String fingerprint();
-
-  String pem();
-
-  Certificate withPem(final String pem);
 
 }

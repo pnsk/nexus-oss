@@ -10,23 +10,26 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package com.sonatype.nexus.ssl.client;
+package org.sonatype.nexus.client.core;
 
-import org.sonatype.nexus.client.core.Entity;
+import org.sonatype.sisu.siesta.client.Filters;
+import org.sonatype.sisu.siesta.client.filters.ErrorsV1JsonFilter;
+import org.sonatype.sisu.siesta.client.filters.ErrorsV1XmlFilter;
+import org.sonatype.sisu.siesta.client.filters.ValidationErrorsV1JsonFilter;
+import org.sonatype.sisu.siesta.client.filters.ValidationErrorsV1XmlFilter;
 
 /**
- * An SSL certificate.
+ * Base interface for clients accessing a siesta endpoint.
  *
- * @since ssl 1.0
+ * @since 2.7
  */
-public interface Certificate
-    extends Entity<Certificate>
+@Filters({
+    ErrorsV1JsonFilter.class,
+    ErrorsV1XmlFilter.class,
+    ValidationErrorsV1JsonFilter.class,
+    ValidationErrorsV1XmlFilter.class
+})
+public interface SiestaClient
 {
-
-  String fingerprint();
-
-  String pem();
-
-  Certificate withPem(final String pem);
 
 }

@@ -10,23 +10,27 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package com.sonatype.nexus.ssl.client;
+package org.sonatype.nexus.client.core;
 
-import org.sonatype.nexus.client.core.Entity;
+import java.util.Map;
 
 /**
- * An SSL certificate.
+ * Subsystems factory. It creates subsystems of given type in case that it knows how to do it.
+ * If it does not know how to create such a subsystem it should return null, case when the remaining
+ * {@link SubsystemProvider}s will be used to create, until one will be able to do it.
  *
- * @since ssl 1.0
+ * @since 2.7
  */
-public interface Certificate
-    extends Entity<Certificate>
+public interface SubsystemProvider
 {
 
-  String fingerprint();
-
-  String pem();
-
-  Certificate withPem(final String pem);
+  /**
+   * Creates an instance of the subsystem for given type.
+   *
+   * @param type    of subsystem to be created (never null)
+   * @param context provides access to client specific components
+   * @return an instance of subsystem or null if it is not able to create a subsystem of specified type
+   */
+  Object get(Class type, Map<Object, Object> context);
 
 }

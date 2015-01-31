@@ -10,23 +10,23 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package com.sonatype.nexus.ssl.client;
+package org.sonatype.nexus.client.jersey;
 
-import org.sonatype.nexus.client.core.Entity;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
- * An SSL certificate.
- *
- * @since ssl 1.0
+ * @since 2.3
  */
-public interface Certificate
-    extends Entity<Certificate>
+@SuppressWarnings("serial")
+public abstract class ContextAwareUniformInterfaceException
+    extends UniformInterfaceException
 {
 
-  String fingerprint();
+  public ContextAwareUniformInterfaceException(final ClientResponse response) {
+    super(response);
+  }
 
-  String pem();
-
-  Certificate withPem(final String pem);
+  public abstract String getMessage(int status);
 
 }

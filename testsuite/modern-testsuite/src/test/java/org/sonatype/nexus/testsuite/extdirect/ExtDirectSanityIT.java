@@ -14,7 +14,7 @@ package org.sonatype.nexus.testsuite.extdirect;
 
 import javax.ws.rs.core.MediaType;
 
-import org.sonatype.nexus.client.rest.jersey.JerseyNexusClient;
+import org.sonatype.nexus.client.jersey.JerseyNexusClient;
 import org.sonatype.nexus.testsuite.NexusCoreITSupport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
