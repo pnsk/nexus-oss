@@ -62,6 +62,7 @@ import static org.sonatype.nexus.repository.storage.StorageFacet.P_GROUP;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_LAST_UPDATED;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_NAME;
 import static org.sonatype.nexus.repository.storage.StorageFacet.P_PATH;
+import static org.sonatype.nexus.repository.storage.StorageFacet.P_SIZE;
 
 /**
  * A {@link RawContentFacet} that persists to a {@link StorageFacet}.
@@ -72,10 +73,9 @@ public class RawContentFacetImpl
     extends FacetSupport
     implements RawContentFacet, NegativeCacheKeySource
 {
+  public static final String CONFIG_KEY = "rawContent";
 
   private final static String RAW = "raw";
-
-  public static final String CONFIG_KEY = "rawContent";
 
   private final static List<HashAlgorithm> hashAlgorithms = Lists.newArrayList(MD5, SHA1);
 
@@ -152,6 +152,7 @@ public class RawContentFacetImpl
       final BlobRef newBlobRef = tx.createBlob(hashingStream, headers);
 
       asset.setProperty(P_BLOB_REF, newBlobRef.toString());
+      asset.setProperty(P_SIZE, hashingStream.count());
       asset.setProperty(P_CONTENT_TYPE, determineContentType(path, content));
 
       // Set attributes map to contain computed checksum metadata

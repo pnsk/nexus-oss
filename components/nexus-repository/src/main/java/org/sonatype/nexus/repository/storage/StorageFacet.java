@@ -53,6 +53,8 @@ public interface StorageFacet
 
   static String P_REPOSITORY_NAME = "repository_name";
 
+  static String P_SIZE = "size";
+
   static String P_VERSION = "version";
 
   static String V_ASSET = "asset";

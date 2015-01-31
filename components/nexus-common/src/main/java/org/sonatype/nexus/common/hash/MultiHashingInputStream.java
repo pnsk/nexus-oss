@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * An {@link InputStream} that maintains multiple hashes of the data read from it.
+ * An {@link InputStream} that maintains multiple hashes and the number of bytes of data read from it.
  *
  * @see HashingInputStream
  * @since 3.0
@@ -35,6 +35,8 @@ public class MultiHashingInputStream
   extends FilterInputStream
 {
   private final Map<HashAlgorithm, Hasher> hashers = Maps.newLinkedHashMap();
+
+  private long count;
 
   public MultiHashingInputStream(Iterable<HashAlgorithm> algorithms, InputStream inputStream) {
     super(checkNotNull(inputStream));
@@ -50,6 +52,7 @@ public class MultiHashingInputStream
       for (Hasher hasher : hashers.values()) {
         hasher.putByte((byte) b);
       }
+      count++;
     }
     return b;
   }
@@ -61,6 +64,7 @@ public class MultiHashingInputStream
       for (Hasher hasher : hashers.values()) {
         hasher.putBytes(bytes, off, numRead);
       }
+      count += numRead;
     }
     return numRead;
   }
@@ -90,5 +94,12 @@ public class MultiHashingInputStream
       hashes.put(algorithm, hasher.hash());
     }
     return hashes;
+  }
+
+  /**
+   * Gets the number of bytes read from this stream.
+   */
+  public long count() {
+    return count;
   }
 }
