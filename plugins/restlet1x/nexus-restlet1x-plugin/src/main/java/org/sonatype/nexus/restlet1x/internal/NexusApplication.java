@@ -10,7 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.rest;
+package org.sonatype.nexus.restlet1x.internal;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,7 +26,6 @@ import org.sonatype.plexus.rest.resource.PlexusResource;
 import org.sonatype.security.web.ProtectedPathManager;
 import org.sonatype.sisu.goodies.eventbus.EventBus;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.eventbus.Subscribe;
 import com.thoughtworks.xstream.XStream;
 import org.apache.shiro.util.AntPathMatcher;
@@ -66,17 +65,6 @@ public class NexusApplication
     this.statusService = statusService;
     useStrictChecking = System.getProperty("nexus.restlet.strict-uri-matching", "true").equals("true");
     LoggerFactory.getLogger(getClass().getName() + "_UriMatching").info("Strict URI matching: {}", useStrictChecking);
-  }
-
-  // HACK: Too many places were using new NexusApplication() ... fuck it
-  @VisibleForTesting
-  public NexusApplication() {
-    this(
-        null,
-        null,
-        null,
-        null
-    );
   }
 
   @Subscribe

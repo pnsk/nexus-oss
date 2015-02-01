@@ -33,5 +33,6 @@ public class Restlet1xLogConfigurationCustomizer
   public void customize(final Configuration configuration) {
     configuration.setLoggerLevel("org.sonatype.plexus.rest", DEFAULT);
     configuration.setLoggerLevel("org.sonatype.nexus.rest", DEFAULT);
+    configuration.setLoggerLevel("org.sonatype.nexus.restlet1x", DEFAULT);
   }
 }
