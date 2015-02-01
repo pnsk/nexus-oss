@@ -30,7 +30,7 @@ public class AuthTicketXO
 {
   @XmlElement(required = true)
   @JsonProperty("t")
-  protected String t;
+  private String t;
 
   public String getT() {
     return t;

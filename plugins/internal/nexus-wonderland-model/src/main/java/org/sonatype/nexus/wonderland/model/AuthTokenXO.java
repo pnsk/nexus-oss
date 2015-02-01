@@ -31,11 +31,11 @@ public class AuthTokenXO
 {
   @XmlElement(required = true)
   @JsonProperty("u")
-  protected String u;
+  private String u;
 
   @XmlElement(required = true)
   @JsonProperty("p")
-  protected String p;
+  private String p;
 
   public String getU() {
     return u;

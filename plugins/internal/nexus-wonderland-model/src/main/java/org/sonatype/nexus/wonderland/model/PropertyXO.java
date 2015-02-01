@@ -31,10 +31,10 @@ public class PropertyXO
 {
   @XmlElement(required = true)
   @JsonProperty("key")
-  protected String key;
+  private String key;
 
   @JsonProperty("value")
-  protected String value;
+  private String value;
 
   public String getKey() {
     return key;
