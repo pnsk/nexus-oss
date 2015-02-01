@@ -29,7 +29,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public abstract class VersionConditions
     implements Condition
 {
-
   /**
    * Version constraint that matches all released Nexus versions beginning with version 1.9.
    */
@@ -40,113 +39,12 @@ public abstract class VersionConditions
    */
   private static final VersionConstraint POST_1_9_VERSIONS = parseVersionConstraint("(1.9.99,)");
 
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.1.
-   */
-  private static final VersionConstraint POST_2_0_VERSIONS = parseVersionConstraint("(2.0.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.2.
-   */
-  private static final VersionConstraint POST_2_1_VERSIONS = parseVersionConstraint("(2.1.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.3.
-   */
-  private static final VersionConstraint POST_2_2_VERSIONS = parseVersionConstraint("(2.2.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.4.
-   */
-  private static final VersionConstraint POST_2_3_VERSIONS = parseVersionConstraint("(2.3.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.5.
-   */
-  private static final VersionConstraint POST_2_4_VERSIONS = parseVersionConstraint("(2.4.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.6.
-   */
-  private static final VersionConstraint POST_2_5_VERSIONS = parseVersionConstraint("(2.5.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.7.
-   */
-  private static final VersionConstraint POST_2_6_VERSIONS = parseVersionConstraint("(2.6.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.8.
-   */
-  private static final VersionConstraint POST_2_7_VERSIONS = parseVersionConstraint("(2.7.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.9.
-   */
-  private static final VersionConstraint POST_2_8_VERSIONS = parseVersionConstraint("(2.8.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 2.10.
-   */
-  private static final VersionConstraint POST_2_9_VERSIONS = parseVersionConstraint("(2.9.99,)");
-
-  /**
-   * Version constraint that matches all released Nexus versions beginning with version 3.0.
-   */
-  private static final VersionConstraint POST_2_99_VERSIONS = parseVersionConstraint("(2.99.99,)");
-
-  // ==
-
   public static Condition anyModernVersion() {
     return new VersionCondition(POST_1_8_VERSIONS);
   }
 
   public static Condition any20AndLaterVersion() {
     return new VersionCondition(POST_1_9_VERSIONS);
-  }
-
-  public static Condition any21AndLaterVersion() {
-    return new VersionCondition(POST_2_0_VERSIONS);
-  }
-
-  public static Condition any22AndLaterVersion() {
-    return new VersionCondition(POST_2_1_VERSIONS);
-  }
-
-  public static Condition any23AndLaterVersion() {
-    return new VersionCondition(POST_2_2_VERSIONS);
-  }
-
-  public static Condition any24AndLaterVersion() {
-    return new VersionCondition(POST_2_3_VERSIONS);
-  }
-
-  public static Condition any25AndLaterVersion() {
-    return new VersionCondition(POST_2_4_VERSIONS);
-  }
-
-  public static Condition any26AndLaterVersion() {
-    return new VersionCondition(POST_2_5_VERSIONS);
-  }
-
-  public static Condition any27AndLaterVersion() {
-    return new VersionCondition(POST_2_6_VERSIONS);
-  }
-
-  public static Condition any28AndLaterVersion() {
-    return new VersionCondition(POST_2_7_VERSIONS);
-  }
-
-  public static Condition any29AndLaterVersion() {
-    return new VersionCondition(POST_2_8_VERSIONS);
-  }
-
-  public static Condition any210AndLaterVersion() {
-    return new VersionCondition(POST_2_9_VERSIONS);
-  }
-
-  public static Condition any30AndLaterVersion() {
-    return new VersionCondition(POST_2_99_VERSIONS);
   }
 
   public static Condition withVersion(final String versionRange) {
@@ -194,5 +92,4 @@ public abstract class VersionConditions
       throw new IllegalArgumentException("Unable to parse version: " + version, e);
     }
   }
-
 }

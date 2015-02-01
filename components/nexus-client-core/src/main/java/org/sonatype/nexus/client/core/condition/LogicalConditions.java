@@ -25,7 +25,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class LogicalConditions
 {
-
   /**
    * Creates a {@link org.sonatype.nexus.client.core.Condition} that requires that all members match. In other words,
    * it

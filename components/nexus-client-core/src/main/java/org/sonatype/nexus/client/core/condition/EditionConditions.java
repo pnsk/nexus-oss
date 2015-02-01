@@ -26,47 +26,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class EditionConditions
 {
-
   /**
    * Edition pattern that matches everything.
    */
   private static final Pattern ALL_EDITIONS = Pattern.compile(".*");
 
-  /**
-   * Edition pattern that matches OSS edition.
-   */
-  private static final Pattern OSS_EDITION = Pattern.compile("OSS");
 
   /**
    * Edition pattern that matches Professional editions (both registered and evaluation).
    */
   private static final Pattern PRO_EDITION = Pattern.compile("^PRO.*$");
 
-  /**
-   * Edition pattern that matches registered Professional edition (not matched evaluation instances).
-   */
-  private static final Pattern REGISTERED_PRO_EDITION = Pattern.compile("^PRO$");
-
   public static Condition anyEdition() {
     return new EditionCondition(ALL_EDITIONS);
-  }
-
-  public static Condition anyOssEdition() {
-    return new EditionCondition(OSS_EDITION);
   }
 
   public static Condition anyProEdition() {
     return new EditionCondition(PRO_EDITION);
   }
 
-  public static Condition anyRegisteredProEdition() {
-    return new EditionCondition(REGISTERED_PRO_EDITION);
-  }
-
   private static class EditionCondition
       implements Condition
   {
-
     private final Pattern editionPattern;
 
     private EditionCondition(final Pattern editionPattern) {
