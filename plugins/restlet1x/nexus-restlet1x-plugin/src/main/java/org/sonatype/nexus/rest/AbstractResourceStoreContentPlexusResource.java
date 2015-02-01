@@ -54,8 +54,6 @@ import org.sonatype.nexus.proxy.repository.GroupItemNotFoundException;
 import org.sonatype.nexus.proxy.repository.Repository;
 import org.sonatype.nexus.proxy.storage.UnsupportedStorageOperationException;
 import org.sonatype.nexus.rest.model.ContentListDescribeRequestResource;
-import org.sonatype.nexus.rest.model.ContentListDescribeResource;
-import org.sonatype.nexus.rest.model.ContentListDescribeResourceResponse;
 import org.sonatype.nexus.rest.model.ContentListDescribeResponseResource;
 import org.sonatype.nexus.rest.model.ContentListResource;
 import org.sonatype.nexus.rest.model.ContentListResourceResponse;
@@ -89,8 +87,6 @@ import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
 import org.restlet.util.Series;
 
-import static org.sonatype.nexus.proxy.ItemNotFoundException.reasonFor;
-
 /**
  * This is an abstract resource handler that uses ResourceStore implementor and publishes those over REST.
  *
@@ -99,8 +95,6 @@ import static org.sonatype.nexus.proxy.ItemNotFoundException.reasonFor;
 public abstract class AbstractResourceStoreContentPlexusResource
     extends AbstractNexusPlexusResource
 {
-  public static final String IS_DESCRIBE_PARAMETER = "describe";
-
   public static final String REQUEST_RECEIVED_KEY = "request.received.timestamp";
 
   public static final String OVERRIDE_FILENAME_KEY = "override-filename";
@@ -109,8 +103,6 @@ public abstract class AbstractResourceStoreContentPlexusResource
 
   private Provider<SystemStatus> systemStatusProvider;
 
-  public Map<String, ArtifactViewProvider> viewProviders;
-  
   public AbstractResourceStoreContentPlexusResource() {
     super();
 
@@ -121,22 +113,15 @@ public abstract class AbstractResourceStoreContentPlexusResource
 
   @VisibleForTesting
   AbstractResourceStoreContentPlexusResource(final SecuritySystem securitySystem,
-                                             final Provider<SystemStatus> systemStatusProvider,
-                                             final Map<String, ArtifactViewProvider> viewProviders)
+                                             final Provider<SystemStatus> systemStatusProvider)
   {
     this.securitySystem = securitySystem;
     this.systemStatusProvider = systemStatusProvider;
-    this.viewProviders = viewProviders;
   }
 
   @Inject
   public void setSecuritySystem(final SecuritySystem securitySystem) {
     this.securitySystem = securitySystem;
-  }
-
-  @Inject
-  public void setViewProviders(final Map<String, ArtifactViewProvider> viewProviders) {
-    this.viewProviders = viewProviders;
   }
 
   @Override
@@ -160,11 +145,6 @@ public abstract class AbstractResourceStoreContentPlexusResource
     }
   }
 
-  protected boolean isDescribe(Request request) {
-    // check do we need describe
-    return request.getResourceRef().getQueryAsForm().getFirst(IS_DESCRIBE_PARAMETER) != null;
-  }
-
   @Override
   public Object get(Context context, Request request, Response response, Variant variant)
       throws ResourceException
@@ -180,12 +160,7 @@ public abstract class AbstractResourceStoreContentPlexusResource
         return renderItem(context, request, response, variant, store, item);
       }
       catch (ItemNotFoundException e) {
-        if (isDescribe(request)) {
-          return renderDescribeItem(context, request, response, variant, store, req, null, e);
-        }
-        else {
-          throw e;
-        }
+        throw e;
       }
     }
     catch (Exception e) {
@@ -302,11 +277,6 @@ public abstract class AbstractResourceStoreContentPlexusResource
     result.setRequestAsExpired(asExpired(request, resourceStorePath));
     result.setExternal(true);
 
-    // honor the describe, add timing
-    if (isDescribe(request)) {
-      result.getRequestContext().put(REQUEST_RECEIVED_KEY, System.currentTimeMillis());
-    }
-
     // honor if-modified-since
     if (request.getConditions().getModifiedSince() != null) {
       result.setIfModifiedSince(request.getConditions().getModifiedSince().getTime());
@@ -356,10 +326,6 @@ public abstract class AbstractResourceStoreContentPlexusResource
       throws IOException, AccessDeniedException, NoSuchResourceStoreException, IllegalOperationException,
              ItemNotFoundException, StorageException, ResourceException
   {
-    if (isDescribe(req)) {
-      return renderDescribeItem(context, req, res, variant, store, item.getResourceStoreRequest(), item, null);
-    }
-
     if (!item.isVirtual()) {
       if (!item.getRepositoryItemUid().getBooleanAttributeValue(IsRemotelyAccessibleAttribute.class)) {
         getLogger().debug(
@@ -554,59 +520,6 @@ public abstract class AbstractResourceStoreContentPlexusResource
   {
     // we are just returning anything, the connector will strip off content anyway.
     return new StorageItemRepresentation(variant.getMediaType(), coll);
-  }
-
-  protected Object renderDescribeItem(Context context, Request req, Response res, Variant variant,
-                                      ResourceStore store, ResourceStoreRequest request, StorageItem item,
-                                      Throwable t)
-      throws IOException, AccessDeniedException, NoSuchResourceStoreException, IllegalOperationException,
-             ItemNotFoundException, StorageException, ResourceException
-  {
-    Parameter describeParameter = req.getResourceRef().getQueryAsForm().getFirst(IS_DESCRIBE_PARAMETER);
-
-    if (StringUtils.isNotEmpty(describeParameter.getValue())) {
-      // if item is null throw not found
-      String key = describeParameter.getValue();
-
-      // check
-      if (!viewProviders.containsKey(key)) {
-        throw new IllegalRequestException(request, "No view for key: " + key);
-      }
-
-      Object result = viewProviders.get(key).retrieveView(store, request, item, req);
-
-      // make sure we have valid content
-      if (result == null) {
-        throw new ItemNotFoundException(reasonFor(request,
-            "View provider keyed \"%s\" did not provide content.", key));
-      }
-      else {
-        return result;
-      }
-    }
-
-    ContentListDescribeResourceResponse result = new ContentListDescribeResourceResponse();
-
-    ContentListDescribeResource resource = new ContentListDescribeResource();
-
-    resource.setRequestUrl(req.getOriginalRef().toString());
-
-    if (request.getRequestContext().containsKey(REQUEST_RECEIVED_KEY)) {
-      long received = (Long) request.getRequestContext().get(REQUEST_RECEIVED_KEY);
-
-      resource.setProcessingTimeMillis(System.currentTimeMillis() - received);
-    }
-    else {
-      resource.setProcessingTimeMillis(-1);
-    }
-
-    resource.setRequest(describeRequest(context, req, res, variant, request));
-
-    resource.setResponse(describeResponse(context, req, res, variant, request, item, t));
-
-    result.setData(resource);
-
-    return result;
   }
 
   protected ContentListDescribeRequestResource describeRequest(Context context, Request req, Response res,
