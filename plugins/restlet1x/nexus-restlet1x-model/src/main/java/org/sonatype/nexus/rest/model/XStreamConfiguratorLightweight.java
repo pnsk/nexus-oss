@@ -22,9 +22,9 @@ import org.sonatype.security.rest.model.AuthenticationLoginResourceResponse;
 import org.sonatype.security.rest.model.ClientPermission;
 
 import com.thoughtworks.xstream.XStream;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.ModelBase;
-import org.apache.maven.model.Scm;
+//import org.apache.maven.model.Model;
+//import org.apache.maven.model.ModelBase;
+//import org.apache.maven.model.Scm;
 
 //import org.sonatype.security.rest.model.ExternalRoleMappingListResourceResponse;
 //import org.sonatype.security.rest.model.ExternalRoleMappingResource;
@@ -90,7 +90,7 @@ public class XStreamConfiguratorLightweight
     // data
 
     // Maven POM
-    xstream.alias("project", Model.class);
+    //xstream.alias("project", Model.class);
 
     //xstream.processAnnotations(ArtifactResolveResourceResponse.class);
     //xstream.processAnnotations(GlobalConfigurationListResourceResponse.class);
@@ -239,9 +239,9 @@ public class XStreamConfiguratorLightweight
     //    String.class, "securityRealmItem"));
 
     // Maven model
-    xstream.omitField(Model.class, "modelEncoding");
-    xstream.omitField(ModelBase.class, "modelEncoding");
-    xstream.omitField(Scm.class, "modelEncoding");
+    //xstream.omitField(Model.class, "modelEncoding");
+    //xstream.omitField(ModelBase.class, "modelEncoding");
+    //xstream.omitField(Scm.class, "modelEncoding");
 
     // SECURITY below
     xstream.processAnnotations(AuthenticationLoginResourceResponse.class);
