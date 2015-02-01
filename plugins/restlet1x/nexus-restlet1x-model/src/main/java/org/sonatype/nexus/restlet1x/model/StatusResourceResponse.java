@@ -28,7 +28,6 @@ package org.sonatype.nexus.restlet1x.model;
 @javax.xml.bind.annotation.XmlRootElement( name = "status" )
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 public class StatusResourceResponse
-    extends NexusResponse
     implements java.io.Serializable
 {
 
