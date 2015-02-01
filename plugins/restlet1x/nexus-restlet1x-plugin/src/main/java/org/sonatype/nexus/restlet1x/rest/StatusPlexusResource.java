@@ -12,9 +12,6 @@
  */
 package org.sonatype.nexus.restlet1x.rest;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,7 +24,6 @@ import javax.ws.rs.Produces;
 import org.sonatype.nexus.SystemStatus;
 import org.sonatype.nexus.restlet1x.model.StatusResource;
 import org.sonatype.nexus.restlet1x.model.StatusResourceResponse;
-import org.sonatype.nexus.web.BaseUrlHolder;
 import org.sonatype.plexus.rest.resource.AbstractPlexusResource;
 import org.sonatype.plexus.rest.resource.ManagedPlexusResource;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
@@ -79,69 +75,14 @@ public class StatusPlexusResource
       throws ResourceException
   {
     final SystemStatus status = systemStatusProvider.get();
-
     final StatusResource resource = new StatusResource();
-
     resource.setAppName(status.getAppName());
-
-    resource.setFormattedAppName(status.getFormattedAppName());
-
     resource.setVersion(status.getVersion());
-
-    resource.setApiVersion(status.getApiVersion());
-
-    resource.setEditionLong(status.getEditionLong());
-
     resource.setEditionShort(status.getEditionShort());
-
-    resource.setAttributionsURL(status.getAttributionsURL());
-
-    resource.setPurchaseURL(status.getPurchaseURL());
-
-    resource.setUserLicenseURL(status.getUserLicenseURL());
-
     resource.setState(status.getState().toString());
 
-    resource.setInitializedAt(status.getInitializedAt());
-
-    resource.setStartedAt(status.getStartedAt());
-
-    resource.setLastConfigChange(status.getLastConfigChange());
-
-    resource.setFirstStart(status.isFirstStart());
-
-    resource.setInstanceUpgraded(status.isInstanceUpgraded());
-
-    resource.setConfigurationUpgraded(status.isConfigurationUpgraded());
-
-    resource.setErrorCause(spit(status.getErrorCause()));
-
-    resource.setBaseUrl(BaseUrlHolder.get());
-
-    resource.setLicenseInstalled(status.isLicenseInstalled());
-
-    resource.setLicenseExpired(status.isLicenseExpired());
-
-    resource.setTrialLicense(status.isTrialLicense());
-
     StatusResourceResponse result = new StatusResourceResponse();
-
     result.setData(resource);
-
     return result;
-  }
-
-  private String spit(Throwable t) {
-    if (t == null) {
-      return null;
-    }
-    else {
-      StringWriter sw = new StringWriter();
-
-      t.printStackTrace(new PrintWriter(sw));
-
-      return sw.toString();
-    }
-
   }
 }

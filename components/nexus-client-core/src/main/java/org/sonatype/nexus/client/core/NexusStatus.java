@@ -12,8 +12,6 @@
  */
 package org.sonatype.nexus.client.core;
 
-import java.util.Date;
-
 /**
  * Status of the remote Nexus instance.
  *
@@ -21,31 +19,15 @@ import java.util.Date;
  */
 public class NexusStatus
 {
-
   /**
    * The application name.
    */
   private final String appName;
 
   /**
-   * The formatted application name (html formatting!).
-   */
-  private final String formattedAppName;
-
-  /**
    * The version of the nexus instance.
    */
   private final String version;
-
-  /**
-   * The version of the core nexus instance.
-   */
-  private final String apiVersion;
-
-  /**
-   * The long version of the nexus edition (i.e. Open Source or Professional).
-   */
-  private final String editionLong;
 
   /**
    * The short version of the nexus edition (i.e. OSS or PRO).
@@ -57,87 +39,19 @@ public class NexusStatus
    */
   private final String state;
 
-  /**
-   * The date the instance was first initialized.
-   */
-  private final Date initializedAt;
-
-  /**
-   * The date the instance was last started.
-   */
-  private final Date startedAt;
-
-  /**
-   * The last time the nexus configuration was updated.
-   */
-  private final Date lastConfigChange;
-
-  /**
-   * The generation of the nexus configuration.
-   */
-  private final long lastConfigGeneration;
-
-  /**
-   * Flag that states if this is the first time nexus was started.
-   */
-  private final boolean firstStart;
-
-  /**
-   * Flag that states if the nexus instance has been upgraded.
-   */
-  private final boolean instanceUpgraded;
-
-  /**
-   * Flag that states if the nexus configuration has been upgraded
-   */
-  private final boolean configurationUpgraded;
-
-  /**
-   * The base url of the nexus instance.
-   */
-  private final String baseUrl;
-
-  public NexusStatus(final String appName, final String formattedAppName, final String version,
-                     final String apiVersion, final String editionLong, final String editionShort,
-                     final String state, final Date initializedAt, final Date startedAt,
-                     final Date lastConfigChange, final long lastConfigGeneration, final boolean firstStart,
-                     final boolean instanceUpgraded, final boolean configurationUpgraded, final String baseUrl)
+  public NexusStatus(final String appName,
+                     final String version,
+                     final String editionShort,
+                     final String state)
   {
     this.appName = appName;
-    this.formattedAppName = formattedAppName;
     this.version = version;
-    this.apiVersion = apiVersion;
-    this.editionLong = editionLong;
     this.editionShort = editionShort;
     this.state = state;
-    this.initializedAt = initializedAt;
-    this.startedAt = startedAt;
-    this.lastConfigChange = lastConfigChange;
-    this.lastConfigGeneration = lastConfigGeneration;
-    this.firstStart = firstStart;
-    this.instanceUpgraded = instanceUpgraded;
-    this.configurationUpgraded = configurationUpgraded;
-    this.baseUrl = baseUrl;
-  }
-
-  public String getAppName() {
-    return appName;
-  }
-
-  public String getFormattedAppName() {
-    return formattedAppName;
   }
 
   public String getVersion() {
     return version;
-  }
-
-  public String getApiVersion() {
-    return apiVersion;
-  }
-
-  public String getEditionLong() {
-    return editionLong;
   }
 
   public String getEditionShort() {
@@ -146,38 +60,6 @@ public class NexusStatus
 
   public String getState() {
     return state;
-  }
-
-  public Date getInitializedAt() {
-    return initializedAt;
-  }
-
-  public Date getStartedAt() {
-    return startedAt;
-  }
-
-  public Date getLastConfigChange() {
-    return lastConfigChange;
-  }
-
-  public long getLastConfigGeneration() {
-    return lastConfigGeneration;
-  }
-
-  public boolean isFirstStart() {
-    return firstStart;
-  }
-
-  public boolean isInstanceUpgraded() {
-    return instanceUpgraded;
-  }
-
-  public boolean isConfigurationUpgraded() {
-    return configurationUpgraded;
-  }
-
-  public String getBaseUrl() {
-    return baseUrl;
   }
 
   @Override

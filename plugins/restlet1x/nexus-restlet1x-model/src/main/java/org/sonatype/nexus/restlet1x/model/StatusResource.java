@@ -19,593 +19,64 @@ package org.sonatype.nexus.restlet1x.model;
 
 /**
  * Nexus status details.
- * 
+ *
  * @version $Revision$ $Date$
  */
-@SuppressWarnings( "all" )
-@javax.xml.bind.annotation.XmlType( name = "status-resource" )
+@SuppressWarnings("all")
+@javax.xml.bind.annotation.XmlType(name = "status-resource")
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
 public class StatusResource
     implements java.io.Serializable
 {
-
-      //--------------------------/
-     //- Class/Member Variables -/
-    //--------------------------/
-
-    /**
-     * The application name.
-     */
-    private String appName;
-
-    /**
-     * The formatted application name (html formatting).
-     */
-    private String formattedAppName;
-
-    /**
-     * The version of the nexus instance.
-     */
-    private String version;
-
-    /**
-     * The version of the core nexus instance.
-     */
-    private String apiVersion;
-
-    /**
-     * The long version of the nexus edition (i.e. Open Source or
-     * Professional).
-     */
-    private String editionLong;
-
-    /**
-     * The short version of the nexus edition (i.e. OSS or PRO).
-     */
-    private String editionShort;
-
-    /**
-     * The attributions page URL.
-     */
-    private String attributionsURL;
-
-    /**
-     * The URL of where to buy the product.
-     */
-    private String purchaseURL;
-
-    /**
-     * The URL of where the End User License Agreement can be found.
-     */
-    private String userLicenseURL;
-
-    /**
-     * The state of the nexus instance.
-     */
-    private String state;
-
-    /**
-     * The operation mode of the nexus instance.
-     */
-    private String operationMode;
-
-    /**
-     * The date the instance was first initialized.
-     */
-    private java.util.Date initializedAt;
-
-    /**
-     * The date the instance was last started.
-     */
-    private java.util.Date startedAt;
-
-    /**
-     * The last time the nexus configuration was updated.
-     */
-    private java.util.Date lastConfigChange;
-
-    /**
-     * Flag that states if this is the first time nexus was started.
-     */
-    private boolean firstStart = false;
-
-    /**
-     * Flag that states if the nexus instance has been upgraded.
-     */
-    private boolean instanceUpgraded = false;
-
-    /**
-     * Flag that states if the nexus configuration has been upgraded
-     */
-    private boolean configurationUpgraded = false;
-
-    /**
-     * Errors occuring during nexus startup.
-     */
-    private String errorCause;
-
-    /**
-     * The base url of the nexus instance.
-     */
-    private String baseUrl;
-
-    /**
-     * Flag that states if currently there is a license installed.
-     */
-    private boolean licenseInstalled = false;
-
-    /**
-     * Flag that states if current installed license is expired.
-     */
-    private boolean licenseExpired = false;
-
-    /**
-     * Flag that states if current installed license is a trial
-     * license.
-     */
-    private boolean trialLicense = false;
-
-
-      //-----------/
-     //- Methods -/
-    //-----------/
-
-    /**
-     * Get the version of the core nexus instance.
-     * 
-     * @return String
-     */
-    public String getApiVersion()
-    {
-        return this.apiVersion;
-    } //-- String getApiVersion()
-
-    /**
-     * Get the application name.
-     * 
-     * @return String
-     */
-    public String getAppName()
-    {
-        return this.appName;
-    } //-- String getAppName()
-
-    /**
-     * Get the attributions page URL.
-     * 
-     * @return String
-     */
-    public String getAttributionsURL()
-    {
-        return this.attributionsURL;
-    } //-- String getAttributionsURL()
-
-    /**
-     * Get the base url of the nexus instance.
-     * 
-     * @return String
-     */
-    public String getBaseUrl()
-    {
-        return this.baseUrl;
-    } //-- String getBaseUrl()
-
-    /**
-     * Get the long version of the nexus edition (i.e. Open Source
-     * or Professional).
-     * 
-     * @return String
-     */
-    public String getEditionLong()
-    {
-        return this.editionLong;
-    } //-- String getEditionLong()
-
-    /**
-     * Get the short version of the nexus edition (i.e. OSS or
-     * PRO).
-     * 
-     * @return String
-     */
-    public String getEditionShort()
-    {
-        return this.editionShort;
-    } //-- String getEditionShort()
-
-    /**
-     * Get errors occuring during nexus startup.
-     * 
-     * @return String
-     */
-    public String getErrorCause()
-    {
-        return this.errorCause;
-    } //-- String getErrorCause()
-
-    /**
-     * Get the formatted application name (html formatting).
-     * 
-     * @return String
-     */
-    public String getFormattedAppName()
-    {
-        return this.formattedAppName;
-    } //-- String getFormattedAppName()
-
-    /**
-     * Get the date the instance was first initialized.
-     * 
-     * @return Date
-     */
-    public java.util.Date getInitializedAt()
-    {
-        return this.initializedAt;
-    } //-- java.util.Date getInitializedAt()
-
-    /**
-     * Get the last time the nexus configuration was updated.
-     * 
-     * @return Date
-     */
-    public java.util.Date getLastConfigChange()
-    {
-        return this.lastConfigChange;
-    } //-- java.util.Date getLastConfigChange()
-
-    /**
-     * Get the operation mode of the nexus instance.
-     * 
-     * @return String
-     */
-    public String getOperationMode()
-    {
-        return this.operationMode;
-    } //-- String getOperationMode()
-
-    /**
-     * Get the URL of where to buy the product.
-     * 
-     * @return String
-     */
-    public String getPurchaseURL()
-    {
-        return this.purchaseURL;
-    } //-- String getPurchaseURL()
-
-    /**
-     * Get the date the instance was last started.
-     * 
-     * @return Date
-     */
-    public java.util.Date getStartedAt()
-    {
-        return this.startedAt;
-    } //-- java.util.Date getStartedAt()
-
-    /**
-     * Get the state of the nexus instance.
-     * 
-     * @return String
-     */
-    public String getState()
-    {
-        return this.state;
-    } //-- String getState()
-
-    /**
-     * Get the URL of where the End User License Agreement can be
-     * found.
-     * 
-     * @return String
-     */
-    public String getUserLicenseURL()
-    {
-        return this.userLicenseURL;
-    } //-- String getUserLicenseURL()
-
-    /**
-     * Get the version of the nexus instance.
-     * 
-     * @return String
-     */
-    public String getVersion()
-    {
-        return this.version;
-    } //-- String getVersion()
-
-    /**
-     * Get flag that states if the nexus configuration has been
-     * upgraded.
-     * 
-     * @return boolean
-     */
-    public boolean isConfigurationUpgraded()
-    {
-        return this.configurationUpgraded;
-    } //-- boolean isConfigurationUpgraded()
-
-    /**
-     * Get flag that states if this is the first time nexus was
-     * started.
-     * 
-     * @return boolean
-     */
-    public boolean isFirstStart()
-    {
-        return this.firstStart;
-    } //-- boolean isFirstStart()
-
-    /**
-     * Get flag that states if the nexus instance has been
-     * upgraded.
-     * 
-     * @return boolean
-     */
-    public boolean isInstanceUpgraded()
-    {
-        return this.instanceUpgraded;
-    } //-- boolean isInstanceUpgraded()
-
-    /**
-     * Get flag that states if current installed license is
-     * expired.
-     * 
-     * @return boolean
-     */
-    public boolean isLicenseExpired()
-    {
-        return this.licenseExpired;
-    } //-- boolean isLicenseExpired()
-
-    /**
-     * Get flag that states if currently there is a license
-     * installed.
-     * 
-     * @return boolean
-     */
-    public boolean isLicenseInstalled()
-    {
-        return this.licenseInstalled;
-    } //-- boolean isLicenseInstalled()
-
-    /**
-     * Get flag that states if current installed license is a trial
-     * license.
-     * 
-     * @return boolean
-     */
-    public boolean isTrialLicense()
-    {
-        return this.trialLicense;
-    } //-- boolean isTrialLicense()
-
-    /**
-     * Set the version of the core nexus instance.
-     * 
-     * @param apiVersion
-     */
-    public void setApiVersion( String apiVersion )
-    {
-        this.apiVersion = apiVersion;
-    } //-- void setApiVersion( String )
-
-    /**
-     * Set the application name.
-     * 
-     * @param appName
-     */
-    public void setAppName( String appName )
-    {
-        this.appName = appName;
-    } //-- void setAppName( String )
-
-    /**
-     * Set the attributions page URL.
-     * 
-     * @param attributionsURL
-     */
-    public void setAttributionsURL( String attributionsURL )
-    {
-        this.attributionsURL = attributionsURL;
-    } //-- void setAttributionsURL( String )
-
-    /**
-     * Set the base url of the nexus instance.
-     * 
-     * @param baseUrl
-     */
-    public void setBaseUrl( String baseUrl )
-    {
-        this.baseUrl = baseUrl;
-    } //-- void setBaseUrl( String )
-
-    /**
-     * Set flag that states if the nexus configuration has been
-     * upgraded.
-     * 
-     * @param configurationUpgraded
-     */
-    public void setConfigurationUpgraded( boolean configurationUpgraded )
-    {
-        this.configurationUpgraded = configurationUpgraded;
-    } //-- void setConfigurationUpgraded( boolean )
-
-    /**
-     * Set the long version of the nexus edition (i.e. Open Source
-     * or Professional).
-     * 
-     * @param editionLong
-     */
-    public void setEditionLong( String editionLong )
-    {
-        this.editionLong = editionLong;
-    } //-- void setEditionLong( String )
-
-    /**
-     * Set the short version of the nexus edition (i.e. OSS or
-     * PRO).
-     * 
-     * @param editionShort
-     */
-    public void setEditionShort( String editionShort )
-    {
-        this.editionShort = editionShort;
-    } //-- void setEditionShort( String )
-
-    /**
-     * Set errors occuring during nexus startup.
-     * 
-     * @param errorCause
-     */
-    public void setErrorCause( String errorCause )
-    {
-        this.errorCause = errorCause;
-    } //-- void setErrorCause( String )
-
-    /**
-     * Set flag that states if this is the first time nexus was
-     * started.
-     * 
-     * @param firstStart
-     */
-    public void setFirstStart( boolean firstStart )
-    {
-        this.firstStart = firstStart;
-    } //-- void setFirstStart( boolean )
-
-    /**
-     * Set the formatted application name (html formatting).
-     * 
-     * @param formattedAppName
-     */
-    public void setFormattedAppName( String formattedAppName )
-    {
-        this.formattedAppName = formattedAppName;
-    } //-- void setFormattedAppName( String )
-
-    /**
-     * Set the date the instance was first initialized.
-     * 
-     * @param initializedAt
-     */
-    public void setInitializedAt( java.util.Date initializedAt )
-    {
-        this.initializedAt = initializedAt;
-    } //-- void setInitializedAt( java.util.Date )
-
-    /**
-     * Set flag that states if the nexus instance has been
-     * upgraded.
-     * 
-     * @param instanceUpgraded
-     */
-    public void setInstanceUpgraded( boolean instanceUpgraded )
-    {
-        this.instanceUpgraded = instanceUpgraded;
-    } //-- void setInstanceUpgraded( boolean )
-
-    /**
-     * Set the last time the nexus configuration was updated.
-     * 
-     * @param lastConfigChange
-     */
-    public void setLastConfigChange( java.util.Date lastConfigChange )
-    {
-        this.lastConfigChange = lastConfigChange;
-    } //-- void setLastConfigChange( java.util.Date )
-
-    /**
-     * Set flag that states if current installed license is
-     * expired.
-     * 
-     * @param licenseExpired
-     */
-    public void setLicenseExpired( boolean licenseExpired )
-    {
-        this.licenseExpired = licenseExpired;
-    } //-- void setLicenseExpired( boolean )
-
-    /**
-     * Set flag that states if currently there is a license
-     * installed.
-     * 
-     * @param licenseInstalled
-     */
-    public void setLicenseInstalled( boolean licenseInstalled )
-    {
-        this.licenseInstalled = licenseInstalled;
-    } //-- void setLicenseInstalled( boolean )
-
-    /**
-     * Set the operation mode of the nexus instance.
-     * 
-     * @param operationMode
-     */
-    public void setOperationMode( String operationMode )
-    {
-        this.operationMode = operationMode;
-    } //-- void setOperationMode( String )
-
-    /**
-     * Set the URL of where to buy the product.
-     * 
-     * @param purchaseURL
-     */
-    public void setPurchaseURL( String purchaseURL )
-    {
-        this.purchaseURL = purchaseURL;
-    } //-- void setPurchaseURL( String )
-
-    /**
-     * Set the date the instance was last started.
-     * 
-     * @param startedAt
-     */
-    public void setStartedAt( java.util.Date startedAt )
-    {
-        this.startedAt = startedAt;
-    } //-- void setStartedAt( java.util.Date )
-
-    /**
-     * Set the state of the nexus instance.
-     * 
-     * @param state
-     */
-    public void setState( String state )
-    {
-        this.state = state;
-    } //-- void setState( String )
-
-    /**
-     * Set flag that states if current installed license is a trial
-     * license.
-     * 
-     * @param trialLicense
-     */
-    public void setTrialLicense( boolean trialLicense )
-    {
-        this.trialLicense = trialLicense;
-    } //-- void setTrialLicense( boolean )
-
-    /**
-     * Set the URL of where the End User License Agreement can be
-     * found.
-     * 
-     * @param userLicenseURL
-     */
-    public void setUserLicenseURL( String userLicenseURL )
-    {
-        this.userLicenseURL = userLicenseURL;
-    } //-- void setUserLicenseURL( String )
-
-    /**
-     * Set the version of the nexus instance.
-     * 
-     * @param version
-     */
-    public void setVersion( String version )
-    {
-        this.version = version;
-    } //-- void setVersion( String )
-
+  /**
+   * The application name.
+   */
+  private String appName;
+
+  /**
+   * The version of the nexus instance.
+   */
+  private String version;
+
+  /**
+   * The short version of the nexus edition (i.e. OSS or PRO).
+   */
+  private String editionShort;
+
+  /**
+   * The state of the nexus instance.
+   */
+  private String state;
+
+  public String getAppName() {
+    return appName;
+  }
+
+  public void setAppName(final String appName) {
+    this.appName = appName;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(final String version) {
+    this.version = version;
+  }
+
+  public String getEditionShort() {
+    return editionShort;
+  }
+
+  public void setEditionShort(final String editionShort) {
+    this.editionShort = editionShort;
+  }
+
+  public String getState() {
+    return state;
+  }
+
+  public void setState(final String state) {
+    this.state = state;
+  }
 }
