@@ -25,7 +25,6 @@ import org.sonatype.nexus.proxy.registry.RepositoryRegistry;
 import org.sonatype.nexus.proxy.router.RepositoryRouter;
 import org.sonatype.nexus.templates.NoSuchTemplateIdException;
 import org.sonatype.nexus.templates.TemplateManager;
-import org.sonatype.nexus.templates.TemplateSet;
 import org.sonatype.nexus.templates.repository.RepositoryTemplate;
 import org.sonatype.plexus.rest.ReferenceFactory;
 import org.sonatype.plexus.rest.resource.AbstractPlexusResource;
@@ -114,10 +113,6 @@ public abstract class AbstractNexusPlexusResource
   protected RepositoryRouter getRepositoryRouter() {
     return repositoryRouter;
   }
-  
-  protected TemplateSet getRepositoryTemplates() {
-    return getTemplateManager().getTemplates().getTemplates(RepositoryTemplate.class);
-  }
 
   protected RepositoryTemplate getRepositoryTemplateById(String id)
       throws NoSuchTemplateIdException
@@ -176,16 +171,6 @@ public abstract class AbstractNexusPlexusResource
     return this.referenceFactory.createChildReference(request, childPath);
   }
 
-  protected Reference createRootReference(Request request, String relPart) {
-    Reference ref = new Reference(getContextRoot(request), relPart);
-
-    if (!ref.getBaseRef().getPath().endsWith("/")) {
-      ref.getBaseRef().setPath(ref.getBaseRef().getPath() + "/");
-    }
-
-    return ref.getTargetRef();
-  }
-
   protected Reference createRepositoryReference(Request request, String repoId) {
     return createReference(getContextRoot(request), "service/local/repositories/" + repoId).getTargetRef();
   }
@@ -200,10 +185,6 @@ public abstract class AbstractNexusPlexusResource
     repoPath = "content/" + repoPath;
 
     return createReference(repoRootRef, repoPath);
-  }
-
-  protected Reference createRepositoryGroupReference(Request request, String groupId) {
-    return createReference(getContextRoot(request), "service/local/repo_groups/" + groupId).getTargetRef();
   }
 
   protected Reference createRedirectReference(Request request) {
@@ -228,26 +209,6 @@ public abstract class AbstractNexusPlexusResource
     ne.setMsg(StringEscapeUtils.escapeHtml(msg));
     ner.addError(ne);
     return ner;
-  }
-
-  protected void handleInvalidConfigurationException(InvalidConfigurationException e)
-      throws PlexusResourceException
-  {
-    getLogger().debug("Configuration error!", e);
-
-    ErrorResponse nexusErrorResponse;
-
-    ValidationResponse vr = e.getValidationResponse();
-
-    if (vr != null && vr.getValidationErrors().size() > 0) {
-      org.sonatype.configuration.validation.ValidationMessage vm = vr.getValidationErrors().get(0);
-      nexusErrorResponse = getNexusErrorResponse(vm.getKey(), vm.getShortMessage());
-    }
-    else {
-      nexusErrorResponse = getNexusErrorResponse("*", e.getMessage());
-    }
-
-    throw new PlexusResourceException(Status.CLIENT_ERROR_BAD_REQUEST, "Configuration error.", nexusErrorResponse);
   }
 
   protected void handleConfigurationException(ConfigurationException e)
@@ -275,19 +236,7 @@ public abstract class AbstractNexusPlexusResource
     throw new PlexusResourceException(Status.CLIENT_ERROR_BAD_REQUEST, "Configuration error.", nexusErrorResponse);
   }
 
-  protected Reference createRedirectBaseRef(Request request) {
-    return createReference(getContextRoot(request), "service/local/artifact/maven/redirect").getTargetRef();
-  }
-
   protected String getValidRemoteIPAddress(Request request) {
     return RemoteIPFinder.findIP(request);
-  }
-
-  protected String getActualPassword(String newPassword, String oldPassword) {
-    if (PASSWORD_PLACE_HOLDER.equals(newPassword)) {
-      return oldPassword;
-    }
-
-    return newPassword;
   }
 }
