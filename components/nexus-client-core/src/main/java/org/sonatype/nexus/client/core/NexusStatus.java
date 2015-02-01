@@ -19,35 +19,19 @@ package org.sonatype.nexus.client.core;
  */
 public class NexusStatus
 {
-  /**
-   * The application name.
-   */
   private final String appName;
 
-  /**
-   * The version of the nexus instance.
-   */
   private final String version;
 
-  /**
-   * The short version of the nexus edition (i.e. OSS or PRO).
-   */
   private final String editionShort;
-
-  /**
-   * The state of the nexus instance.
-   */
-  private final String state;
 
   public NexusStatus(final String appName,
                      final String version,
-                     final String editionShort,
-                     final String state)
+                     final String editionShort)
   {
     this.appName = appName;
     this.version = version;
     this.editionShort = editionShort;
-    this.state = state;
   }
 
   public String getVersion() {
@@ -56,10 +40,6 @@ public class NexusStatus
 
   public String getEditionShort() {
     return editionShort;
-  }
-
-  public String getState() {
-    return state;
   }
 
   @Override

@@ -28,25 +28,11 @@ package org.sonatype.nexus.restlet1x.model;
 public class StatusResource
     implements java.io.Serializable
 {
-  /**
-   * The application name.
-   */
   private String appName;
 
-  /**
-   * The version of the nexus instance.
-   */
   private String version;
 
-  /**
-   * The short version of the nexus edition (i.e. OSS or PRO).
-   */
   private String editionShort;
-
-  /**
-   * The state of the nexus instance.
-   */
-  private String state;
 
   public String getAppName() {
     return appName;
@@ -70,13 +56,5 @@ public class StatusResource
 
   public void setEditionShort(final String editionShort) {
     this.editionShort = editionShort;
-  }
-
-  public String getState() {
-    return state;
-  }
-
-  public void setState(final String state) {
-    this.state = state;
   }
 }

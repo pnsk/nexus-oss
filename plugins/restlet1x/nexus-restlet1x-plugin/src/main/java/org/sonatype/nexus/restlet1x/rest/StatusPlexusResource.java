@@ -79,7 +79,6 @@ public class StatusPlexusResource
     resource.setAppName(status.getAppName());
     resource.setVersion(status.getVersion());
     resource.setEditionShort(status.getEditionShort());
-    resource.setState(status.getState().toString());
 
     StatusResourceResponse result = new StatusResourceResponse();
     result.setData(resource);
