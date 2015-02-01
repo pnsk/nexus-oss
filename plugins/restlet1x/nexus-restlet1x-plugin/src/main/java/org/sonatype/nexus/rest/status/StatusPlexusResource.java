@@ -25,10 +25,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.sonatype.nexus.SystemStatus;
-import org.sonatype.nexus.rest.authentication.AbstractSecurityPlexusResource;
 import org.sonatype.nexus.rest.model.StatusResource;
 import org.sonatype.nexus.rest.model.StatusResourceResponse;
 import org.sonatype.nexus.web.BaseUrlHolder;
+import org.sonatype.plexus.rest.resource.AbstractPlexusResource;
 import org.sonatype.plexus.rest.resource.ManagedPlexusResource;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
 
@@ -45,7 +45,7 @@ import org.restlet.resource.Variant;
 @Path(StatusPlexusResource.RESOURCE_URI)
 @Produces({"application/xml", "application/json"})
 public class StatusPlexusResource
-    extends AbstractSecurityPlexusResource
+    extends AbstractPlexusResource
     implements ManagedPlexusResource
 {
   public static final String RESOURCE_URI = "/status";

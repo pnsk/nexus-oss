@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.sonatype.plexus.rest.resource.AbstractPlexusResource;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
 import org.sonatype.security.rest.model.AuthenticationLoginResource;
 import org.sonatype.security.rest.model.AuthenticationLoginResourceResponse;
@@ -35,7 +36,7 @@ import org.restlet.resource.Variant;
 @Path(LoginPlexusResource.RESOURCE_URI)
 @Produces({"application/xml", "application/json"})
 public class LoginPlexusResource
-    extends AbstractSecurityPlexusResource
+    extends AbstractPlexusResource
 {
   public static final String RESOURCE_URI = "/authentication/login";
 
