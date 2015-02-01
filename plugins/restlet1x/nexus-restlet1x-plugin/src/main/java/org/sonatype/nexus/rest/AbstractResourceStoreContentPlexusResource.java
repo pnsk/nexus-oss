@@ -60,7 +60,6 @@ import org.sonatype.nexus.rest.model.ContentListDescribeResponseResource;
 import org.sonatype.nexus.rest.model.ContentListResource;
 import org.sonatype.nexus.rest.model.ContentListResourceResponse;
 import org.sonatype.nexus.rest.model.NotFoundReasoning;
-import org.sonatype.nexus.rest.repositories_.AbstractRepositoryPlexusResource;
 import org.sonatype.nexus.security.filter.authc.NexusHttpAuthenticationFilter;
 import org.sonatype.nexus.web.BaseUrlHolder;
 import org.sonatype.plexus.rest.representation.VelocityRepresentation;
@@ -246,8 +245,7 @@ public abstract class AbstractResourceStoreContentPlexusResource
       store.deleteItem(req);
 
       getLogger().info(
-          "Storage item(s) on path \"" + req.getRequestPath() + "\" (and below) were deleted from repository ["
-              + request.getAttributes().get(AbstractRepositoryPlexusResource.REPOSITORY_ID_KEY) + "]");
+          "Storage item(s) on path \"" + req.getRequestPath() + "\" (and below) were deleted from repository");
     }
     catch (Exception e) {
       handleException(request, response, e);

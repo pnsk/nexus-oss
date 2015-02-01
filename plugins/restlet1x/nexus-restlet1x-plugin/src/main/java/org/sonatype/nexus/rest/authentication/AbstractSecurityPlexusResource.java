@@ -14,10 +14,7 @@ package org.sonatype.nexus.rest.authentication;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -31,14 +28,12 @@ import org.sonatype.nexus.rest.model.AliasingListConverter;
 import org.sonatype.nexus.rest.model.HtmlUnescapeStringConverter;
 import org.sonatype.plexus.rest.ReferenceFactory;
 import org.sonatype.plexus.rest.resource.AbstractPlexusResource;
-import org.sonatype.plexus.rest.resource.PlexusResourceException;
 import org.sonatype.plexus.rest.resource.error.ErrorMessage;
 import org.sonatype.plexus.rest.resource.error.ErrorResponse;
 import org.sonatype.security.SecuritySystem;
 import org.sonatype.security.authorization.AuthorizationManager;
 import org.sonatype.security.authorization.NoSuchAuthorizationManagerException;
 import org.sonatype.security.authorization.NoSuchRoleException;
-import org.sonatype.security.authorization.Role;
 import org.sonatype.security.rest.model.PlexusRoleResource;
 import org.sonatype.security.rest.model.PlexusUserResource;
 import org.sonatype.security.rest.model.RoleAndPrivilegeListFilterResource;
@@ -59,7 +54,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.restlet.data.Reference;
 import org.restlet.data.Request;
-import org.restlet.data.Status;
 
 /**
  * Base class of SecurityPlexusResources. Contains error handling util methods and conversion between DTO and
@@ -94,75 +88,6 @@ public abstract class AbstractSecurityPlexusResource
     return ner;
   }
 
-  protected void handleInvalidConfigurationException(InvalidConfigurationException e)
-      throws PlexusResourceException
-  {
-    getLogger().debug("Configuration error!", e);
-
-    ErrorResponse errorResponse;
-
-    ValidationResponse vr = e.getValidationResponse();
-
-    if (vr != null && vr.getValidationErrors().size() > 0) {
-      ValidationMessage vm = vr.getValidationErrors().get(0);
-      errorResponse = getErrorResponse(vm.getKey(), vm.getShortMessage());
-    }
-    else {
-      errorResponse = getErrorResponse("*", e.getMessage());
-    }
-
-    throw new PlexusResourceException(Status.CLIENT_ERROR_BAD_REQUEST, "Configuration error.", errorResponse);
-  }
-
-  protected UserResource securityToRestModel(User user, Request request, boolean appendResourceId) {
-    UserResource resource = new UserResource();
-    resource.setEmail(user.getEmailAddress());
-    resource.setFirstName(user.getFirstName());
-    resource.setLastName(user.getLastName());
-    resource.setStatus(user.getStatus().name());
-    resource.setUserId(user.getUserId());
-
-    String resourceId = "";
-    if (appendResourceId) {
-      resourceId = resource.getUserId();
-    }
-    resource.setResourceURI(this.createChildReference(request, resourceId).toString());
-
-    for (RoleIdentifier role : user.getRoles()) {
-      resource.addRole(role.getRoleId());
-    }
-
-    return resource;
-  }
-
-  protected User restToSecurityModel(User user, UserResource resource)
-      throws InvalidConfigurationException
-  {
-    if (user == null) {
-      user = new User();
-    }
-
-    // validate users Status, converting to an ENUM throws an exception, so we need to explicitly check it
-    this.checkUsersStatus(resource.getStatus());
-
-    user.setEmailAddress(resource.getEmail());
-    user.setFirstName(resource.getFirstName());
-    user.setLastName(resource.getLastName());
-    user.setStatus(UserStatus.valueOf(resource.getStatus()));
-    user.setUserId(resource.getUserId());
-
-    // set the users source
-    user.setSource(DEFAULT_SOURCE);
-
-    Set<RoleIdentifier> roles = new HashSet<RoleIdentifier>();
-    for (String roleId : resource.getRoles()) {
-      roles.add(new RoleIdentifier(DEFAULT_SOURCE, roleId));
-    }
-
-    user.setRoles(roles);
-
-    return user;
-  }
 
   protected PlexusUserResource securityToRestModel(User user) {
     PlexusUserResource resource = new PlexusUserResource();
@@ -179,28 +104,6 @@ public abstract class AbstractSecurityPlexusResource
     }
 
     return resource;
-  }
-
-  protected PlexusRoleResource securityToRestModel(Role role) {
-    if (role == null) {
-      return null;
-    }
-
-    PlexusRoleResource roleResource = new PlexusRoleResource();
-    roleResource.setRoleId(role.getRoleId());
-    roleResource.setName(role.getName());
-    roleResource.setSource(role.getSource());
-
-    return roleResource;
-  }
-
-  protected List<PlexusUserResource> securityToRestModel(Set<User> users) {
-    List<PlexusUserResource> restUsersList = new ArrayList<PlexusUserResource>();
-
-    for (User user : users) {
-      restUsersList.add(securityToRestModel(user));
-    }
-    return restUsersList;
   }
 
   // TODO: come back to this, we need to change the PlexusRoleResource
@@ -259,10 +162,6 @@ public abstract class AbstractSecurityPlexusResource
       response.addValidationError(new ValidationMessage("status", "Users status is not valid."));
       throw new InvalidConfigurationException(response);
     }
-  }
-
-  protected String getRequestAttribute(final Request request, final String key) {
-    return getRequestAttribute(request, key, true);
   }
 
   protected String getRequestAttribute(final Request request, final String key, final boolean decode) {
