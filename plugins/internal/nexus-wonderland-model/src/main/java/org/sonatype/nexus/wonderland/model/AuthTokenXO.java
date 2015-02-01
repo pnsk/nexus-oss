@@ -13,7 +13,6 @@
 
 package org.sonatype.nexus.wonderland.model;
 
-import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -28,72 +27,39 @@ import com.fasterxml.jackson.annotation.JsonProperty;
     "p"
 })
 @XmlRootElement(name = "authToken")
-@Generated(value = "XJC 2.2.11", date = "2015-02-01T14:56:11")
-public class AuthTokenXO {
+public class AuthTokenXO
+{
+  @XmlElement(required = true)
+  @JsonProperty("u")
+  protected String u;
 
-    @XmlElement(required = true)
-    @JsonProperty("u")
-    protected String u;
-    @XmlElement(required = true)
-    @JsonProperty("p")
-    protected String p;
+  @XmlElement(required = true)
+  @JsonProperty("p")
+  protected String p;
 
-    /**
-     * Gets the value of the u property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getU() {
-        return u;
-    }
+  public String getU() {
+    return u;
+  }
 
-    /**
-     * Sets the value of the u property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setU(String value) {
-        this.u = value;
-    }
+  public void setU(String value) {
+    this.u = value;
+  }
 
-    /**
-     * Gets the value of the p property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getP() {
-        return p;
-    }
+  public String getP() {
+    return p;
+  }
 
-    /**
-     * Sets the value of the p property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setP(String value) {
-        this.p = value;
-    }
+  public void setP(String value) {
+    this.p = value;
+  }
 
-    public AuthTokenXO withU(String value) {
-        setU(value);
-        return this;
-    }
+  public AuthTokenXO withU(String value) {
+    setU(value);
+    return this;
+  }
 
-    public AuthTokenXO withP(String value) {
-        setP(value);
-        return this;
-    }
-
+  public AuthTokenXO withP(String value) {
+    setP(value);
+    return this;
+  }
 }

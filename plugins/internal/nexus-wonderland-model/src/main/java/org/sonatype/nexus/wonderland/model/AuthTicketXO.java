@@ -13,7 +13,6 @@
 
 package org.sonatype.nexus.wonderland.model;
 
-import javax.annotation.Generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,40 +26,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
     "t"
 })
 @XmlRootElement(name = "authTicket")
-@Generated(value = "XJC 2.2.11", date = "2015-02-01T14:56:11")
-public class AuthTicketXO {
+public class AuthTicketXO
+{
+  @XmlElement(required = true)
+  @JsonProperty("t")
+  protected String t;
 
-    @XmlElement(required = true)
-    @JsonProperty("t")
-    protected String t;
+  public String getT() {
+    return t;
+  }
 
-    /**
-     * Gets the value of the t property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getT() {
-        return t;
-    }
+  public void setT(String value) {
+    this.t = value;
+  }
 
-    /**
-     * Sets the value of the t property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setT(String value) {
-        this.t = value;
-    }
-
-    public AuthTicketXO withT(String value) {
-        setT(value);
-        return this;
-    }
-
+  public AuthTicketXO withT(String value) {
+    setT(value);
+    return this;
+  }
 }
