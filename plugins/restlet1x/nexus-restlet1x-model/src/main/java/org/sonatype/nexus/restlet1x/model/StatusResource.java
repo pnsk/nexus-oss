@@ -120,19 +120,9 @@ public class StatusResource
     private boolean configurationUpgraded = false;
 
     /**
-     * Configuration validation status.
-     */
-    private StatusConfigurationValidationResponse configurationValidationResponse;
-
-    /**
      * Errors occuring during nexus startup.
      */
     private String errorCause;
-
-    /**
-     * Permissions that are available to the current user.
-     */
-    private NexusAuthenticationClientPermissions clientPermissions;
 
     /**
      * The base url of the nexus instance.
@@ -199,26 +189,6 @@ public class StatusResource
     {
         return this.baseUrl;
     } //-- String getBaseUrl()
-
-    /**
-     * Get permissions that are available to the current user.
-     * 
-     * @return NexusAuthenticationClientPermissions
-     */
-    public NexusAuthenticationClientPermissions getClientPermissions()
-    {
-        return this.clientPermissions;
-    } //-- NexusAuthenticationClientPermissions getClientPermissions()
-
-    /**
-     * Get configuration validation status.
-     * 
-     * @return StatusConfigurationValidationResponse
-     */
-    public StatusConfigurationValidationResponse getConfigurationValidationResponse()
-    {
-        return this.configurationValidationResponse;
-    } //-- StatusConfigurationValidationResponse getConfigurationValidationResponse()
 
     /**
      * Get the long version of the nexus edition (i.e. Open Source
@@ -450,16 +420,6 @@ public class StatusResource
     } //-- void setBaseUrl( String )
 
     /**
-     * Set permissions that are available to the current user.
-     * 
-     * @param clientPermissions
-     */
-    public void setClientPermissions( NexusAuthenticationClientPermissions clientPermissions )
-    {
-        this.clientPermissions = clientPermissions;
-    } //-- void setClientPermissions( NexusAuthenticationClientPermissions )
-
-    /**
      * Set flag that states if the nexus configuration has been
      * upgraded.
      * 
@@ -469,16 +429,6 @@ public class StatusResource
     {
         this.configurationUpgraded = configurationUpgraded;
     } //-- void setConfigurationUpgraded( boolean )
-
-    /**
-     * Set configuration validation status.
-     * 
-     * @param configurationValidationResponse
-     */
-    public void setConfigurationValidationResponse( StatusConfigurationValidationResponse configurationValidationResponse )
-    {
-        this.configurationValidationResponse = configurationValidationResponse;
-    } //-- void setConfigurationValidationResponse( StatusConfigurationValidationResponse )
 
     /**
      * Set the long version of the nexus edition (i.e. Open Source

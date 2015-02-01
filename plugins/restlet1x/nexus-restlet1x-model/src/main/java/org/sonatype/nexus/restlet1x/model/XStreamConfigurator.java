@@ -38,14 +38,6 @@ public class XStreamConfigurator
 
     xstream.alias("authentication-login", AuthenticationLoginResourceResponse.class);
 
-    xstream.registerLocalConverter(AuthenticationClientPermissions.class, "permissions",
-        new AliasingListConverter(ClientPermission.class, "permission"));
-
-    xstream.registerLocalConverter(StatusConfigurationValidationResponse.class, "validationErrors",
-        new AliasingListConverter(String.class, "error"));
-    xstream.registerLocalConverter(StatusConfigurationValidationResponse.class, "validationWarnings",
-        new AliasingListConverter(String.class, "warning"));
-
     xstream.processAnnotations(AuthenticationLoginResourceResponse.class);
 
     return xstream;

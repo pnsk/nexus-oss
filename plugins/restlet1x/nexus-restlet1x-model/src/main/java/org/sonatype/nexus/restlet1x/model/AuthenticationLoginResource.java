@@ -28,38 +28,4 @@ public class AuthenticationLoginResource
     implements java.io.Serializable
 {
 
-      //--------------------------/
-     //- Class/Member Variables -/
-    //--------------------------/
-
-    /**
-     * Login details info.
-     */
-    private AuthenticationClientPermissions clientPermissions;
-
-
-      //-----------/
-     //- Methods -/
-    //-----------/
-
-    /**
-     * Get login details info.
-     * 
-     * @return AuthenticationClientPermissions
-     */
-    public AuthenticationClientPermissions getClientPermissions()
-    {
-        return this.clientPermissions;
-    } //-- AuthenticationClientPermissions getClientPermissions()
-
-    /**
-     * Set login details info.
-     * 
-     * @param clientPermissions
-     */
-    public void setClientPermissions( AuthenticationClientPermissions clientPermissions )
-    {
-        this.clientPermissions = clientPermissions;
-    } //-- void setClientPermissions( AuthenticationClientPermissions )
-
 }

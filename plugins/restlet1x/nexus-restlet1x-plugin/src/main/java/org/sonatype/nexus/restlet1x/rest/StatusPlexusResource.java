@@ -116,26 +116,6 @@ public class StatusPlexusResource
 
     resource.setErrorCause(spit(status.getErrorCause()));
 
-    // if ( status.getConfigurationValidationResponse() != null )
-    // {
-    // resource.setConfigurationValidationResponse( new StatusConfigurationValidationResponse() );
-    //
-    // resource.getConfigurationValidationResponse().setValid(
-    // status.getConfigurationValidationResponse().isValid() );
-    //
-    // resource.getConfigurationValidationResponse().setModified(
-    // status.getConfigurationValidationResponse().isModified() );
-    //
-    // for ( ValidationMessage msg : status.getConfigurationValidationResponse().getValidationErrors() )
-    // {
-    // resource.getConfigurationValidationResponse().addValidationError( msg.toString() );
-    // }
-    // for ( ValidationMessage msg : status.getConfigurationValidationResponse().getValidationWarnings() )
-    // {
-    // resource.getConfigurationValidationResponse().addValidationWarning( msg.toString() );
-    // }
-    // }
-
     resource.setBaseUrl(BaseUrlHolder.get());
 
     resource.setLicenseInstalled(status.isLicenseInstalled());
