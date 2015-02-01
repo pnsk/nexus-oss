@@ -14,11 +14,11 @@ package org.sonatype.nexus.rest.authentication;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
+import org.sonatype.security.rest.model.AuthenticationLoginResource;
 import org.sonatype.security.rest.model.AuthenticationLoginResourceResponse;
 
 import org.restlet.Context;
@@ -28,17 +28,26 @@ import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
 
 /**
- * The login resource handler. It creates a user token.
- *
- * @author bdemers
+ * Login resource.
  */
 @Named
 @Singleton
-@Path(AbstractLoginPlexusResource.RESOURCE_URI)
+@Path(LoginPlexusResource.RESOURCE_URI)
 @Produces({"application/xml", "application/json"})
-public class NexusLoginPlexusResource
-    extends AbstractLoginPlexusResource
+public class LoginPlexusResource
+    extends AbstractSecurityPlexusResource
 {
+  public static final String RESOURCE_URI = "/authentication/login";
+
+  @Override
+  public Object getPayloadInstance() {
+    return null;
+  }
+
+  @Override
+  public String getResourceUri() {
+    return RESOURCE_URI;
+  }
 
   @Override
   public PathProtectionDescriptor getResourceProtection() {
@@ -47,14 +56,14 @@ public class NexusLoginPlexusResource
     return new PathProtectionDescriptor(getResourceUri(), "authcNxBasic,perms[nexus:authentication]");
   }
 
-  /**
-   * Login to the application, will return a set of permissions available to the specified user.
-   */
   @Override
-  @GET
   public AuthenticationLoginResourceResponse get(Context context, Request request, Response response, Variant variant)
       throws ResourceException
   {
-    return super.get(context, request, response, variant);
+    AuthenticationLoginResource resource = new AuthenticationLoginResource();
+    AuthenticationLoginResourceResponse result = new AuthenticationLoginResourceResponse();
+    result.setData(resource);
+
+    return result;
   }
 }

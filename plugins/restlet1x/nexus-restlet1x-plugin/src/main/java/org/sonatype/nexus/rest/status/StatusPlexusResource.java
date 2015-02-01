@@ -25,18 +25,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.sonatype.nexus.SystemStatus;
-import org.sonatype.nexus.rest.authentication.AbstractUIPermissionCalculatingPlexusResource;
-import org.sonatype.nexus.rest.model.NexusAuthenticationClientPermissions;
+import org.sonatype.nexus.rest.authentication.AbstractSecurityPlexusResource;
 import org.sonatype.nexus.rest.model.StatusResource;
 import org.sonatype.nexus.rest.model.StatusResourceResponse;
 import org.sonatype.nexus.web.BaseUrlHolder;
 import org.sonatype.plexus.rest.resource.ManagedPlexusResource;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
-import org.sonatype.security.rest.model.AuthenticationClientPermissions;
 
 import com.codahale.metrics.annotation.Timed;
 import org.restlet.Context;
-import org.restlet.data.Form;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.resource.ResourceException;
@@ -48,7 +45,7 @@ import org.restlet.resource.Variant;
 @Path(StatusPlexusResource.RESOURCE_URI)
 @Produces({"application/xml", "application/json"})
 public class StatusPlexusResource
-    extends AbstractUIPermissionCalculatingPlexusResource
+    extends AbstractSecurityPlexusResource
     implements ManagedPlexusResource
 {
   public static final String RESOURCE_URI = "/status";
@@ -75,12 +72,6 @@ public class StatusPlexusResource
     return new PathProtectionDescriptor(getResourceUri(), "authcBasic,perms[nexus:status]");
   }
 
-  /**
-   * Returns the status of the Nexus server.
-   *
-   * @param perms If query parameter with this name present (without or with any value, does not matter, it is only
-   *              checked for presence), this resource will emit the user permissions too.
-   */
   @Timed
   @Override
   @GET
@@ -145,11 +136,6 @@ public class StatusPlexusResource
     // }
     // }
 
-    final Form form = request.getResourceRef().getQueryAsForm();
-    if (form.getFirst("perms") != null) {
-      resource.setClientPermissions(getClientPermissions(request));
-    }
-
     resource.setBaseUrl(BaseUrlHolder.get());
 
     resource.setLicenseInstalled(status.isLicenseInstalled());
@@ -163,23 +149,6 @@ public class StatusPlexusResource
     result.setData(resource);
 
     return result;
-  }
-
-  private NexusAuthenticationClientPermissions getClientPermissions(Request request) throws ResourceException {
-    AuthenticationClientPermissions originalClientPermissions = getClientPermissionsForCurrentUser(request);
-
-    // TODO: this is a modello work around,
-    // the SystemStatus could not include a field of type AuthenticationClientPermissions
-    // because it is in a different model, but I can extend that class... and include it.
-
-    NexusAuthenticationClientPermissions clientPermissions = new NexusAuthenticationClientPermissions();
-    clientPermissions.setLoggedIn(originalClientPermissions.isLoggedIn());
-    clientPermissions.setLoggedInUsername(originalClientPermissions.getLoggedInUsername());
-    clientPermissions.setLoggedInUserSource(originalClientPermissions.getLoggedInUserSource());
-    clientPermissions.setLoggedInUserSource(originalClientPermissions.getLoggedInUserSource());
-    clientPermissions.setPermissions(originalClientPermissions.getPermissions());
-
-    return clientPermissions;
   }
 
   private String spit(Throwable t) {

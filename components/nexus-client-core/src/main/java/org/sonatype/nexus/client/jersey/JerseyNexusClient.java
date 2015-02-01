@@ -151,11 +151,24 @@ public class JerseyNexusClient
       final StatusResource response = serviceResource("status")
           .get(StatusResourceResponse.class)
           .getData();
-      return new NexusStatus(response.getAppName(), response.getFormattedAppName(), response.getVersion(),
-          response.getApiVersion(), response.getEditionLong(), response.getEditionShort(), response.getState(),
-          response.getInitializedAt(), response.getStartedAt(), response.getLastConfigChange(), -1,
-          response.isFirstStart(), response.isInstanceUpgraded(), response.isConfigurationUpgraded(),
-          response.getBaseUrl());
+
+      return new NexusStatus(
+          response.getAppName(),
+          response.getFormattedAppName(),
+          response.getVersion(),
+          response.getApiVersion(),
+          response.getEditionLong(),
+          response.getEditionShort(),
+          response.getState(),
+          response.getInitializedAt(),
+          response.getStartedAt(),
+          response.getLastConfigChange(),
+          -1,
+          response.isFirstStart(),
+          response.isInstanceUpgraded(),
+          response.isConfigurationUpgraded(),
+          response.getBaseUrl()
+      );
     }
     catch (UniformInterfaceException e) {
       throw convert(e);

@@ -31,9 +31,7 @@ import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
 
 /**
- * The logout handler. It removes/invalidates the user token.
- *
- * @author cstamas
+ * Logout resource.
  */
 @Singleton
 @Typed(PlexusResource.class)
@@ -71,5 +69,4 @@ public class LogoutPlexusResource
   {
     return "OK";
   }
-
 }
