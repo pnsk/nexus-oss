@@ -10,40 +10,50 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.rest.attributes;
+package org.sonatype.nexus.rest.authentication;
 
-import org.sonatype.nexus.rest.restore.AbstractRestorePlexusResource;
-import org.sonatype.nexus.scheduling.TaskConfiguration;
-import org.sonatype.nexus.tasks.RebuildAttributesTask;
+import org.sonatype.security.rest.model.AuthenticationLoginResource;
+import org.sonatype.security.rest.model.AuthenticationLoginResourceResponse;
 
 import org.restlet.Context;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.resource.ResourceException;
+import org.restlet.resource.Variant;
 
-public abstract class AbstractAttributesPlexusResource
-    extends AbstractRestorePlexusResource
+/**
+ * The login resource handler. It creates a user token.
+ *
+ * @author cstamas
+ */
+public abstract class AbstractLoginPlexusResource
+    extends AbstractUIPermissionCalculatingPlexusResource
 {
+  public static final String RESOURCE_URI = "/authentication/login";
+
   @Override
   public Object getPayloadInstance() {
     return null;
   }
 
   @Override
-  public void delete(Context context, Request request, Response response)
+  public String getResourceUri() {
+    return RESOURCE_URI;
+  }
+
+  @Override
+  public AuthenticationLoginResourceResponse get(Context context, Request request, Response response, Variant variant)
       throws ResourceException
   {
-    TaskConfiguration task = getNexusScheduler().createTaskConfigurationInstance(RebuildAttributesTask.class);
+    AuthenticationLoginResource resource = new AuthenticationLoginResource();
 
-    String repositoryId = getRepositoryId(request);
-    if (repositoryId == null) {
-      repositoryId = getRepositoryGroupId(request);
-    }
-    task.setRepositoryId(repositoryId);
+    resource.setClientPermissions(getClientPermissionsForCurrentUser(request));
 
-    task.setPath(getResourceStorePath(request));
+    AuthenticationLoginResourceResponse result = new AuthenticationLoginResourceResponse();
 
-    this.handleDelete(task, request);
+    result.setData(resource);
+
+    return result;
   }
 
 }

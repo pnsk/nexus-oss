@@ -10,7 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.security.rest;
+package org.sonatype.nexus.rest.authentication;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -46,8 +46,8 @@ import org.sonatype.security.rest.model.RoleAndPrivilegeListResource;
 import org.sonatype.security.rest.model.RoleResource;
 import org.sonatype.security.rest.model.UserChangePasswordResource;
 import org.sonatype.security.rest.model.UserResource;
-import org.sonatype.security.usermanagement.User;
 import org.sonatype.security.usermanagement.RoleIdentifier;
+import org.sonatype.security.usermanagement.User;
 import org.sonatype.security.usermanagement.UserStatus;
 
 import com.google.common.base.Function;

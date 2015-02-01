@@ -25,13 +25,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.sonatype.nexus.SystemStatus;
+import org.sonatype.nexus.rest.authentication.AbstractUIPermissionCalculatingPlexusResource;
 import org.sonatype.nexus.rest.model.NexusAuthenticationClientPermissions;
 import org.sonatype.nexus.rest.model.StatusResource;
 import org.sonatype.nexus.rest.model.StatusResourceResponse;
 import org.sonatype.nexus.web.BaseUrlHolder;
 import org.sonatype.plexus.rest.resource.ManagedPlexusResource;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
-import org.sonatype.security.rest.authentication.AbstractUIPermissionCalculatingPlexusResource;
 import org.sonatype.security.rest.model.AuthenticationClientPermissions;
 
 import com.codahale.metrics.annotation.Timed;

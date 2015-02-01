@@ -19,7 +19,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
-import org.sonatype.security.rest.authentication.AbstractLoginPlexusResource;
 import org.sonatype.security.rest.model.AuthenticationLoginResourceResponse;
 
 import org.restlet.Context;
