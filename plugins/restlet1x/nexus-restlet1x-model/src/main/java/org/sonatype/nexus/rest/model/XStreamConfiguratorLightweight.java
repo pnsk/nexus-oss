@@ -20,39 +20,40 @@ import org.sonatype.nexus.rest.schedules.ScheduledServiceResourceResponseConvert
 import org.sonatype.security.rest.model.AuthenticationClientPermissions;
 import org.sonatype.security.rest.model.AuthenticationLoginResourceResponse;
 import org.sonatype.security.rest.model.ClientPermission;
-import org.sonatype.security.rest.model.ExternalRoleMappingListResourceResponse;
-import org.sonatype.security.rest.model.ExternalRoleMappingResource;
-import org.sonatype.security.rest.model.ExternalRoleMappingResourceResponse;
-import org.sonatype.security.rest.model.PlexusRoleListResourceResponse;
-import org.sonatype.security.rest.model.PlexusRoleResource;
-import org.sonatype.security.rest.model.PlexusUserListResourceResponse;
-import org.sonatype.security.rest.model.PlexusUserResource;
-import org.sonatype.security.rest.model.PlexusUserResourceResponse;
-import org.sonatype.security.rest.model.PlexusUserSearchCriteriaResourceRequest;
-import org.sonatype.security.rest.model.PrivilegeListResourceResponse;
-import org.sonatype.security.rest.model.PrivilegeProperty;
-import org.sonatype.security.rest.model.PrivilegeStatusResource;
-import org.sonatype.security.rest.model.PrivilegeStatusResourceResponse;
-import org.sonatype.security.rest.model.PrivilegeTypePropertyResource;
-import org.sonatype.security.rest.model.PrivilegeTypeResource;
-import org.sonatype.security.rest.model.PrivilegeTypeResourceResponse;
-import org.sonatype.security.rest.model.RoleListResourceResponse;
-import org.sonatype.security.rest.model.RoleResource;
-import org.sonatype.security.rest.model.RoleResourceRequest;
-import org.sonatype.security.rest.model.RoleResourceResponse;
-import org.sonatype.security.rest.model.UserChangePasswordRequest;
-import org.sonatype.security.rest.model.UserForgotPasswordRequest;
-import org.sonatype.security.rest.model.UserListResourceResponse;
-import org.sonatype.security.rest.model.UserResource;
-import org.sonatype.security.rest.model.UserResourceRequest;
-import org.sonatype.security.rest.model.UserResourceResponse;
-import org.sonatype.security.rest.model.UserToRoleResource;
-import org.sonatype.security.rest.model.UserToRoleResourceRequest;
 
 import com.thoughtworks.xstream.XStream;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.ModelBase;
 import org.apache.maven.model.Scm;
+
+//import org.sonatype.security.rest.model.ExternalRoleMappingListResourceResponse;
+//import org.sonatype.security.rest.model.ExternalRoleMappingResource;
+//import org.sonatype.security.rest.model.ExternalRoleMappingResourceResponse;
+//import org.sonatype.security.rest.model.PlexusRoleListResourceResponse;
+//import org.sonatype.security.rest.model.PlexusRoleResource;
+//import org.sonatype.security.rest.model.PlexusUserListResourceResponse;
+//import org.sonatype.security.rest.model.PlexusUserResource;
+//import org.sonatype.security.rest.model.PlexusUserResourceResponse;
+//import org.sonatype.security.rest.model.PlexusUserSearchCriteriaResourceRequest;
+//import org.sonatype.security.rest.model.PrivilegeListResourceResponse;
+//import org.sonatype.security.rest.model.PrivilegeProperty;
+//import org.sonatype.security.rest.model.PrivilegeStatusResource;
+//import org.sonatype.security.rest.model.PrivilegeStatusResourceResponse;
+//import org.sonatype.security.rest.model.PrivilegeTypePropertyResource;
+//import org.sonatype.security.rest.model.PrivilegeTypeResource;
+//import org.sonatype.security.rest.model.PrivilegeTypeResourceResponse;
+//import org.sonatype.security.rest.model.RoleListResourceResponse;
+//import org.sonatype.security.rest.model.RoleResource;
+//import org.sonatype.security.rest.model.RoleResourceRequest;
+//import org.sonatype.security.rest.model.RoleResourceResponse;
+//import org.sonatype.security.rest.model.UserChangePasswordRequest;
+//import org.sonatype.security.rest.model.UserForgotPasswordRequest;
+//import org.sonatype.security.rest.model.UserListResourceResponse;
+//import org.sonatype.security.rest.model.UserResource;
+//import org.sonatype.security.rest.model.UserResourceRequest;
+//import org.sonatype.security.rest.model.UserResourceResponse;
+//import org.sonatype.security.rest.model.UserToRoleResource;
+//import org.sonatype.security.rest.model.UserToRoleResourceRequest;
 
 /**
  * The "lightweight" configurator that makes possible the use of it when plexus-restlet-bridge is not on classpath, as
@@ -244,74 +245,74 @@ public class XStreamConfiguratorLightweight
 
     // SECURITY below
     xstream.processAnnotations(AuthenticationLoginResourceResponse.class);
-    xstream.processAnnotations(UserResourceResponse.class);
-    xstream.processAnnotations(UserListResourceResponse.class);
-    xstream.processAnnotations(UserResourceRequest.class);
-    xstream.processAnnotations(UserForgotPasswordRequest.class);
-    xstream.processAnnotations(UserChangePasswordRequest.class);
-    xstream.registerLocalConverter(UserResource.class, "roles", new AliasingListConverter(String.class, "role"));
-    xstream.registerLocalConverter(UserListResourceResponse.class, "data", new AliasingListConverter(
-        UserResource.class, "users-list-item"));
+    //xstream.processAnnotations(UserResourceResponse.class);
+    //xstream.processAnnotations(UserListResourceResponse.class);
+    //xstream.processAnnotations(UserResourceRequest.class);
+    //xstream.processAnnotations(UserForgotPasswordRequest.class);
+    //xstream.processAnnotations(UserChangePasswordRequest.class);
+    //xstream.registerLocalConverter(UserResource.class, "roles", new AliasingListConverter(String.class, "role"));
+    //xstream.registerLocalConverter(UserListResourceResponse.class, "data", new AliasingListConverter(
+    //    UserResource.class, "users-list-item"));
 
-    xstream.processAnnotations(RoleListResourceResponse.class);
-    xstream.processAnnotations(RoleResource.class);
-    xstream.processAnnotations(RoleResourceRequest.class);
+    //xstream.processAnnotations(RoleListResourceResponse.class);
+    //xstream.processAnnotations(RoleResource.class);
+    //xstream.processAnnotations(RoleResourceRequest.class);
+    //
+    //xstream.processAnnotations(RoleResourceResponse.class);
+    //xstream.registerLocalConverter(RoleListResourceResponse.class, "data", new AliasingListConverter(
+    //    RoleResource.class, "roles-list-item"));
+    //xstream.registerLocalConverter(RoleResource.class, "roles", new AliasingListConverter(String.class, "role"));
+    //xstream.registerLocalConverter(RoleResource.class, "privileges", new AliasingListConverter(String.class,
+    //    "privilege"));
 
-    xstream.processAnnotations(RoleResourceResponse.class);
-    xstream.registerLocalConverter(RoleListResourceResponse.class, "data", new AliasingListConverter(
-        RoleResource.class, "roles-list-item"));
-    xstream.registerLocalConverter(RoleResource.class, "roles", new AliasingListConverter(String.class, "role"));
-    xstream.registerLocalConverter(RoleResource.class, "privileges", new AliasingListConverter(String.class,
-        "privilege"));
-
-    xstream.processAnnotations(PrivilegeListResourceResponse.class);
-    xstream.processAnnotations(PrivilegeStatusResourceResponse.class);
-    xstream.processAnnotations(PrivilegeTypeResourceResponse.class);
-    xstream.registerLocalConverter(PrivilegeListResourceResponse.class, "data", new AliasingListConverter(
-        PrivilegeStatusResource.class, "privilege-item"));
-    xstream.registerLocalConverter(PrivilegeResource.class, "method", new AliasingListConverter(String.class,
-        "method"));
-    xstream.registerLocalConverter(PrivilegeStatusResource.class, "properties", new AliasingListConverter(
-        PrivilegeProperty.class, "privilege-property"));
-    xstream.registerLocalConverter(PrivilegeTypeResourceResponse.class, "data", new AliasingListConverter(
-        PrivilegeTypeResource.class, "privilege-type"));
-    xstream.registerLocalConverter(PrivilegeTypeResource.class, "properties", new AliasingListConverter(
-        PrivilegeTypePropertyResource.class, "privilege-type-property"));
-
-    xstream.processAnnotations(UserToRoleResourceRequest.class);
-    xstream.registerLocalConverter(UserToRoleResource.class, "roles", new AliasingListConverter(String.class,
-        "role"));
-
-    xstream.processAnnotations(PlexusUserResourceResponse.class);
-    xstream.registerLocalConverter(PlexusUserResource.class, "roles", new AliasingListConverter(
-        PlexusRoleResource.class, "plexus-role"));
-
-    xstream.processAnnotations(PlexusRoleResource.class);
-
-    xstream.processAnnotations(PlexusUserListResourceResponse.class);
-    xstream.registerLocalConverter(PlexusUserListResourceResponse.class, "data", new AliasingListConverter(
-        PlexusUserResource.class, "plexus-user"));
-
-    xstream.processAnnotations(ExternalRoleMappingListResourceResponse.class);
-    xstream.processAnnotations(ExternalRoleMappingResourceResponse.class);
-    xstream.processAnnotations(ExternalRoleMappingResource.class);
-
-    xstream.registerLocalConverter(ExternalRoleMappingListResourceResponse.class, "data",
-        new AliasingListConverter(ExternalRoleMappingResource.class, "mapping"));
-    xstream.registerLocalConverter(ExternalRoleMappingResource.class, "mappedRoles", new AliasingListConverter(
-        PlexusRoleResource.class, "plexus-role"));
-
-    xstream.processAnnotations(PlexusRoleListResourceResponse.class);
-    xstream.registerLocalConverter(PlexusRoleListResourceResponse.class, "data", new AliasingListConverter(
-        PlexusRoleResource.class, "plexus-role"));
-
-    xstream.processAnnotations(PlexusUserSearchCriteriaResourceRequest.class);
-
-    xstream.processAnnotations(org.sonatype.security.rest.model.PlexusComponentListResourceResponse.class);
-    xstream.processAnnotations(org.sonatype.security.rest.model.PlexusComponentListResource.class);
-    xstream.registerLocalConverter(org.sonatype.security.rest.model.PlexusComponentListResourceResponse.class,
-        "data", new AliasingListConverter(org.sonatype.security.rest.model.PlexusComponentListResource.class,
-        "component"));
+    //xstream.processAnnotations(PrivilegeListResourceResponse.class);
+    //xstream.processAnnotations(PrivilegeStatusResourceResponse.class);
+    //xstream.processAnnotations(PrivilegeTypeResourceResponse.class);
+    //xstream.registerLocalConverter(PrivilegeListResourceResponse.class, "data", new AliasingListConverter(
+    //    PrivilegeStatusResource.class, "privilege-item"));
+    //xstream.registerLocalConverter(PrivilegeResource.class, "method", new AliasingListConverter(String.class,
+    //    "method"));
+    //xstream.registerLocalConverter(PrivilegeStatusResource.class, "properties", new AliasingListConverter(
+    //    PrivilegeProperty.class, "privilege-property"));
+    //xstream.registerLocalConverter(PrivilegeTypeResourceResponse.class, "data", new AliasingListConverter(
+    //    PrivilegeTypeResource.class, "privilege-type"));
+    //xstream.registerLocalConverter(PrivilegeTypeResource.class, "properties", new AliasingListConverter(
+    //    PrivilegeTypePropertyResource.class, "privilege-type-property"));
+    //
+    //xstream.processAnnotations(UserToRoleResourceRequest.class);
+    //xstream.registerLocalConverter(UserToRoleResource.class, "roles", new AliasingListConverter(String.class,
+    //    "role"));
+    //
+    //xstream.processAnnotations(PlexusUserResourceResponse.class);
+    //xstream.registerLocalConverter(PlexusUserResource.class, "roles", new AliasingListConverter(
+    //    PlexusRoleResource.class, "plexus-role"));
+    //
+    //xstream.processAnnotations(PlexusRoleResource.class);
+    //
+    //xstream.processAnnotations(PlexusUserListResourceResponse.class);
+    //xstream.registerLocalConverter(PlexusUserListResourceResponse.class, "data", new AliasingListConverter(
+    //    PlexusUserResource.class, "plexus-user"));
+    //
+    //xstream.processAnnotations(ExternalRoleMappingListResourceResponse.class);
+    //xstream.processAnnotations(ExternalRoleMappingResourceResponse.class);
+    //xstream.processAnnotations(ExternalRoleMappingResource.class);
+    //
+    //xstream.registerLocalConverter(ExternalRoleMappingListResourceResponse.class, "data",
+    //    new AliasingListConverter(ExternalRoleMappingResource.class, "mapping"));
+    //xstream.registerLocalConverter(ExternalRoleMappingResource.class, "mappedRoles", new AliasingListConverter(
+    //    PlexusRoleResource.class, "plexus-role"));
+    //
+    //xstream.processAnnotations(PlexusRoleListResourceResponse.class);
+    //xstream.registerLocalConverter(PlexusRoleListResourceResponse.class, "data", new AliasingListConverter(
+    //    PlexusRoleResource.class, "plexus-role"));
+    //
+    //xstream.processAnnotations(PlexusUserSearchCriteriaResourceRequest.class);
+    //
+    //xstream.processAnnotations(org.sonatype.security.rest.model.PlexusComponentListResourceResponse.class);
+    //xstream.processAnnotations(org.sonatype.security.rest.model.PlexusComponentListResource.class);
+    //xstream.registerLocalConverter(org.sonatype.security.rest.model.PlexusComponentListResourceResponse.class,
+    //    "data", new AliasingListConverter(org.sonatype.security.rest.model.PlexusComponentListResource.class,
+    //    "component"));
 
     xstream.processAnnotations(UserAccount.class);
     xstream.processAnnotations(UserAccountRequestResponseWrapper.class);

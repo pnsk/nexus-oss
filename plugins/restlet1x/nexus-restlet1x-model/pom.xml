@@ -86,20 +86,6 @@
               </models>
             </configuration>
           </execution>
-
-          <execution>
-            <id>vos-security.xml</id>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <version>1.0.0</version>
-              <packageWithVersion>false</packageWithVersion>
-              <models>
-                <model>src/main/mdo/vos-security.xml</model>
-              </models>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
     </plugins>
