@@ -35,8 +35,8 @@ import org.sonatype.nexus.client.internal.AbstractNexusClient;
 import org.sonatype.nexus.client.internal.ErrorMessage;
 import org.sonatype.nexus.client.internal.ErrorResponse;
 import org.sonatype.nexus.client.rest.ConnectionInfo;
-import org.sonatype.nexus.rest.model.StatusResource;
-import org.sonatype.nexus.rest.model.StatusResourceResponse;
+import org.sonatype.nexus.restlet1x.model.StatusResource;
+import org.sonatype.nexus.restlet1x.model.StatusResourceResponse;
 import org.sonatype.sisu.siesta.client.ClientBuilder;
 import org.sonatype.sisu.siesta.client.ClientBuilder.Target.Factory;
 

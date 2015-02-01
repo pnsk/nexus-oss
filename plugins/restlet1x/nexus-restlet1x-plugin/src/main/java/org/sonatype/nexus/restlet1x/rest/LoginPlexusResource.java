@@ -17,10 +17,10 @@ import javax.inject.Singleton;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.sonatype.nexus.restlet1x.model.AuthenticationLoginResource;
+import org.sonatype.nexus.restlet1x.model.AuthenticationLoginResourceResponse;
 import org.sonatype.plexus.rest.resource.AbstractPlexusResource;
 import org.sonatype.plexus.rest.resource.PathProtectionDescriptor;
-import org.sonatype.security.rest.model.AuthenticationLoginResource;
-import org.sonatype.security.rest.model.AuthenticationLoginResourceResponse;
 
 import org.restlet.Context;
 import org.restlet.data.Request;

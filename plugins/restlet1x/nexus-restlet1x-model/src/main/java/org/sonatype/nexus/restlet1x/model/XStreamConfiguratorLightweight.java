@@ -10,16 +10,13 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.rest.model;
+package org.sonatype.nexus.restlet1x.model;
 
 //import org.sonatype.nexus.rest.repositories.RepositoryBaseResourceConverter;
 //import org.sonatype.nexus.rest.repositories.RepositoryResourceResponseConverter;
 //import org.sonatype.nexus.rest.schedules.ScheduledServiceBaseResourceConverter;
 //import org.sonatype.nexus.rest.schedules.ScheduledServicePropertyResourceConverter;
 //import org.sonatype.nexus.rest.schedules.ScheduledServiceResourceResponseConverter;
-import org.sonatype.security.rest.model.AuthenticationClientPermissions;
-import org.sonatype.security.rest.model.AuthenticationLoginResourceResponse;
-import org.sonatype.security.rest.model.ClientPermission;
 
 import com.thoughtworks.xstream.XStream;
 //import org.apache.maven.model.Model;

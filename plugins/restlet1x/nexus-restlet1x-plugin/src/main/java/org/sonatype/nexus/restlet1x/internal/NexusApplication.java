@@ -18,6 +18,7 @@ import javax.inject.Singleton;
 
 import org.sonatype.nexus.proxy.events.NexusStartedEvent;
 import org.sonatype.nexus.proxy.events.NexusStoppedEvent;
+import org.sonatype.nexus.restlet1x.model.XStreamConfigurator;
 import org.sonatype.plexus.rest.PlexusRestletApplicationBridge;
 import org.sonatype.plexus.rest.RetargetableRestlet;
 import org.sonatype.plexus.rest.resource.ManagedPlexusResource;
@@ -92,7 +93,7 @@ public class NexusApplication
 
   @Override
   public XStream doConfigureXstream(XStream xstream) {
-    return org.sonatype.nexus.rest.model.XStreamConfigurator.configureXStream(xstream);
+    return XStreamConfigurator.configureXStream(xstream);
   }
 
   @Override

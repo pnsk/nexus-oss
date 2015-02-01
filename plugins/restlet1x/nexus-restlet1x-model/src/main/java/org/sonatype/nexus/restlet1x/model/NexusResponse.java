@@ -15,18 +15,15 @@
 // any modifications will be overwritten.
 // ==============================================================
 
-package org.sonatype.nexus.rest.model;
+package org.sonatype.nexus.restlet1x.model;
 
 /**
- * Permissions that are granted to the user.
+ * Class NexusResponse.
  * 
  * @version $Revision$ $Date$
  */
 @SuppressWarnings( "all" )
-@javax.xml.bind.annotation.XmlType( name = "nexus-authentication-client-permissions" )
-@javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
-public class NexusAuthenticationClientPermissions
-    extends org.sonatype.security.rest.model.AuthenticationClientPermissions
+public class NexusResponse
     implements java.io.Serializable
 {
 }

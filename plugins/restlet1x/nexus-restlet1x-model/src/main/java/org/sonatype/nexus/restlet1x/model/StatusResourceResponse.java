@@ -15,16 +15,20 @@
 // any modifications will be overwritten.
 // ==============================================================
 
-package org.sonatype.security.rest.model;
+package org.sonatype.nexus.restlet1x.model;
 
 /**
- * Permission details.
+ * REST Response object for the nexus status, contains the typical
+ * 'data' parameter, which is the nexus status.
  * 
  * @version $Revision$ $Date$
  */
 @SuppressWarnings( "all" )
+@com.thoughtworks.xstream.annotations.XStreamAlias( value = "status" )
+@javax.xml.bind.annotation.XmlRootElement( name = "status" )
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
-public class ClientPermission
+public class StatusResourceResponse
+    extends NexusResponse
     implements java.io.Serializable
 {
 
@@ -33,15 +37,9 @@ public class ClientPermission
     //--------------------------/
 
     /**
-     * Id of the permission.
+     * Nexus status details.
      */
-    private String id;
-
-    /**
-     * Privilege value: NONE = 0, READ = 1, UPDATE = 2, DELETE = 4,
-     * CREATE = 8, or you can OR them together.
-     */
-    private int value = 0;
+    private StatusResource data;
 
 
       //-----------/
@@ -49,45 +47,23 @@ public class ClientPermission
     //-----------/
 
     /**
-     * Get id of the permission.
+     * Get nexus status details.
      * 
-     * @return String
+     * @return StatusResource
      */
-    public String getId()
+    public StatusResource getData()
     {
-        return this.id;
-    } //-- String getId()
+        return this.data;
+    } //-- StatusResource getData()
 
     /**
-     * Get privilege value: NONE = 0, READ = 1, UPDATE = 2, DELETE
-     * = 4, CREATE = 8, or you can OR them together.
+     * Set nexus status details.
      * 
-     * @return int
+     * @param data
      */
-    public int getValue()
+    public void setData( StatusResource data )
     {
-        return this.value;
-    } //-- int getValue()
-
-    /**
-     * Set id of the permission.
-     * 
-     * @param id
-     */
-    public void setId( String id )
-    {
-        this.id = id;
-    } //-- void setId( String )
-
-    /**
-     * Set privilege value: NONE = 0, READ = 1, UPDATE = 2, DELETE
-     * = 4, CREATE = 8, or you can OR them together.
-     * 
-     * @param value
-     */
-    public void setValue( int value )
-    {
-        this.value = value;
-    } //-- void setValue( int )
+        this.data = data;
+    } //-- void setData( StatusResource )
 
 }

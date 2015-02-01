@@ -15,55 +15,18 @@
 // any modifications will be overwritten.
 // ==============================================================
 
-package org.sonatype.nexus.rest.model;
+package org.sonatype.nexus.restlet1x.model;
 
 /**
- * REST Response object for the nexus status, contains the typical
- * 'data' parameter, which is the nexus status.
+ * Permissions that are granted to the user.
  * 
  * @version $Revision$ $Date$
  */
 @SuppressWarnings( "all" )
-@com.thoughtworks.xstream.annotations.XStreamAlias( value = "status" )
-@javax.xml.bind.annotation.XmlRootElement( name = "status" )
+@javax.xml.bind.annotation.XmlType( name = "nexus-authentication-client-permissions" )
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
-public class StatusResourceResponse
-    extends NexusResponse
+public class NexusAuthenticationClientPermissions
+    extends AuthenticationClientPermissions
     implements java.io.Serializable
 {
-
-      //--------------------------/
-     //- Class/Member Variables -/
-    //--------------------------/
-
-    /**
-     * Nexus status details.
-     */
-    private StatusResource data;
-
-
-      //-----------/
-     //- Methods -/
-    //-----------/
-
-    /**
-     * Get nexus status details.
-     * 
-     * @return StatusResource
-     */
-    public StatusResource getData()
-    {
-        return this.data;
-    } //-- StatusResource getData()
-
-    /**
-     * Set nexus status details.
-     * 
-     * @param data
-     */
-    public void setData( StatusResource data )
-    {
-        this.data = data;
-    } //-- void setData( StatusResource )
-
 }

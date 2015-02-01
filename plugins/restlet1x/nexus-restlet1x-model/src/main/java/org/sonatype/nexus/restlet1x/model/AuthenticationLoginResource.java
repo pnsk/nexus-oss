@@ -15,7 +15,7 @@
 // any modifications will be overwritten.
 // ==============================================================
 
-package org.sonatype.security.rest.model;
+package org.sonatype.nexus.restlet1x.model;
 
 /**
  * Wrapper around login details.

@@ -15,15 +15,53 @@
 // any modifications will be overwritten.
 // ==============================================================
 
-package org.sonatype.nexus.rest.model;
+package org.sonatype.nexus.restlet1x.model;
 
 /**
- * Class NexusResponse.
+ * REST Response object to list the privileges a users has.
  * 
  * @version $Revision$ $Date$
  */
 @SuppressWarnings( "all" )
-public class NexusResponse
+@com.thoughtworks.xstream.annotations.XStreamAlias( "authentication-login" )
+@javax.xml.bind.annotation.XmlRootElement( name = "authentication-login" )
+@javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
+public class AuthenticationLoginResourceResponse
     implements java.io.Serializable
 {
+
+      //--------------------------/
+     //- Class/Member Variables -/
+    //--------------------------/
+
+    /**
+     * Login details.
+     */
+    private AuthenticationLoginResource data;
+
+
+      //-----------/
+     //- Methods -/
+    //-----------/
+
+    /**
+     * Get login details.
+     * 
+     * @return AuthenticationLoginResource
+     */
+    public AuthenticationLoginResource getData()
+    {
+        return this.data;
+    } //-- AuthenticationLoginResource getData()
+
+    /**
+     * Set login details.
+     * 
+     * @param data
+     */
+    public void setData( AuthenticationLoginResource data )
+    {
+        this.data = data;
+    } //-- void setData( AuthenticationLoginResource )
+
 }

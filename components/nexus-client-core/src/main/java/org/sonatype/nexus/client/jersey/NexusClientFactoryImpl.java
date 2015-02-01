@@ -33,7 +33,7 @@ import org.sonatype.nexus.client.rest.ConnectionInfo;
 import org.sonatype.nexus.client.rest.NexusClientFactory;
 import org.sonatype.nexus.client.rest.ProxyInfo;
 import org.sonatype.nexus.client.rest.UsernamePasswordAuthenticationInfo;
-import org.sonatype.nexus.rest.model.XStreamConfiguratorLightweight;
+import org.sonatype.nexus.restlet1x.model.XStreamConfiguratorLightweight;
 import org.sonatype.sisu.siesta.client.filters.RequestFilters;
 
 import com.google.common.base.Preconditions;

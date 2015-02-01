@@ -15,18 +15,16 @@
 // any modifications will be overwritten.
 // ==============================================================
 
-package org.sonatype.security.rest.model;
+package org.sonatype.nexus.restlet1x.model;
 
 /**
- * REST Response object to list the privileges a users has.
+ * Permission details.
  * 
  * @version $Revision$ $Date$
  */
 @SuppressWarnings( "all" )
-@com.thoughtworks.xstream.annotations.XStreamAlias( "authentication-login" )
-@javax.xml.bind.annotation.XmlRootElement( name = "authentication-login" )
 @javax.xml.bind.annotation.XmlAccessorType(javax.xml.bind.annotation.XmlAccessType.FIELD)
-public class AuthenticationLoginResourceResponse
+public class ClientPermission
     implements java.io.Serializable
 {
 
@@ -35,9 +33,15 @@ public class AuthenticationLoginResourceResponse
     //--------------------------/
 
     /**
-     * Login details.
+     * Id of the permission.
      */
-    private AuthenticationLoginResource data;
+    private String id;
+
+    /**
+     * Privilege value: NONE = 0, READ = 1, UPDATE = 2, DELETE = 4,
+     * CREATE = 8, or you can OR them together.
+     */
+    private int value = 0;
 
 
       //-----------/
@@ -45,23 +49,45 @@ public class AuthenticationLoginResourceResponse
     //-----------/
 
     /**
-     * Get login details.
+     * Get id of the permission.
      * 
-     * @return AuthenticationLoginResource
+     * @return String
      */
-    public AuthenticationLoginResource getData()
+    public String getId()
     {
-        return this.data;
-    } //-- AuthenticationLoginResource getData()
+        return this.id;
+    } //-- String getId()
 
     /**
-     * Set login details.
+     * Get privilege value: NONE = 0, READ = 1, UPDATE = 2, DELETE
+     * = 4, CREATE = 8, or you can OR them together.
      * 
-     * @param data
+     * @return int
      */
-    public void setData( AuthenticationLoginResource data )
+    public int getValue()
     {
-        this.data = data;
-    } //-- void setData( AuthenticationLoginResource )
+        return this.value;
+    } //-- int getValue()
+
+    /**
+     * Set id of the permission.
+     * 
+     * @param id
+     */
+    public void setId( String id )
+    {
+        this.id = id;
+    } //-- void setId( String )
+
+    /**
+     * Set privilege value: NONE = 0, READ = 1, UPDATE = 2, DELETE
+     * = 4, CREATE = 8, or you can OR them together.
+     * 
+     * @param value
+     */
+    public void setValue( int value )
+    {
+        this.value = value;
+    } //-- void setValue( int )
 
 }

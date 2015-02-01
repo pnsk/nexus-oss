@@ -15,7 +15,7 @@
 // any modifications will be overwritten.
 // ==============================================================
 
-package org.sonatype.nexus.rest.model;
+package org.sonatype.nexus.restlet1x.model;
 
 /**
  * Configuration validation status.
