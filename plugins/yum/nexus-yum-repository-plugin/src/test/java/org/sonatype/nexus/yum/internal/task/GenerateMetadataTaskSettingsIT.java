@@ -240,7 +240,6 @@ public class GenerateMetadataTaskSettingsIT
     task.setRepositoryId(repo);
     task.setVersion(version);
     task.setAddedFiles(null);
-    task.setSingleRpmPerDirectory(true);
 
     return task;
   }

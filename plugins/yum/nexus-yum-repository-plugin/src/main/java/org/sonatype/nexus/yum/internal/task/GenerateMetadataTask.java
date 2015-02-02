@@ -18,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -95,8 +94,6 @@ public class GenerateMetadataTask
 
   public static final String PARAM_REMOVED_FILE = "removedFile";
 
-  public static final String PARAM_SINGLE_RPM_PER_DIR = "singleRpmPerDir";
-
   public static final String PARAM_FORCE_FULL_SCAN = "forceFullScan";
 
   public static final String PARAM_YUM_GROUPS_DEFINITION_FILE = "yumGroupsDefinitionFile";
@@ -115,8 +112,6 @@ public class GenerateMetadataTask
     this.yumRegistry = checkNotNull(yumRegistry);
     this.scanner = checkNotNull(scanner);
     this.routingManager = checkNotNull(routingManager);
-
-    getConfiguration().setString(PARAM_SINGLE_RPM_PER_DIR, Boolean.toString(true));
   }
 
   /**
@@ -254,19 +249,6 @@ public class GenerateMetadataTask
     File rpmDir = new File(getRpmDir());
     if (shouldForceFullScan()) {
       files = scanner.scan(rpmDir);
-      if (isSingleRpmPerDirectory()) {
-        Set<File> dirs = Sets.newHashSet();
-        Iterator<File> it = files.iterator();
-        while (it.hasNext()) {
-          File file = it.next();
-          if (dirs.contains(file.getParentFile())) {
-            it.remove();
-          }
-          else {
-            dirs.add(file.getParentFile());
-          }
-        }
-      }
     }
     else if (getAddedFiles() != null) {
       String[] addedFiles = getAddedFiles().split(File.pathSeparator);
@@ -402,15 +384,8 @@ public class GenerateMetadataTask
     getConfiguration().setString(PARAM_YUM_GROUPS_DEFINITION_FILE, file);
   }
 
-  public boolean isSingleRpmPerDirectory() {
-    return getConfiguration().getBoolean(PARAM_SINGLE_RPM_PER_DIR, false);
-  }
-
   public boolean shouldForceFullScan() {
     return getConfiguration().getBoolean(PARAM_FORCE_FULL_SCAN, false);
   }
 
-  public void setSingleRpmPerDirectory(boolean singleRpmPerDirectory) {
-    getConfiguration().setBoolean(PARAM_SINGLE_RPM_PER_DIR, singleRpmPerDirectory);
-  }
 }
