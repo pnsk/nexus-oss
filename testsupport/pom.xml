@@ -35,6 +35,7 @@
     <module>nexus-it-helper-plugin</module>
     <module>nexus-test-harness-launcher</module>
     <module>nexus-ldap-testsupport</module>
+    <module>pax-exam-example</module>
   </modules>
 
   <dependencyManagement>
