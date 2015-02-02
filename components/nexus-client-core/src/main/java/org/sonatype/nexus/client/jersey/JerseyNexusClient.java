@@ -155,7 +155,8 @@ public class JerseyNexusClient
       return new NexusStatus(
           response.getAppName(),
           response.getVersion(),
-          response.getEditionShort()
+          response.getEditionShort(),
+          response.getState()
       );
     }
     catch (UniformInterfaceException e) {

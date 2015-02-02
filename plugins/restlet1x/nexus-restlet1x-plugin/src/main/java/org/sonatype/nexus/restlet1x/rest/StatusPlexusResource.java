@@ -80,6 +80,9 @@ public class StatusPlexusResource
     resource.setVersion(status.getVersion());
     resource.setEditionShort(status.getEditionShort());
 
+    // NOTE: Bundle launcher uses to to know what the state=STARTED
+    resource.setState(status.getState().name());
+
     StatusResourceResponse result = new StatusResourceResponse();
     result.setData(resource);
     return result;

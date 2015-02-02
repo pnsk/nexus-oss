@@ -25,13 +25,17 @@ public class NexusStatus
 
   private final String editionShort;
 
+  private final String state;
+
   public NexusStatus(final String appName,
                      final String version,
-                     final String editionShort)
+                     final String editionShort,
+                     final String state)
   {
     this.appName = appName;
     this.version = version;
     this.editionShort = editionShort;
+    this.state = state;
   }
 
   public String getVersion() {
@@ -40,6 +44,10 @@ public class NexusStatus
 
   public String getEditionShort() {
     return editionShort;
+  }
+
+  public String getState() {
+    return state;
   }
 
   @Override

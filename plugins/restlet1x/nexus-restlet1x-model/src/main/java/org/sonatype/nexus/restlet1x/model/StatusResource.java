@@ -34,6 +34,8 @@ public class StatusResource
 
   private String editionShort;
 
+  private String state;
+
   public String getAppName() {
     return appName;
   }
@@ -56,5 +58,13 @@ public class StatusResource
 
   public void setEditionShort(final String editionShort) {
     this.editionShort = editionShort;
+  }
+
+  public String getState() {
+    return state;
+  }
+
+  public void setState(final String state) {
+    this.state = state;
   }
 }

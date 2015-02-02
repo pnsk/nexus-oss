@@ -34,9 +34,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 2.0
  */
-public class RequestUtils
+class RequestUtils
 {
-
   private static final Logger LOG = LoggerFactory.getLogger(RequestUtils.class);
 
   public static boolean isNexusRESTStarted(final String nexusBaseURI) {
@@ -62,6 +61,9 @@ public class RequestUtils
         return false;
       }
       final String responseAsString = new BasicResponseHandler().handleResponse(response);
+
+      // FIXME: This is fragile as it doesn't expose proper visibility that the state field is actually used
+      // FIXME: Presently this REST response field is only used by this code
       if (responseAsString == null || !responseAsString.contains("<state>STARTED</state>")) {
         LOG.debug("Nexus Status Check: Invalid system state. Status: " + responseAsString);
         return false;
