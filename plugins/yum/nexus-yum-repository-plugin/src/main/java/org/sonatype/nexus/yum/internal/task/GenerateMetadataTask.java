@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -253,6 +254,19 @@ public class GenerateMetadataTask
     File rpmDir = new File(getRpmDir());
     if (shouldForceFullScan()) {
       files = scanner.scan(rpmDir);
+      if (isSingleRpmPerDirectory()) {
+        Set<File> dirs = Sets.newHashSet();
+        Iterator<File> it = files.iterator();
+        while (it.hasNext()) {
+          File file = it.next();
+          if (dirs.contains(file.getParentFile())) {
+            it.remove();
+          }
+          else {
+            dirs.add(file.getParentFile());
+          }
+        }
+      }
     }
     else if (getAddedFiles() != null) {
       String[] addedFiles = getAddedFiles().split(File.pathSeparator);
